@@ -8,7 +8,7 @@ services:
     env: node
     region: frankfurt  # EU region (closest for France)
     plan: free         # Upgrade to 'starter' for 24/7 uptime
-    buildCommand: "cd server && npm install"
+    buildCommand: "cd server && npm install && npm run build"
     startCommand: "cd server && npm run start"
     envVars:
       - key: NODE_ENV
