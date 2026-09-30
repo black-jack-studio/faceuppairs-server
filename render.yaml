@@ -1,23 +1,25 @@
-# Leaderboard API on Render (same host as faceup-server). The database is a dedicated Supabase
-# project — never FaceUp's. Migrations are applied by hand (`npm run migrate`), never on deploy.
+# Render Blueprint for FaceUp Pairs
+# Automates deployment configuration on Render
+# See: https://render.com/docs/blueprint-spec
+
 services:
   - type: web
-    name: faceup-pairs-api
-    runtime: node
-    region: frankfurt
-    # Starter, not Free: a free instance sleeps after 15 min and the first player to open the
-    # leaderboard would wait ~50 s for it to wake up.
-    plan: starter
-    rootDir: server
-    buildCommand: npm ci && npm run build
-    startCommand: npm start
-    healthCheckPath: /health
-    autoDeploy: true
+    name: faceuppairs-server
+    env: node
+    region: frankfurt  # EU region (closest for France)
+    plan: free         # Upgrade to 'starter' for 24/7 uptime
+    buildCommand: "cd server && npm install"
+    startCommand: "cd server && npm run start"
     envVars:
       - key: NODE_ENV
         value: production
-      - key: NODE_VERSION
-        value: "24"
-      # Supabase → Project Settings → Database → Connection string → "Session pooler".
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: faceuppairs-db
+          property: connectionString
+
+databases:
+  - name: faceuppairs-db
+    plan: free         # Upgrade to 'starter' for HA
+    region: frankfurt
+    ttlMonths: 0       # No auto-deletion (free tier has daily backups)
