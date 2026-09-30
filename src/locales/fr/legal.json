@@ -1,0 +1,217 @@
+{
+  "copyright": "© {{years}} {{publisher}} – Tous droits réservés.",
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "sections": [
+      {
+        "title": "Introduction",
+        "body": "Cette politique explique quelles informations sont traitées lorsque tu utilises {{app}}, pourquoi, et avec qui elles sont partagées."
+      },
+      {
+        "title": "Aucun compte",
+        "body": "{{app}} ne demande ni inscription, ni adresse e-mail, ni mot de passe. Au premier lancement, l'application crée un identifiant de joueur anonyme et aléatoire, qui ne contient aucune information sur toi."
+      },
+      {
+        "title": "Données stockées sur ton appareil",
+        "body": "Ta progression (niveaux, étoiles, records), tes pièces et boosters, tes packs d'icônes, tes réglages et ton pseudo sont enregistrés sur ton appareil."
+      },
+      {
+        "title": "Données envoyées à nos serveurs",
+        "body": "Pour le classement général : ton identifiant de joueur anonyme, le pseudo que tu choisis, tes scores et le détail des coups des parties classées. Le détail des coups sert uniquement à vérifier qu'un score est authentique. Les signalements de pseudos que tu envoies sont aussi enregistrés."
+      },
+      {
+        "title": "Publicité",
+        "body": "Le jeu est gratuit et affiche des publicités via Google AdMob : des vidéos que tu choisis de regarder en échange d'une récompense (continuer une partie, doubler tes pièces, un indice, le coffre du jour), et des publicités entre certaines parties. Sur iOS, nous te demandons ton autorisation via App Tracking Transparency avant d'utiliser l'identifiant publicitaire de ton appareil ; si tu refuses, les publicités s'affichent quand même, sans personnalisation. Dans l'Espace économique européen et au Royaume-Uni, ton consentement est recueilli via le formulaire de Google et reste modifiable dans Réglages → Confidentialité des pubs. Tu peux aussi changer ton choix de suivi dans Réglages de l'iPhone → Confidentialité → Suivi."
+      },
+      {
+        "title": "Achats intégrés",
+        "body": "Les achats (pièces, suppression des pubs, packs, abonnement Pairs+) sont traités par l'App Store d'Apple ou Google Play. Nous ne recevons jamais tes coordonnées bancaires. Notre prestataire RevenueCat reçoit les reçus d'achat pour vérifier et restaurer tes achats."
+      },
+      {
+        "title": "Mesure d'audience",
+        "body": "Nous mesurons l'usage de l'application (écrans visités, parties jouées, achats et publicités vus) avec PostHog, rattaché à ton identifiant anonyme, afin d'améliorer le jeu. Ces données ne sont ni vendues ni utilisées pour la publicité."
+      },
+      {
+        "title": "Ce que nous ne collectons pas",
+        "body": "Nous ne collectons ni ton nom, ni ton adresse e-mail, ni ta localisation précise, ni tes contacts, ni tes photos."
+      },
+      {
+        "title": "Partage des données",
+        "body": "Nous ne vendons ni ne louons aucune donnée. Elles ne sont partagées qu'avec les prestataires nécessaires au service : notre hébergement ({{host}}), Google AdMob pour la publicité, RevenueCat et l'App Store / Google Play pour les achats, PostHog pour la mesure d'audience. Ton pseudo et tes scores sont visibles des autres joueurs dans le classement ; ton identifiant de joueur ne l'est jamais."
+      },
+      {
+        "title": "Conservation",
+        "body": "Les données du classement sont conservées tant que ton identifiant de joueur existe, et supprimées dès que tu effaces tes données depuis l'application ou que tu nous le demandes."
+      },
+      {
+        "title": "Vos droits",
+        "body": "Conformément au RGPD, tu peux accéder à tes données, les corriger ou les supprimer à tout moment. Tu peux tout supprimer directement depuis l'application (Réglages → Confidentialité → Supprimer mes données), ou nous écrire à {{email}}."
+      },
+      {
+        "title": "Mineurs",
+        "body": "{{app}} n'est pas destiné aux enfants de moins de 13 ans. Les pseudos sont filtrés automatiquement et peuvent être signalés. Si tu as moins de 15 ans, demande l'accord d'un parent avant de participer au classement ou de faire un achat."
+      },
+      {
+        "title": "Sécurité",
+        "body": "Les échanges avec nos serveurs sont chiffrés (HTTPS). Nous mettons en œuvre des mesures techniques et organisationnelles pour protéger les données contre tout accès, modification ou destruction non autorisés."
+      },
+      {
+        "title": "Contact",
+        "body": "Pour toute question sur cette politique, écris-nous à {{email}}."
+      }
+    ]
+  },
+  "terms": {
+    "title": "Conditions d'utilisation",
+    "sections": [
+      {
+        "title": "1. Acceptation des conditions",
+        "body": "En téléchargeant et en utilisant {{app}}, tu acceptes les présentes Conditions d'utilisation. Si tu n'es pas d'accord, n'utilise pas l'application."
+      },
+      {
+        "title": "2. Description du service",
+        "body": "{{app}} est un jeu de mémoire gratuit, proposé à des fins de divertissement uniquement : un mode Carrière par niveaux, un mode Infini, un Défi du jour et un classement général. L'application affiche des publicités et propose des achats intégrés facultatifs. Aucun jeu d'argent réel n'est proposé."
+      },
+      {
+        "title": "3. Monnaie virtuelle et objets",
+        "body": "Les pièces, boosters, packs d'icônes et autres objets du jeu s'obtiennent en jouant ou par achat intégré. Ils n'ont aucune valeur réelle, ne sont ni remboursables en argent, ni échangeables, ni transférables en dehors de l'application. Les pièces et boosters sont stockés sur ton appareil : ils ne peuvent pas être restaurés après une suppression de l'application ou de tes données, contrairement aux achats non consommables (suppression des pubs, packs) et à l'abonnement, restaurables via « Restaurer les achats »."
+      },
+      {
+        "title": "4. Abonnement Pairs+",
+        "body": "Pairs+ est un abonnement à renouvellement automatique, mensuel ou annuel, au prix affiché dans l'application avant l'achat. Le paiement est débité sur ton compte App Store ou Google Play à la confirmation. Sauf résiliation au moins 24 heures avant la fin de la période en cours, il se renouvelle automatiquement pour la même durée et au même prix. Tu peux le gérer ou le résilier à tout moment dans Réglages → Gérer l'abonnement, ou dans les réglages de ton compte du store."
+      },
+      {
+        "title": "5. Remboursements",
+        "body": "Les achats sont traités par le store depuis lequel tu as téléchargé l'application. Les éléments numériques étant fournis immédiatement, les ventes sont définitives, sauf disposition contraire de la loi applicable. Toute demande de remboursement doit être adressée directement à Apple ou Google, selon leurs propres règles."
+      },
+      {
+        "title": "6. Classement et pseudos",
+        "body": "Pour apparaître au classement, tu choisis un pseudo. Il ne doit pas être injurieux, discriminatoire, à caractère sexuel, ni usurper l'identité d'une personne, d'une marque ou de l'équipe du jeu. Nous pouvons renommer ou retirer tout pseudo contraire à ces règles, notamment après un signalement. Les scores sont vérifiés ; un score obtenu par la triche ou la manipulation de l'application peut être retiré sans préavis."
+      },
+      {
+        "title": "7. Conduite des utilisateurs",
+        "body": "Tu t'engages à ne pas tenter de pirater, tricher ou exploiter des failles du jeu, à ne pas utiliser l'application à des fins illégales, et à ne pas harceler d'autres joueurs, y compris au moyen de ton pseudo."
+      },
+      {
+        "title": "8. Propriété intellectuelle",
+        "body": "Le contenu, le design, le code source et les marques de l'application demeurent la propriété exclusive de {{publisher}}. Toute reproduction ou distribution non autorisée est interdite."
+      },
+      {
+        "title": "9. Exclusion de garanties",
+        "body": "L'application est fournie « telle quelle », sans garantie d'aucune sorte. Nous ne garantissons pas un fonctionnement ininterrompu ni la disponibilité permanente du classement."
+      },
+      {
+        "title": "10. Limitation de responsabilité",
+        "body": "{{publisher}} ne pourront être tenus responsables de tout dommage, direct ou indirect, résultant de l'utilisation ou de l'impossibilité d'utiliser l'application, y compris la perte de progression."
+      },
+      {
+        "title": "11. Modifications",
+        "body": "Nous pouvons modifier ces Conditions à tout moment. Les changements importants seront signalés dans l'application."
+      },
+      {
+        "title": "12. Droit applicable",
+        "body": "Les présentes Conditions sont régies par le droit français. Tout litige relève de la compétence exclusive des tribunaux de Paris, France."
+      },
+      {
+        "title": "13. Contact",
+        "body": "Pour toute question sur ces Conditions, écris-nous à {{email}}."
+      }
+    ]
+  },
+  "notice": {
+    "title": "Mentions légales",
+    "sections": [
+      {
+        "title": "Éditeur de l'application",
+        "body": "Nom : Stanislas Beaudoin ; Anatole Beaudoin\nAdresse : Paris, France\nE-mail de contact : {{email}}"
+      },
+      {
+        "title": "Hébergement",
+        "body": "Hébergeur : {{host}}"
+      },
+      {
+        "title": "Propriété intellectuelle",
+        "body": "L'ensemble du contenu de l'application (textes, graphismes, logo, code source) est protégé par les lois applicables en matière de propriété intellectuelle. Toute reproduction ou diffusion nécessite une autorisation écrite préalable."
+      },
+      {
+        "title": "Responsabilité",
+        "body": "L'éditeur décline toute responsabilité en cas de dysfonctionnement, d'interruption de service ou de dommages, directs ou indirects, résultant de l'utilisation de l'application."
+      },
+      {
+        "title": "Contact",
+        "body": "Pour toute question, écris-nous à {{email}}."
+      }
+    ]
+  },
+  "support": {
+    "title": "Assistance",
+    "sections": [
+      {
+        "title": "Besoin d'aide ?",
+        "body": "Un bug, une question, ou un pseudo inapproprié au classement ? Écris-nous à {{email}} et on te répondra dès que possible."
+      },
+      {
+        "title": "Signaler un joueur",
+        "body": "Touche un pseudo dans le classement pour le signaler ou le masquer, ou écris-nous à {{email}} en indiquant le pseudo concerné. Les signalements sont examinés et les pseudos contraires aux règles sont renommés."
+      },
+      {
+        "title": "Achats",
+        "body": "Un achat n'apparaît pas ? Utilise « Restaurer les achats » dans Réglages ou dans la Boutique. Pour un remboursement, contacte directement l'assistance de l'App Store ou de Google Play (voir nos Conditions d'utilisation)."
+      },
+      {
+        "title": "Tes données",
+        "body": "Tu peux changer ton pseudo ou supprimer définitivement toutes tes données depuis Réglages → Confidentialité, dans l'application."
+      }
+    ]
+  },
+  "rules": {
+    "title": "Règles du jeu",
+    "sections": [
+      {
+        "title": "Objectif",
+        "body": "Toutes les cartes sont face cachée. Retourne-les deux par deux pour retrouver les paires d'emojis identiques. Une paire trouvée reste visible ; sinon, les deux cartes se retournent."
+      },
+      {
+        "title": "Coups et temps",
+        "body": "Chaque paire de cartes retournées compte pour un coup. Moins tu fais de coups et plus tu vas vite, meilleur est ton résultat. Le chrono démarre à la première carte retournée."
+      },
+      {
+        "title": "Mode Carrière",
+        "body": "Des niveaux de plus en plus difficiles : plus de cartes, des emojis qui se ressemblent, et moins de temps pour voir une paire ratée. Chaque niveau terminé débloque le suivant et rapporte 1 à 3 étoiles selon tes coups et ton temps. Deux boosters peuvent t'aider : Aperçu (toutes les cartes visibles un instant, avant ton premier coup) et Indice (une paire trouvée pour toi)."
+      },
+      {
+        "title": "Mode Infini",
+        "body": "Les grilles s'enchaînent sans fin et deviennent plus difficiles. Tu as 3 vies. Tu perds une vie sur une erreur de mémoire : rater une paire alors que la bonne carte avait déjà été retournée. Un essai à l'aveugle, sur des cartes jamais vues, ne coûte rien. Une fois par partie, tu peux continuer avec une vie de plus. Aucun booster n'est autorisé : le classement reste équitable."
+      },
+      {
+        "title": "Défi du jour",
+        "body": "La même partie pour tout le monde, chaque jour, avec les règles du mode Infini. Une seule tentative : elle compte pour le classement du jour."
+      },
+      {
+        "title": "Score",
+        "body": "Chaque paire rapporte 100 points, multipliés par ta série de paires trouvées d'affilée (jusqu'à ×5). Une grille terminée rapporte un bonus, plus un bonus de vitesse si tu la finis vite."
+      },
+      {
+        "title": "Pièces",
+        "body": "Tu gagnes des pièces en terminant des niveaux, des parties, le Défi du jour, et avec le coffre du jour, dont les récompenses grossissent si tu reviens chaque jour. Elles servent à acheter des boosters et des packs d'icônes."
+      }
+    ]
+  },
+  "credits": {
+    "title": "Crédits",
+    "sections": [
+      {
+        "title": "Jeu / Application",
+        "body": "Design, gameplay et contenu original créés par {{publisher}}."
+      },
+      {
+        "title": "Illustrations",
+        "body": "Les cartes et les icônes utilisent Fluent Emoji 3D de Microsoft (github.com/microsoft/fluentui-emoji), sous licence MIT ci-dessous."
+      },
+      {
+        "title": "Licence MIT — Copyright (c) Microsoft Corporation.",
+        "body": "Par la présente, une autorisation est accordée, à titre gratuit, à toute personne obtenant une copie de ce logiciel et des fichiers de documentation associés (le « Logiciel »), de traiter le Logiciel sans restriction, notamment sans limitation les droits d'utiliser, de copier, de modifier, de fusionner, de publier, de distribuer, de sous-licencier et/ou de vendre des copies du Logiciel, et de permettre aux personnes auxquelles le Logiciel est fourni de le faire, sous réserve des conditions suivantes :\n\nL'avis de copyright ci-dessus et cet avis d'autorisation doivent être inclus dans toutes les copies ou parties substantielles du Logiciel.\n\nLE LOGICIEL EST FOURNI « TEL QUEL », SANS GARANTIE D'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS, MAIS SANS S'Y LIMITER, LES GARANTIES DE QUALITÉ MARCHANDE, D'ADÉQUATION À UN USAGE PARTICULIER ET D'ABSENCE DE CONTREFAÇON. EN AUCUN CAS LES AUTEURS OU TITULAIRES DU COPYRIGHT NE POURRONT ÊTRE TENUS RESPONSABLES DE TOUT DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS LE CADRE D'UN CONTRAT, D'UN DÉLIT OU AUTRE, DÉCOULANT DE, RÉSULTANT DE OU EN RELATION AVEC LE LOGICIEL OU L'UTILISATION OU D'AUTRES TRANSACTIONS AVEC LE LOGICIEL."
+      }
+    ]
+  }
+}

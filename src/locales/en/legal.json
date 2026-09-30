@@ -1,0 +1,217 @@
+{
+  "copyright": "© {{years}} {{publisher}} – All rights reserved.",
+  "privacy": {
+    "title": "Privacy Policy",
+    "sections": [
+      {
+        "title": "Introduction",
+        "body": "This policy explains what information is processed when you use {{app}}, why, and who it is shared with."
+      },
+      {
+        "title": "No account",
+        "body": "{{app}} never asks you to sign up, give an email address or set a password. On first launch the app creates a random, anonymous player ID that contains no information about you."
+      },
+      {
+        "title": "Data stored on your device",
+        "body": "Your progress (levels, stars, best scores), coins and boosters, icon packs, settings and nickname are stored on your device."
+      },
+      {
+        "title": "Data sent to our servers",
+        "body": "For the global leaderboard: your anonymous player ID, the nickname you choose, your scores and the moves of your ranked games. The moves are used only to check that a score is genuine. Nickname reports you send are also stored."
+      },
+      {
+        "title": "Advertising",
+        "body": "The game is free and shows ads through Google AdMob: videos you choose to watch in exchange for a reward (continuing a game, doubling your coins, a hint, the daily chest), and ads between some games. On iOS we ask for your permission through App Tracking Transparency before using your device's advertising identifier; if you decline, ads still appear, just not personalized. In the European Economic Area and the UK, your consent is collected through Google's form and can be changed any time in Settings → Ad privacy. You can also change your tracking choice in iPhone Settings → Privacy → Tracking."
+      },
+      {
+        "title": "In-app purchases",
+        "body": "Purchases (coins, ad removal, packs, the Pairs+ subscription) are processed by Apple's App Store or Google Play. We never receive your payment details. Our provider RevenueCat receives purchase receipts to verify and restore your purchases."
+      },
+      {
+        "title": "Analytics",
+        "body": "We measure how the app is used (screens visited, games played, purchases and ads seen) with PostHog, linked to your anonymous ID, to improve the game. This data is never sold or used for advertising."
+      },
+      {
+        "title": "What we don't collect",
+        "body": "We don't collect your name, email address, precise location, contacts or photos."
+      },
+      {
+        "title": "Data sharing",
+        "body": "We never sell or rent any data. It is shared only with the providers the service needs: our hosting ({{host}}), Google AdMob for advertising, RevenueCat and the App Store / Google Play for purchases, and PostHog for analytics. Your nickname and scores are visible to other players on the leaderboard; your player ID never is."
+      },
+      {
+        "title": "Retention",
+        "body": "Leaderboard data is kept for as long as your player ID exists, and deleted as soon as you erase your data from the app or ask us to."
+      },
+      {
+        "title": "Your rights",
+        "body": "Under the GDPR you can access, correct or delete your data at any time. You can delete everything directly in the app (Settings → Privacy → Delete my data), or write to us at {{email}}."
+      },
+      {
+        "title": "Children",
+        "body": "{{app}} is not intended for children under 13. Nicknames are filtered automatically and can be reported. If you are under 15, ask a parent before taking part in the leaderboard or making a purchase."
+      },
+      {
+        "title": "Security",
+        "body": "Traffic with our servers is encrypted (HTTPS). We apply technical and organizational measures to protect data against unauthorized access, alteration or destruction."
+      },
+      {
+        "title": "Contact",
+        "body": "For any question about this policy, write to us at {{email}}."
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "sections": [
+      {
+        "title": "1. Acceptance of terms",
+        "body": "By downloading and using {{app}}, you agree to these Terms of Service. If you don't agree, please don't use the app."
+      },
+      {
+        "title": "2. Description of the service",
+        "body": "{{app}} is a free memory game for entertainment only: a level-based Career mode, an Endless mode, a Daily Challenge and a global leaderboard. The app shows ads and offers optional in-app purchases. No real-money gambling is offered."
+      },
+      {
+        "title": "3. Virtual currency and items",
+        "body": "Coins, boosters, icon packs and other in-game items are earned by playing or bought in-app. They have no real-world value and cannot be refunded for money, exchanged or transferred outside the app. Coins and boosters are stored on your device: they can't be recovered after deleting the app or your data, unlike non-consumable purchases (ad removal, packs) and the subscription, which can be recovered with \"Restore purchases\"."
+      },
+      {
+        "title": "4. Pairs+ subscription",
+        "body": "Pairs+ is an auto-renewing subscription, monthly or yearly, at the price shown in the app before purchase. Payment is charged to your App Store or Google Play account at confirmation. Unless cancelled at least 24 hours before the end of the current period, it renews automatically for the same length and price. You can manage or cancel it any time in Settings → Manage subscription, or in your store account settings."
+      },
+      {
+        "title": "5. Refunds",
+        "body": "Purchases are processed by the store you downloaded the app from. Digital items are delivered immediately, so sales are final unless applicable law says otherwise. Refund requests must be made directly to Apple or Google under their own policies."
+      },
+      {
+        "title": "6. Leaderboard and nicknames",
+        "body": "To appear on the leaderboard you choose a nickname. It must not be abusive, discriminatory or sexual, and must not impersonate a person, a brand or the game's team. We may rename or remove any nickname that breaks these rules, including after a report. Scores are verified; a score obtained by cheating or tampering with the app may be removed without notice."
+      },
+      {
+        "title": "7. User conduct",
+        "body": "You agree not to hack, cheat or exploit flaws in the game, not to use the app for unlawful purposes, and not to harass other players, including through your nickname."
+      },
+      {
+        "title": "8. Intellectual property",
+        "body": "The app's content, design, source code and trademarks remain the exclusive property of {{publisher}}. Any unauthorized reproduction or distribution is prohibited."
+      },
+      {
+        "title": "9. Disclaimer",
+        "body": "The app is provided \"as is\", without warranty of any kind. We don't guarantee uninterrupted operation or constant availability of the leaderboard."
+      },
+      {
+        "title": "10. Limitation of liability",
+        "body": "{{publisher}} shall not be liable for any damage, direct or indirect, arising from the use of or inability to use the app, including loss of progress."
+      },
+      {
+        "title": "11. Changes",
+        "body": "We may change these Terms at any time. Significant changes will be announced in the app."
+      },
+      {
+        "title": "12. Governing law",
+        "body": "These Terms are governed by French law. Any dispute falls under the exclusive jurisdiction of the courts of Paris, France."
+      },
+      {
+        "title": "13. Contact",
+        "body": "For any question about these Terms, write to us at {{email}}."
+      }
+    ]
+  },
+  "notice": {
+    "title": "Legal Notice",
+    "sections": [
+      {
+        "title": "Publisher",
+        "body": "Name: Stanislas Beaudoin; Anatole Beaudoin\nAddress: Paris, France\nContact email: {{email}}"
+      },
+      {
+        "title": "Hosting",
+        "body": "Host: {{host}}"
+      },
+      {
+        "title": "Intellectual property",
+        "body": "All content in the app (text, graphics, logo, source code) is protected by applicable intellectual property laws. Any reproduction or distribution requires prior written permission."
+      },
+      {
+        "title": "Liability",
+        "body": "The publisher accepts no liability for malfunctions, service interruptions or damage, direct or indirect, resulting from the use of the app."
+      },
+      {
+        "title": "Contact",
+        "body": "For any question, write to us at {{email}}."
+      }
+    ]
+  },
+  "support": {
+    "title": "Support",
+    "sections": [
+      {
+        "title": "Need help?",
+        "body": "A bug, a question, or an inappropriate nickname on the leaderboard? Write to us at {{email}} and we'll get back to you as soon as we can."
+      },
+      {
+        "title": "Report a player",
+        "body": "Tap a nickname on the leaderboard to report or hide it, or write to us at {{email}} with the nickname in question. Reports are reviewed and nicknames that break the rules are renamed."
+      },
+      {
+        "title": "Purchases",
+        "body": "A purchase is missing? Use \"Restore purchases\" in Settings or in the Shop. For a refund, contact App Store or Google Play support directly (see our Terms of Service)."
+      },
+      {
+        "title": "Your data",
+        "body": "You can change your nickname or permanently delete all your data from Settings → Privacy in the app."
+      }
+    ]
+  },
+  "rules": {
+    "title": "How to play",
+    "sections": [
+      {
+        "title": "Goal",
+        "body": "All cards start face down. Flip them two at a time to find matching pairs of emojis. A found pair stays face up; otherwise both cards flip back."
+      },
+      {
+        "title": "Moves and time",
+        "body": "Every two cards you flip count as one move. The fewer moves and the faster you are, the better. The clock starts on your first flip."
+      },
+      {
+        "title": "Career",
+        "body": "Levels get harder and harder: more cards, emojis that look alike, and less time to see a missed pair. Each level you clear unlocks the next one and earns 1 to 3 stars depending on your moves and time. Two boosters can help: Peek (every card shown for a moment, before your first move) and Hint (a pair found for you)."
+      },
+      {
+        "title": "Endless",
+        "body": "Boards follow one another without end and keep getting harder. You have 3 lives. You lose one on a memory slip: missing a pair when the right card had already been revealed. A blind guess on cards you've never seen costs nothing. Once per game you can keep going with one more life. No boosters are allowed, so the leaderboard stays fair."
+      },
+      {
+        "title": "Daily Challenge",
+        "body": "The same game for everyone, every day, with Endless rules. One attempt only: it counts for the daily leaderboard."
+      },
+      {
+        "title": "Score",
+        "body": "Each pair is worth 100 points, multiplied by your streak of pairs found in a row (up to ×5). Clearing a board earns a bonus, plus a speed bonus if you clear it fast."
+      },
+      {
+        "title": "Coins",
+        "body": "You earn coins by clearing levels, finishing games, the Daily Challenge, and from the daily chest, whose rewards grow if you come back every day. Spend them on boosters and icon packs."
+      }
+    ]
+  },
+  "credits": {
+    "title": "Credits",
+    "sections": [
+      {
+        "title": "Game / App",
+        "body": "Design, gameplay and original content by {{publisher}}."
+      },
+      {
+        "title": "Illustrations",
+        "body": "Cards and icons use Microsoft's Fluent Emoji 3D (github.com/microsoft/fluentui-emoji), under the MIT license below."
+      },
+      {
+        "title": "MIT License — Copyright (c) Microsoft Corporation.",
+        "body": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+      }
+    ]
+  }
+}

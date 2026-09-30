@@ -1,98 +1,237 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { APP_NAME } from "@/config/app";
+import { canClaimDaily, localDay } from "@/game/economy";
+import { getPack } from "@/game/iconPacks";
+import { LEVEL_COUNT } from "@/game/levels";
+import { useAds } from "@/lib/ads";
+import { formatScore } from "@/lib/format";
+import { promptNickname } from "@/lib/promptNickname";
+import { totalStars, useProgress } from "@/store/progress";
+import { useWallet } from "@/store/wallet";
+import { AppButtonGroup, IconButton } from "@/ui/AppButton";
+import { CoinsPill } from "@/ui/CoinsPill";
+import { Emoji } from "@/ui/Emoji";
+import { colors, space } from "@/ui/theme";
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+// Two face-down cards, two face-up ones from the equipped pack (slots from different groups).
+const PREVIEW_SLOTS = [null, 5, null, 0] as const;
+// Label width of the two main buttons, so Career and Endless are exactly the same size.
+const HERO_BUTTON_WIDTH = 240;
+const SECONDARY_BUTTON_WIDTH = 118;
+// Lets the home screen appear first, so the alert lands on the game rather than a blank screen.
+const FIRST_PROMPT_DELAY_MS = 600;
+const CONSENT_WAIT_MAX_MS = 8_000;
+
+export default function Home() {
+  const { t, i18n } = useTranslation();
+  const bestEndless = useProgress((s) => s.bestEndless);
+  const stars = useProgress((s) => s.stars);
+  const nickname = useProgress((s) => s.nickname);
+  const nicknamePrompted = useProgress((s) => s.nicknamePrompted);
+  const markNicknamePrompted = useProgress((s) => s.markNicknamePrompted);
+  const chestReady = useWallet((s) => canClaimDaily(s.streak, localDay()));
+  const pack = getPack(useWallet((s) => s.activePack));
+
+  // First launch only: ask for a nickname right away. Marked as shown when it is shown, so
+  // "Later" never turns into a prompt on every launch (it stays reachable in Settings).
+  // Marking it here rather than before the timer matters: the flag is a dependency, and flipping
+  // it early would run the cleanup and cancel the prompt.
+  // Waits for the ad-consent step: iOS shows one modal at a time (CONSENT_WAIT_MAX_MS caps the
+  // wait if that step hangs).
+  const consentSettled = useAds((s) => s.consentSettled);
+  const [consentWaitOver, setConsentWaitOver] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setConsentWaitOver(true), CONSENT_WAIT_MAX_MS);
+    return () => clearTimeout(timer);
+  }, []);
+  const takenNotice = useProgress((s) => s.nicknameTakenNotice);
+
+  useEffect(() => {
+    if (nickname !== null || nicknamePrompted || !(consentSettled || consentWaitOver)) return;
+    const timer = setTimeout(() => {
+      markNicknamePrompted();
+      promptNickname(t, takenNotice ? t("settings:username.errors.taken") : undefined);
+    }, FIRST_PROMPT_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [nickname, nicknamePrompted, markNicknamePrompted, t, consentSettled, consentWaitOver, takenNotice]);
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <SafeAreaView style={styles.screen}>
+      <View style={styles.topBar}>
+        <IconButton
+          label={t("home.settings")}
+          systemImage="gearshape.fill"
+          fallbackGlyph="⚙︎"
+          onPress={() => router.push("/settings")}
+        />
+        <View style={styles.topRight}>
+          <View>
+            <IconButton
+              label={chestReady ? t("chest.ready") : t("home.chest")}
+              systemImage="gift.fill"
+              fallbackGlyph="🎁"
+              onPress={() => router.push("/chest")}
+            />
+            {chestReady && <View style={styles.dot} pointerEvents="none" />}
+          </View>
+          <CoinsPill />
+        </View>
+      </View>
+      {/* Title near the top; stats and the two main buttons in the middle of the screen; the
+          Daily / Leaderboard pills pinned at the bottom. */}
+      <View style={styles.hero}>
+        <View style={styles.preview} accessible={false}>
+          {PREVIEW_SLOTS.map((slot, i) => (
+            <View key={i} style={styles.previewCard}>
+              {slot !== null && <Emoji asset={pack.icons[slot].asset} size={34} />}
+            </View>
+          ))}
+        </View>
+        <Text style={styles.title} accessibilityRole="header">
+          {APP_NAME}
+        </Text>
+      </View>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      <View style={styles.center}>
+        <View style={styles.stats}>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{formatScore(bestEndless, i18n.language)}</Text>
+            <Text style={styles.statLabel}>{t("home.bestScore")}</Text>
+          </View>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>
+              {totalStars(stars)}/{LEVEL_COUNT * 3}
+            </Text>
+            <Text style={styles.statLabel}>{t("home.stars")}</Text>
+          </View>
+        </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        <AppButtonGroup
+          buttons={[
+            {
+              label: t("home.career"),
+              variant: "primary",
+              size: "hero",
+              width: HERO_BUTTON_WIDTH,
+              onPress: () => router.push("/career"),
+            },
+            {
+              label: t("home.endless"),
+              size: "hero",
+              width: HERO_BUTTON_WIDTH,
+              onPress: () => router.push("/play/endless"),
+            },
+          ]}
+        />
+      </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      <View style={styles.actions}>
+        <AppButtonGroup
+          direction="horizontal"
+          buttons={[
+            {
+              label: t("home.daily"),
+              size: "large",
+              width: SECONDARY_BUTTON_WIDTH,
+              onPress: () => router.push("/play/daily"),
+            },
+            {
+              label: t("home.leaderboard"),
+              size: "large",
+              width: SECONDARY_BUTTON_WIDTH,
+              onPress: () => router.push("/leaderboard"),
+            },
+          ]}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: colors.board,
+    paddingHorizontal: space.screen,
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+  topBar: {
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  topRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  // Monochrome badge: DESIGN.md keeps color off everything but the primary button.
+  dot: {
+    position: "absolute",
+    top: 2,
+    right: 2,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.text,
+    borderWidth: 2,
+    borderColor: colors.board,
+  },
+  center: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 36,
+  },
+  hero: {
+    alignItems: "center",
+    gap: 12,
+    marginTop: 24,
+  },
+  preview: {
+    flexDirection: "row",
+    gap: space.gridGap,
+    marginBottom: 20,
+  },
+  previewCard: {
+    width: 52,
+    height: 52,
+    backgroundColor: colors.card,
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
-    textAlign: 'center',
+    color: colors.text,
+    fontSize: 34,
+    fontWeight: "800",
   },
-  code: {
-    textTransform: 'uppercase',
+  stats: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 48,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  stat: {
+    alignItems: "center",
+    gap: 4,
+  },
+  statValue: {
+    color: colors.text,
+    fontSize: 22,
+    fontWeight: "800",
+    fontVariant: ["tabular-nums"],
+  },
+  statLabel: {
+    color: colors.muted,
+    fontSize: 13,
+  },
+  actions: {
+    alignItems: "center",
+    gap: 12,
+    paddingBottom: 24,
   },
 });
