@@ -1,7 +1,13 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { APP_NAME } from "@/config/app";
@@ -27,11 +33,14 @@ import { colors, space } from "@/ui/theme";
 // Dealt once per launch (module scope): two face-up icons from one pack (or the occasion's,
 // around Halloween, Christmas…), two face-down cards, one of which secretly opens the 8×4 board.
 const season = seasonOn(new Date());
-const homeDeal = dealHome(Math.random, season ? SEASON_PAIRS[season] : undefined);
-const PREVIEW_CARD_SIZE = 52;
+const homeDeal = dealHome(
+  Math.random,
+  season ? SEASON_PAIRS[season] : undefined,
+);
+// Below this height (iPhone SE, small Androids) the home block tightens up to fit.
+const COMPACT_HEIGHT = 740;
 // Label width of the two main buttons, so Career and Endless are exactly the same size.
 const HERO_BUTTON_WIDTH = 240;
-const HERO_OFFSET = 96;
 const SECONDARY_BUTTON_WIDTH = 126;
 // Lets the home screen appear first, so the alert lands on the game rather than a blank screen.
 const FIRST_PROMPT_DELAY_MS = 600;
@@ -47,7 +56,12 @@ export default function Home() {
   const nicknamePrompted = useProgress((s) => s.nicknamePrompted);
   const markNicknamePrompted = useProgress((s) => s.markNicknamePrompted);
   const chestReady = useWallet((s) => canClaimDaily(s.streak, localDay()));
-  const dailyOpen = useWallet((s) => !(s.daily.day === utcDay() && s.daily.played));
+  const { height } = useWindowDimensions();
+  const compact = height < COMPACT_HEIGHT;
+  const previewSize = compact ? 44 : 52;
+  const dailyOpen = useWallet(
+    (s) => !(s.daily.day === utcDay() && s.daily.played),
+  );
 
   // First launch only: ask for a nickname right away. Marked as shown when it is shown, so
   // "Later" never turns into a prompt on every launch (it stays reachable in Settings).
@@ -58,7 +72,10 @@ export default function Home() {
   const consentSettled = useAds((s) => s.consentSettled);
   const [consentWaitOver, setConsentWaitOver] = useState(false);
   useEffect(() => {
-    const timer = setTimeout(() => setConsentWaitOver(true), CONSENT_WAIT_MAX_MS);
+    const timer = setTimeout(
+      () => setConsentWaitOver(true),
+      CONSENT_WAIT_MAX_MS,
+    );
     return () => clearTimeout(timer);
   }, []);
   const takenNotice = useProgress((s) => s.nicknameTakenNotice);
@@ -76,13 +93,29 @@ export default function Home() {
   );
 
   useEffect(() => {
-    if (nickname !== null || nicknamePrompted || !(consentSettled || consentWaitOver)) return;
+    if (
+      nickname !== null ||
+      nicknamePrompted ||
+      !(consentSettled || consentWaitOver)
+    )
+      return;
     const timer = setTimeout(() => {
       markNicknamePrompted();
-      promptNickname(t, takenNotice ? t("settings:username.errors.taken") : undefined);
+      promptNickname(
+        t,
+        takenNotice ? t("settings:username.errors.taken") : undefined,
+      );
     }, FIRST_PROMPT_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [nickname, nicknamePrompted, markNicknamePrompted, t, consentSettled, consentWaitOver, takenNotice]);
+  }, [
+    nickname,
+    nicknamePrompted,
+    markNicknamePrompted,
+    t,
+    consentSettled,
+    consentWaitOver,
+    takenNotice,
+  ]);
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -107,67 +140,87 @@ export default function Home() {
           onPress={() => router.push("/settings")}
         />
       </View>
-      {/* Title near the top; stats and the two main buttons in the middle of the screen; the
-          Daily / Leaderboard pills pinned at the bottom. */}
-      <View style={styles.hero}>
-        <View style={styles.preview} accessible={false}>
-          {homeDeal.cards.map((icon, i) =>
-            icon ? (
-              <HomePreviewCard key={`${i}-${icon.asset}`} asset={icon.asset} size={PREVIEW_CARD_SIZE} />
-            ) : i === homeDeal.secretIndex ? (
-              <Pressable
-                key={i}
-                style={styles.previewCard}
-                accessible={false}
-                onPress={() => {
-                  hapticImpact();
-                  router.push("/play/secret");
-                }}
-              />
-            ) : (
-              <View key={i} style={styles.previewCard} />
-            ),
-          )}
+      {/* Cards + title, stats and the two main buttons form one block, centred in the space
+          between the top bar and the Daily / Leaderboard pills, so it fits any screen height. */}
+      <View style={[styles.main, { gap: compact ? 24 : 40 }]}>
+        <View style={styles.hero}>
+          <View style={styles.preview} accessible={false}>
+            {homeDeal.cards.map((icon, i) =>
+              icon ? (
+                <HomePreviewCard
+                  key={`${i}-${icon.asset}`}
+                  asset={icon.asset}
+                  size={previewSize}
+                />
+              ) : i === homeDeal.secretIndex ? (
+                <Pressable
+                  key={i}
+                  style={[
+                    styles.previewCard,
+                    { width: previewSize, height: previewSize },
+                  ]}
+                  accessible={false}
+                  onPress={() => {
+                    hapticImpact();
+                    router.push("/play/secret");
+                  }}
+                />
+              ) : (
+                <View
+                  key={i}
+                  style={[
+                    styles.previewCard,
+                    { width: previewSize, height: previewSize },
+                  ]}
+                />
+              ),
+            )}
+          </View>
+          <Text
+            style={[styles.title, compact && styles.titleCompact]}
+            accessibilityRole="header"
+          >
+            {APP_NAME}
+          </Text>
         </View>
-        <Text style={styles.title} accessibilityRole="header">
-          {APP_NAME}
-        </Text>
+
+        <View style={[styles.center, { gap: compact ? 24 : 36 }]}>
+          <View style={styles.stats}>
+            <View style={styles.stat}>
+              <Text style={styles.statValue}>
+                {formatScore(bestEndless, i18n.language)}
+              </Text>
+              <Text style={styles.statLabel}>{t("home.bestScore")}</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statValue}>
+                {totalStars(stars)}/{LEVEL_COUNT * 3}
+              </Text>
+              <Text style={styles.statLabel}>{t("home.stars")}</Text>
+            </View>
+          </View>
+
+          <AppButtonGroup
+            buttons={[
+              {
+                label: t("home.career"),
+                variant: "primary",
+                size: "hero",
+                width: HERO_BUTTON_WIDTH,
+                onPress: () => router.push("/career"),
+              },
+              {
+                label: t("home.endless"),
+                size: "hero",
+                width: HERO_BUTTON_WIDTH,
+                onPress: () => router.push("/play/endless"),
+              },
+            ]}
+          />
+        </View>
       </View>
 
-      <View style={styles.center}>
-        <View style={styles.stats}>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{formatScore(bestEndless, i18n.language)}</Text>
-            <Text style={styles.statLabel}>{t("home.bestScore")}</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>
-              {totalStars(stars)}/{LEVEL_COUNT * 3}
-            </Text>
-            <Text style={styles.statLabel}>{t("home.stars")}</Text>
-          </View>
-        </View>
-
-        <AppButtonGroup
-          buttons={[
-            {
-              label: t("home.career"),
-              variant: "primary",
-              size: "hero",
-              width: HERO_BUTTON_WIDTH,
-              onPress: () => router.push("/career"),
-            },
-            {
-              label: t("home.endless"),
-              size: "hero",
-              width: HERO_BUTTON_WIDTH,
-              onPress: () => router.push("/play/endless"),
-            },
-          ]}
-        />
-      </View>
-
-      <View style={styles.actions}>
+      <View style={[styles.actions, compact && styles.actionsCompact]}>
         <View style={styles.actionsRow}>
           <View>
             <AppButtonGroup
@@ -220,27 +273,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 14,
   },
-  center: {
+  main: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 36,
+  },
+  center: {
+    alignItems: "center",
   },
   hero: {
     alignItems: "center",
     gap: 12,
-    marginTop: 24,
-    // Moves the cards and title down without shifting the sections below them.
-    transform: [{ translateY: HERO_OFFSET }],
   },
   preview: {
     flexDirection: "row",
     gap: space.gridGap,
-    marginBottom: 20,
+    marginBottom: 12,
   },
   previewCard: {
-    width: 52,
-    height: 52,
     backgroundColor: colors.card,
     alignItems: "center",
     justifyContent: "center",
@@ -249,6 +299,9 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 34,
     fontWeight: "800",
+  },
+  titleCompact: {
+    fontSize: 30,
   },
   stats: {
     flexDirection: "row",
@@ -273,5 +326,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     paddingBottom: 24,
+  },
+  actionsCompact: {
+    paddingBottom: 12,
   },
 });

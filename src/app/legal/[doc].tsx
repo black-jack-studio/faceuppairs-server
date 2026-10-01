@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { APP_NAME, COPYRIGHT_YEARS, HOSTING_PROVIDER, PUBLISHER, SUPPORT_EMAIL } from "@/config/app";
 import { AppButton, CloseButton } from "@/ui/AppButton";
 import { colors, space } from "@/ui/theme";
+import { SHEET_EDGES } from "@/ui/sheet";
 
 const DOCS = ["privacy", "terms", "notice", "support", "rules", "credits"] as const;
 type Doc = (typeof DOCS)[number];
@@ -37,7 +38,7 @@ export default function LegalDocument() {
   const sections = t(`${key}.sections`, { returnObjects: true }) as Section[];
 
   return (
-    <SafeAreaView style={styles.sheet} edges={["top"]}>
+    <SafeAreaView style={styles.sheet} edges={SHEET_EDGES}>
     <ScrollView contentContainerStyle={styles.content}>
       <View style={styles.titleRow}>
         <Text style={styles.title} accessibilityRole="header">

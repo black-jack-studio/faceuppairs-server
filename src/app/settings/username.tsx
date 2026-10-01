@@ -9,6 +9,7 @@ import { USERNAME_MAX } from "@/moderation/usernameFilter";
 import { NICKNAME_CHANGE_COOLDOWN_MS, useProgress } from "@/store/progress";
 import { AppButton, CloseButton } from "@/ui/AppButton";
 import { colors, radius, space } from "@/ui/theme";
+import { SHEET_EDGES } from "@/ui/sheet";
 
 // Same rules as FaceUp's ChangeUsernameModal. The server has the last word (uniqueness,
 // cooldown); the local cooldown check just answers instantly when it's obvious.
@@ -38,7 +39,7 @@ export default function Username() {
   };
 
   return (
-    <SafeAreaView style={styles.sheet} edges={["top"]}>
+    <SafeAreaView style={styles.sheet} edges={SHEET_EDGES}>
       <View style={styles.titleRow}>
         <Text style={styles.title} accessibilityRole="header">
           {t("username.title")}

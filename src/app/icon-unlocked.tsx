@@ -11,6 +11,7 @@ import { hapticSuccess } from "@/lib/haptics";
 import { AppButtonGroup, CloseButton } from "@/ui/AppButton";
 import { APP_ICON_PREVIEWS } from "@/ui/appIconPreviews";
 import { colors, space } from "@/ui/theme";
+import { SHEET_EDGES } from "@/ui/sheet";
 
 const ICON_SIZE = 150;
 const BUTTON_WIDTH = 220;
@@ -40,7 +41,7 @@ export default function IconUnlocked() {
   };
 
   return (
-    <SafeAreaView style={styles.sheet} edges={["top"]}>
+    <SafeAreaView style={styles.sheet} edges={SHEET_EDGES}>
       <View style={styles.closeRow}>
         <CloseButton label={t("close")} />
       </View>

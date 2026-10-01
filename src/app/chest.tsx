@@ -15,6 +15,7 @@ import { useWallet } from "@/store/wallet";
 import { AppButtonGroup, CloseButton } from "@/ui/AppButton";
 import { Emoji, UI_EMOJI } from "@/ui/Emoji";
 import { colors, space } from "@/ui/theme";
+import { SHEET_EDGES } from "@/ui/sheet";
 
 const DAY_COIN_SIZE = 20;
 
@@ -75,7 +76,7 @@ export default function Chest() {
   };
 
   return (
-    <SafeAreaView style={styles.sheet} edges={["top"]}>
+    <SafeAreaView style={styles.sheet} edges={SHEET_EDGES}>
       <View style={styles.titleRow}>
         <Text style={styles.title} accessibilityRole="header">
           {t("chest.title")}

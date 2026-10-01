@@ -25,6 +25,7 @@ import { useWallet } from "@/store/wallet";
 import { AppButton, CloseButton } from "@/ui/AppButton";
 import { APP_ICON_PREVIEWS } from "@/ui/appIconPreviews";
 import { colors, space } from "@/ui/theme";
+import { SHEET_EDGES } from "@/ui/sheet";
 
 // Leave the sheet's dismissal animation time before opening the next screen.
 const SHEET_CLOSE_MS = 350;
@@ -125,7 +126,7 @@ export default function AppIconGallery() {
   };
 
   return (
-    <SafeAreaView style={styles.sheet} edges={["top"]}>
+    <SafeAreaView style={styles.sheet} edges={SHEET_EDGES}>
       <View style={styles.titleRow}>
         <Text style={styles.title} accessibilityRole="header">
           {t("appIcons.title")}

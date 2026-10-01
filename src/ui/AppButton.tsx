@@ -18,7 +18,11 @@ import {
   lineLimit,
   minimumScaleFactor,
 } from "@expo/ui/swift-ui/modifiers";
-import { isGlassEffectAPIAvailable, isLiquidGlassAvailable } from "expo-glass-effect";
+import {
+  isGlassEffectAPIAvailable,
+  isLiquidGlassAvailable,
+} from "expo-glass-effect";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -29,7 +33,9 @@ import { colors, glass } from "./theme";
 // DESIGN.md: iOS 26+ uses the native Liquid Glass material (system capsule, interactive
 // highlight); everything else gets the flat radius-12 fallback.
 export const USE_LIQUID_GLASS =
-  Platform.OS === "ios" && isLiquidGlassAvailable() && isGlassEffectAPIAvailable();
+  Platform.OS === "ios" &&
+  isLiquidGlassAvailable() &&
+  isGlassEffectAPIAvailable();
 
 type Variant = "primary" | "secondary" | "destructive";
 type Size = "regular" | "large" | "hero";
@@ -46,7 +52,11 @@ export interface AppButtonProps {
 
 const FONT_SIZE: Record<Size, number> = { regular: 15, large: 17, hero: 20 };
 // Extra label height on top of the system button padding; only the hero size grows.
-const LABEL_MIN_HEIGHT: Record<Size, number> = { regular: 0, large: 0, hero: 34 };
+const LABEL_MIN_HEIGHT: Record<Size, number> = {
+  regular: 0,
+  large: 0,
+  hero: 34,
+};
 
 function labelColor(variant: Variant): string {
   if (variant === "primary") return colors.accentText;
@@ -56,7 +66,14 @@ function labelColor(variant: Variant): string {
 
 // Pure system styles: `.glassProminent` in the system accent blue for the primary action,
 // `.glass` for the rest. No custom tint — the blue is Apple's own.
-function GlassButton({ label, onPress, variant = "secondary", size = "regular", width, disabled = false }: AppButtonProps) {
+function GlassButton({
+  label,
+  onPress,
+  variant = "secondary",
+  size = "regular",
+  width,
+  disabled = false,
+}: AppButtonProps) {
   const sizing =
     width !== undefined || LABEL_MIN_HEIGHT[size] > 0
       ? [frame({ width, minHeight: LABEL_MIN_HEIGHT[size] || undefined })]
@@ -73,11 +90,16 @@ function GlassButton({ label, onPress, variant = "secondary", size = "regular", 
     >
       <SwiftText
         modifiers={[
-          font({ size: FONT_SIZE[size], weight: size === "hero" ? "bold" : "semibold" }),
+          font({
+            size: FONT_SIZE[size],
+            weight: size === "hero" ? "bold" : "semibold",
+          }),
           // A label never wraps: it shrinks a little first ("Daily Challenge" on two lines looked broken).
           lineLimit(1),
           minimumScaleFactor(0.8),
-          ...(variant === "destructive" ? [foregroundStyle(colors.danger)] : []),
+          ...(variant === "destructive"
+            ? [foregroundStyle(colors.danger)]
+            : []),
           ...sizing,
         ]}
       >
@@ -88,10 +110,21 @@ function GlassButton({ label, onPress, variant = "secondary", size = "regular", 
 }
 
 // Same capsule and sizes as the iOS glass buttons (measured from them), with a frosted fill.
-const FALLBACK_HEIGHT: Record<Size, number> = { regular: 46, large: 50, hero: 54 };
+const FALLBACK_HEIGHT: Record<Size, number> = {
+  regular: 46,
+  large: 50,
+  hero: 54,
+};
 const FALLBACK_CHROME = 40;
 
-function FallbackButton({ label, onPress, variant = "secondary", size = "regular", width, disabled = false }: AppButtonProps) {
+function FallbackButton({
+  label,
+  onPress,
+  variant = "secondary",
+  size = "regular",
+  width,
+  disabled = false,
+}: AppButtonProps) {
   const height = FALLBACK_HEIGHT[size];
   return (
     <Pressable
@@ -114,7 +147,13 @@ function FallbackButton({ label, onPress, variant = "secondary", size = "regular
         minimumFontScale={0.8}
         style={[
           styles.label,
-          { fontSize: FONT_SIZE[size], color: disabled && variant !== "primary" ? colors.muted : labelColor(variant) },
+          {
+            fontSize: FONT_SIZE[size],
+            color:
+              disabled && variant !== "primary"
+                ? colors.muted
+                : labelColor(variant),
+          },
           size === "hero" && styles.labelBold,
         ]}
       >
@@ -137,10 +176,22 @@ export function AppButton(props: AppButtonProps) {
  * Buttons shown together. On iOS they share one GlassEffectContainer: glass can't sample
  * other glass, so neighbours in separate containers render inconsistently (DESIGN.md).
  */
-export function AppButtonGroup({ buttons, direction = "vertical" }: { buttons: AppButtonProps[]; direction?: "vertical" | "horizontal" }) {
+export function AppButtonGroup({
+  buttons,
+  direction = "vertical",
+}: {
+  buttons: AppButtonProps[];
+  direction?: "vertical" | "horizontal";
+}) {
   if (!USE_LIQUID_GLASS) {
     return (
-      <View style={direction === "vertical" ? styles.groupVertical : styles.groupHorizontal}>
+      <View
+        style={
+          direction === "vertical"
+            ? styles.groupVertical
+            : styles.groupHorizontal
+        }
+      >
         {buttons.map((b) => (
           <FallbackButton key={b.label} {...b} />
         ))}
@@ -162,6 +213,14 @@ export function AppButtonGroup({ buttons, direction = "vertical" }: { buttons: A
 }
 
 const EMOJI_ICON_SIZE = 28;
+// Where SF Symbols don't exist (Android), the closest vector icons, drawn centred — text glyphs
+// like "‹" sat off-centre in the circle.
+const FALLBACK_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
+  "chevron.left": "chevron-back",
+  xmark: "close",
+  "gearshape.fill": "settings-sharp",
+};
+const FALLBACK_ICON_SIZE = 22;
 // Same as the iOS glass circle (controlSize large).
 const ICON_BUTTON_SIZE = 48;
 
@@ -177,7 +236,13 @@ interface IconButtonProps {
 }
 
 /** Round icon-only button: native glass circle with an SF Symbol on iOS 26+. */
-export function IconButton({ label, systemImage, fallbackGlyph, emoji, onPress }: IconButtonProps) {
+export function IconButton({
+  label,
+  systemImage,
+  fallbackGlyph,
+  emoji,
+  onPress,
+}: IconButtonProps) {
   if (USE_LIQUID_GLASS) {
     // The native glass circle keeps its own touch handling; a Fluent emoji, which SwiftUI can't
     // draw, sits on top of its (hidden) symbol.
@@ -213,13 +278,36 @@ export function IconButton({ label, systemImage, fallbackGlyph, emoji, onPress }
       hitSlop={12}
       style={({ pressed }) => [styles.icon, pressed && styles.pressed]}
     >
-      {emoji ? <Emoji asset={emoji} size={EMOJI_ICON_SIZE} /> : <Text style={styles.iconGlyph}>{fallbackGlyph}</Text>}
+      {emoji ? (
+        <Emoji asset={emoji} size={EMOJI_ICON_SIZE} />
+      ) : FALLBACK_ICONS[systemImage] ? (
+        <Ionicons
+          name={FALLBACK_ICONS[systemImage]}
+          size={FALLBACK_ICON_SIZE}
+          color={colors.text}
+        />
+      ) : (
+        <Text style={styles.iconGlyph}>{fallbackGlyph}</Text>
+      )}
     </Pressable>
   );
 }
 
-export function BackButton({ label, onPress }: { label: string; onPress: () => void }) {
-  return <IconButton label={label} systemImage="chevron.left" fallbackGlyph="‹" onPress={onPress} />;
+export function BackButton({
+  label,
+  onPress,
+}: {
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <IconButton
+      label={label}
+      systemImage="chevron.left"
+      fallbackGlyph="‹"
+      onPress={onPress}
+    />
+  );
 }
 
 /**
@@ -227,8 +315,16 @@ export function BackButton({ label, onPress }: { label: string; onPress: () => v
  * under it, so it goes home instead of leaving the player on a page with no way out.
  */
 export function CloseButton({ label }: { label: string }) {
-  const close = () => (router.canGoBack() ? router.back() : router.replace("/"));
-  return <IconButton label={label} systemImage="xmark" fallbackGlyph="✕" onPress={close} />;
+  const close = () =>
+    router.canGoBack() ? router.back() : router.replace("/");
+  return (
+    <IconButton
+      label={label}
+      systemImage="xmark"
+      fallbackGlyph="✕"
+      onPress={close}
+    />
+  );
 }
 
 const styles = StyleSheet.create({
