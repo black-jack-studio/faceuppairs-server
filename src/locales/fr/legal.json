@@ -21,7 +21,7 @@
       },
       {
         "title": "Publicité",
-        "body": "Le jeu est gratuit et affiche des publicités via Google AdMob : des vidéos que tu choisis de regarder en échange d'une récompense (continuer une partie, doubler tes pièces, un indice, le coffre du jour), et des publicités entre certaines parties. Sur iOS, nous te demandons ton autorisation via App Tracking Transparency avant d'utiliser l'identifiant publicitaire de ton appareil ; si tu refuses, les publicités s'affichent quand même, sans personnalisation. Dans l'Espace économique européen et au Royaume-Uni, ton consentement est recueilli via le formulaire de Google et reste modifiable dans Réglages → Confidentialité des pubs. Tu peux aussi changer ton choix de suivi dans Réglages de l'iPhone → Confidentialité → Suivi."
+        "body": "Le jeu est gratuit et affiche des publicités via Google AdMob : des vidéos que tu choisis de regarder en échange d'une récompense (continuer une partie, doubler tes pièces, un indice, la récompense du jour), et des publicités entre certaines parties. Sur iOS, nous te demandons ton autorisation via App Tracking Transparency avant d'utiliser l'identifiant publicitaire de ton appareil ; si tu refuses, les publicités s'affichent quand même, sans personnalisation. Dans l'Espace économique européen et au Royaume-Uni, ton consentement est recueilli via le formulaire de Google et reste modifiable dans Réglages → Confidentialité des pubs. Tu peux aussi changer ton choix de suivi dans Réglages de l'iPhone → Confidentialité → Suivi."
       },
       {
         "title": "Achats intégrés",
@@ -193,7 +193,7 @@
       },
       {
         "title": "Pièces",
-        "body": "Tu gagnes des pièces en terminant des niveaux, des parties, le Défi du jour, et avec le coffre du jour, dont les récompenses grossissent si tu reviens chaque jour. Elles servent à acheter des boosters et des packs d'icônes."
+        "body": "Tu gagnes des pièces en terminant des niveaux, des parties, le Défi du jour, et avec la récompense du jour, dont les récompenses grossissent si tu reviens chaque jour. Elles servent à acheter des boosters et des packs d'icônes."
       }
     ]
   },

@@ -21,7 +21,7 @@
       },
       {
         "title": "Advertising",
-        "body": "The game is free and shows ads through Google AdMob: videos you choose to watch in exchange for a reward (continuing a game, doubling your coins, a hint, the daily chest), and ads between some games. On iOS we ask for your permission through App Tracking Transparency before using your device's advertising identifier; if you decline, ads still appear, just not personalized. In the European Economic Area and the UK, your consent is collected through Google's form and can be changed any time in Settings → Ad privacy. You can also change your tracking choice in iPhone Settings → Privacy → Tracking."
+        "body": "The game is free and shows ads through Google AdMob: videos you choose to watch in exchange for a reward (continuing a game, doubling your coins, a hint, the daily reward), and ads between some games. On iOS we ask for your permission through App Tracking Transparency before using your device's advertising identifier; if you decline, ads still appear, just not personalized. In the European Economic Area and the UK, your consent is collected through Google's form and can be changed any time in Settings → Ad privacy. You can also change your tracking choice in iPhone Settings → Privacy → Tracking."
       },
       {
         "title": "In-app purchases",
@@ -193,7 +193,7 @@
       },
       {
         "title": "Coins",
-        "body": "You earn coins by clearing levels, finishing games, the Daily Challenge, and from the daily chest, whose rewards grow if you come back every day. Spend them on boosters and icon packs."
+        "body": "You earn coins by clearing levels, finishing games, the Daily Challenge, and from the daily reward, whose rewards grow if you come back every day. Spend them on boosters and icon packs."
       }
     ]
   },

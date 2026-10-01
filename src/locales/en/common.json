@@ -12,7 +12,7 @@
     "daily": "Daily Challenge",
     "leaderboard": "Leaderboard",
     "shop": "Shop",
-    "chest": "Daily chest",
+    "chest": "Daily reward",
     "settings": "Settings",
     "bestScore": "Best score",
     "stars": "Stars"
@@ -118,7 +118,7 @@
     "yourRank": "Your rank"
   },
   "chest": {
-    "title": "Daily chest",
+    "title": "Daily reward",
     "day": "D{{n}}",
     "claim": "Collect",
     "streak_one": "Streak: {{count}} day",
@@ -126,7 +126,7 @@
     "reward": "+{{count}} coins",
     "bonusHint": "+1 hint",
     "doubleAd": "Double (ad)",
-    "ready": "Daily chest ready"
+    "ready": "Daily reward ready"
   },
   "shop": {
     "title": "Shop",
@@ -173,11 +173,11 @@
     "continue": "Continue"
   },
   "notifications": {
-    "title": "Don't miss your chest",
-    "body": "We'll let you know when your daily chest and daily challenge are ready, and before your streak runs out. Nothing else.",
+    "title": "Don't miss your daily reward",
+    "body": "We'll let you know when your daily reward and daily challenge are ready, and before your streak runs out. Nothing else.",
     "allow": "Turn on",
     "later": "Later",
-    "chestTitle": "Your daily chest is ready",
+    "chestTitle": "Your daily reward is ready",
     "chestBody": "Come collect your coins and keep your streak.",
     "streakTitle": "Your streak is waiting",
     "streakBody": "Open the game today so you don't lose it.",

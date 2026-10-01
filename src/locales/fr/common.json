@@ -12,7 +12,7 @@
     "daily": "Défi du jour",
     "leaderboard": "Classement",
     "shop": "Boutique",
-    "chest": "Coffre du jour",
+    "chest": "Récompense du jour",
     "settings": "Réglages",
     "bestScore": "Meilleur score",
     "stars": "Étoiles"
@@ -118,7 +118,7 @@
     "yourRank": "Ta place"
   },
   "chest": {
-    "title": "Coffre du jour",
+    "title": "Récompense du jour",
     "day": "J{{n}}",
     "claim": "Récupérer",
     "streak_one": "Série : {{count}} jour",
@@ -126,7 +126,7 @@
     "reward": "+{{count}} pièces",
     "bonusHint": "+1 indice",
     "doubleAd": "Doubler (pub)",
-    "ready": "Coffre du jour prêt"
+    "ready": "Récompense du jour prête"
   },
   "shop": {
     "title": "Boutique",
@@ -173,11 +173,11 @@
     "continue": "Continuer"
   },
   "notifications": {
-    "title": "Ne rate pas ton coffre",
-    "body": "On te prévient quand ton coffre et le défi du jour sont prêts, et avant que ta série ne se perde. Rien d'autre.",
+    "title": "Ne rate pas ta récompense",
+    "body": "On te prévient quand ta récompense du jour et le défi du jour sont prêts, et avant que ta série ne se perde. Rien d'autre.",
     "allow": "Activer",
     "later": "Plus tard",
-    "chestTitle": "Ton coffre du jour est prêt",
+    "chestTitle": "Ta récompense du jour est prête",
     "chestBody": "Viens récupérer tes pièces et garder ta série.",
     "streakTitle": "Ta série t'attend",
     "streakBody": "Ouvre le jeu aujourd'hui pour ne pas la perdre.",
