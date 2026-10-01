@@ -15,6 +15,8 @@ export const UI_EMOJI = {
   crystalball: "crystal_ball",
   lightbulb: "light_bulb",
   fire: "fire",
+  // Animated (48-frame WebP) — the daily chest / streak icon.
+  flame: "fire_animated",
   calendar: "spiral_calendar",
   sparkles: "sparkles",
   crown: "crown",

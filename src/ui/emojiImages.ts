@@ -66,6 +66,7 @@ export const EMOJI_IMAGES = {
   "fallen_leaf": require("../../assets/emoji/fallen_leaf.webp"),
   "ferris_wheel": require("../../assets/emoji/ferris_wheel.webp"),
   "fire": require("../../assets/emoji/fire.webp"),
+  "fire_animated": require("../../assets/emoji/fire_animated.webp"),
   "fireworks": require("../../assets/emoji/fireworks.webp"),
   "first_quarter_moon": require("../../assets/emoji/first_quarter_moon.webp"),
   "flag_in_hole": require("../../assets/emoji/flag_in_hole.webp"),

@@ -3,8 +3,9 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { BOOSTER_PRICES, type BoosterId } from "@/game/economy";
+import { BOOSTER_PRICES, FREE_COINS_PER_DAY, FREE_COINS_REWARD, localDay, type BoosterId } from "@/game/economy";
 import { ICON_PACKS, type IconPack } from "@/game/iconPacks";
+import { showRewarded, useAds } from "@/lib/ads";
 import { track } from "@/lib/analytics";
 import { appIconsSupported } from "@/lib/appIcons";
 import { formatScore } from "@/lib/format";
@@ -56,6 +57,15 @@ export default function Shop() {
         t("boosters.notEnough"),
         t("boosters.notEnoughBody", { price: BOOSTER_PRICES[id] }),
       );
+    }
+  };
+
+  const rewardedReady = useAds((s) => s.rewardedReady);
+  const today = localDay();
+  const freeCoinsLeft = FREE_COINS_PER_DAY - (wallet.freeCoins.day === today ? wallet.freeCoins.count : 0);
+  const watchForCoins = async () => {
+    if (await showRewarded("free_coins")) {
+      if (useWallet.getState().claimFreeCoins(localDay())) hapticSuccess();
     }
   };
 
@@ -111,6 +121,17 @@ export default function Shop() {
         )}
 
         <Section title={t("shop.boosters")}>
+          <Item
+            icon={UI_EMOJI.coin}
+            title={t("shop.freeCoins")}
+            description={t("shop.freeCoinsDesc", { coins: FREE_COINS_REWARD, left: freeCoinsLeft, max: FREE_COINS_PER_DAY })}
+          >
+            {freeCoinsLeft > 0 ? (
+              <AppButton label={t("shop.watchAd")} disabled={!rewardedReady} onPress={watchForCoins} />
+            ) : (
+              <Text style={styles.packState}>{t("shop.freeCoinsDone")}</Text>
+            )}
+          </Item>
           {(["peek", "hint"] as const).map((id) => (
             <Item
               key={id}

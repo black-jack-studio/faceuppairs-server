@@ -22,7 +22,7 @@ import { track } from "./analytics";
 const rewardedUnit = __DEV__ ? TestIds.REWARDED : ADMOB_UNITS.rewarded;
 const interstitialUnit = __DEV__ ? TestIds.INTERSTITIAL : ADMOB_UNITS.interstitial;
 
-export type RewardPlacement = "revive" | "double_coins" | "hint" | "daily_chest";
+export type RewardPlacement = "revive" | "double_coins" | "hint" | "peek" | "daily_chest" | "free_coins";
 
 interface AdsState {
   /** A rewarded ad is loaded and can be shown right now. Buttons hide otherwise. */

@@ -4,6 +4,8 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import {
   BOOSTER_PRICES,
+  FREE_COINS_PER_DAY,
+  FREE_COINS_REWARD,
   claimDaily as claimDailyReward,
   type BoosterId,
   type StreakState,
@@ -30,6 +32,8 @@ interface WalletData {
   ownedAppIcons: string[];
   /** Icons earned but not yet celebrated: shown one by one when the player is back home. */
   pendingIconReveals: string[];
+  /** Ad-for-coins in the shop: how many were watched on `day` (local). */
+  freeCoins: { day: string | null; count: number };
 }
 
 interface WalletState extends WalletData {
@@ -43,6 +47,8 @@ interface WalletState extends WalletData {
   unlockPack: (id: string) => void;
   unlockAppIcons: (ids: string[]) => void;
   queueIconReveals: (ids: string[]) => void;
+  /** Credits the ad-for-coins reward; false once today's allowance is used up. */
+  claimFreeCoins: (today: string) => boolean;
   /** Takes the next icon to celebrate off the queue. */
   takeIconReveal: () => string | null;
   setActivePack: (id: string) => void;
@@ -68,6 +74,7 @@ const initial: WalletData = {
   daily: { day: null, played: false, bestScore: 0 },
   ownedAppIcons: [],
   pendingIconReveals: [],
+  freeCoins: { day: null, count: 0 },
 };
 
 export const useWallet = create<WalletState>()(
@@ -101,6 +108,12 @@ export const useWallet = create<WalletState>()(
       },
       unlockPack: (id) => set((s) => (s.ownedPacks.includes(id) ? s : { ownedPacks: [...s.ownedPacks, id] })),
       setActivePack: (id) => set({ activePack: id }),
+      claimFreeCoins: (today) => {
+        const used = get().freeCoins.day === today ? get().freeCoins.count : 0;
+        if (used >= FREE_COINS_PER_DAY) return false;
+        set((s) => ({ coins: s.coins + FREE_COINS_REWARD, freeCoins: { day: today, count: used + 1 } }));
+        return true;
+      },
       queueIconReveals: (ids) =>
         set((s) => ({ pendingIconReveals: [...s.pendingIconReveals, ...ids.filter((id) => !s.pendingIconReveals.includes(id))] })),
       takeIconReveal: () => {

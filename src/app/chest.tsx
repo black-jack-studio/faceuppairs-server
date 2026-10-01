@@ -83,7 +83,7 @@ export default function Chest() {
         <CloseButton label={t("close")} />
       </View>
       <View style={styles.hero}>
-        <Emoji asset={UI_EMOJI.gift} size={88} />
+        <Emoji asset={UI_EMOJI.flame} size={88} />
       </View>
 
       <View style={styles.days} accessibilityRole="list">

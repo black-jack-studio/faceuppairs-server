@@ -94,12 +94,12 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
     }
     const price = BOOSTER_PRICES[id];
     Alert.alert(t("boosters.notEnough"), t("boosters.notEnoughBody", { price }), [
-      ...(id === "hint" && rewardedReady
+      ...(rewardedReady
         ? [
             {
-              text: t("boosters.adHint"),
+              text: id === "hint" ? t("boosters.adHint") : t("boosters.adPeek"),
               onPress: async () => {
-                if (await showRewarded("hint")) {
+                if (await showRewarded(id)) {
                   track("booster_used", { booster: id, level: level.number, via: "ad" });
                   apply();
                 }

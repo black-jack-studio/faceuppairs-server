@@ -7,15 +7,16 @@ import { Platform } from "react-native";
 /** Leaderboard API. In development the simulator reaches the Mac's localhost. */
 export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? (__DEV__ ? "http://localhost:8787" : "");
 
-// AdMob ad unit ids. Development builds use Google's test units (TestIds in ads.ts); release
-// builds never do — serving test ads in production breaks AdMob policy, so no id means no ads.
+// AdMob ad unit ids (not secrets: they ship inside the app anyway). Development builds always
+// use Google's test units instead (TestIds in ads.ts), so clicking around is never a policy risk.
+// Android has no units yet: no id means no ads there.
 export const ADMOB_UNITS = {
   rewarded: Platform.select({
-    ios: process.env.EXPO_PUBLIC_ADMOB_IOS_REWARDED,
+    ios: process.env.EXPO_PUBLIC_ADMOB_IOS_REWARDED ?? "ca-app-pub-9106120973763702/7971939419",
     android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_REWARDED,
   }),
   interstitial: Platform.select({
-    ios: process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL,
+    ios: process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL ?? "ca-app-pub-9106120973763702/4891403941",
     android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL,
   }),
 };

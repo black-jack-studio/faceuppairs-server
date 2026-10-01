@@ -54,7 +54,8 @@
     "notEnough": "Pas assez de pièces",
     "notEnoughBody": "Il te faut {{price}} pièces. Tu peux en gagner en jouant ou en obtenir dans la boutique.",
     "toShop": "Boutique",
-    "adHint": "Indice gratuit (pub)"
+    "adHint": "Indice gratuit (pub)",
+    "adPeek": "Aperçu gratuit (pub)"
   },
   "endless": {
     "board": "Grille {{n}}",
@@ -160,7 +161,11 @@
       "food": "Cuisine",
       "nature": "Nature",
       "travel": "Transports"
-    }
+    },
+    "freeCoins": "Pièces gratuites",
+    "freeCoinsDesc": "+{{coins}} pièces par pub · {{left}}/{{max}} aujourd'hui",
+    "watchAd": "Regarder",
+    "freeCoinsDone": "Reviens demain"
   },
   "tracking": {
     "title": "Des pubs qui te ressemblent",

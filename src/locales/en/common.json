@@ -54,7 +54,8 @@
     "notEnough": "Not enough coins",
     "notEnoughBody": "You need {{price}} coins. Earn them by playing or get some in the shop.",
     "toShop": "Shop",
-    "adHint": "Free hint (ad)"
+    "adHint": "Free hint (ad)",
+    "adPeek": "Free peek (ad)"
   },
   "endless": {
     "board": "Board {{n}}",
@@ -160,7 +161,11 @@
       "food": "Food",
       "nature": "Nature",
       "travel": "Travel"
-    }
+    },
+    "freeCoins": "Free coins",
+    "freeCoinsDesc": "+{{coins}} coins per ad · {{left}}/{{max}} left today",
+    "watchAd": "Watch",
+    "freeCoinsDone": "Back tomorrow"
   },
   "tracking": {
     "title": "Ads that suit you",

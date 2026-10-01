@@ -92,9 +92,9 @@ export default function Home() {
           <View>
             <IconButton
               label={chestReady ? t("chest.ready") : t("home.chest")}
-              systemImage="gift.fill"
-              fallbackGlyph="🎁"
-              emoji={UI_EMOJI.gift}
+              systemImage="flame.fill"
+              fallbackGlyph="🔥"
+              emoji={UI_EMOJI.flame}
               onPress={() => router.push("/chest")}
             />
             {chestReady && <NotificationDot />}
