@@ -21,7 +21,8 @@
     "title": "Career",
     "level": "Level {{n}}",
     "locked": "Level {{n}}, locked",
-    "starsA11y": "{{count}} star(s)"
+    "starsA11y_one": "{{count}} star",
+    "starsA11y_other": "{{count}} stars"
   },
   "game": {
     "moves": "Moves",
@@ -120,7 +121,8 @@
     "day": "D{{n}}",
     "claim": "Collect",
     "claimed": "Come back tomorrow",
-    "streak": "Streak: {{count}} day(s)",
+    "streak_one": "Streak: {{count}} day",
+    "streak_other": "Streak: {{count}} days",
     "reward": "+{{count}} coins",
     "bonusHint": "+1 hint",
     "doubleAd": "Double (ad)",

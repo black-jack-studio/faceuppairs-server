@@ -66,7 +66,7 @@ export default function Username() {
         style={styles.input}
       />
       <Text style={[styles.help, error && styles.error]} accessibilityLiveRegion="polite">
-        {error ? t(`username.errors.${error.code}`, { days: error.days ?? cooldownDays() }) : t("username.rules")}
+        {error ? t(`username.errors.${error.code}`, { count: error.days ?? cooldownDays() }) : t("username.rules")}
       </Text>
 
       <View style={styles.actions}>

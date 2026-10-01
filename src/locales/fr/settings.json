@@ -48,7 +48,8 @@
       "reserved": "Ce pseudo est réservé.",
       "sameAsCurrent": "C'est déjà ton pseudo.",
       "taken": "Ce pseudo est déjà pris.",
-      "cooldown": "Tu pourras changer de pseudo dans {{days}} jour(s)."
+      "cooldown_one": "Tu pourras changer de pseudo dans {{count}} jour.",
+      "cooldown_other": "Tu pourras changer de pseudo dans {{count}} jours."
     }
   }
 }

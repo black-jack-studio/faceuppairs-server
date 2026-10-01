@@ -48,7 +48,8 @@
       "reserved": "This nickname is reserved.",
       "sameAsCurrent": "That's already your nickname.",
       "taken": "This nickname is already taken.",
-      "cooldown": "You can change your nickname again in {{days}} day(s)."
+      "cooldown_one": "You can change your nickname again in {{count}} day.",
+      "cooldown_other": "You can change your nickname again in {{count}} days."
     }
   }
 }

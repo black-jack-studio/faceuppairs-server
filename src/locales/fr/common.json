@@ -21,7 +21,8 @@
     "title": "Carrière",
     "level": "Niveau {{n}}",
     "locked": "Niveau {{n}}, verrouillé",
-    "starsA11y": "{{count}} étoile(s)"
+    "starsA11y_one": "{{count}} étoile",
+    "starsA11y_other": "{{count}} étoiles"
   },
   "game": {
     "moves": "Coups",
@@ -120,7 +121,8 @@
     "day": "J{{n}}",
     "claim": "Récupérer",
     "claimed": "Reviens demain",
-    "streak": "Série : {{count}} jour(s)",
+    "streak_one": "Série : {{count}} jour",
+    "streak_other": "Série : {{count}} jours",
     "reward": "+{{count}} pièces",
     "bonusHint": "+1 indice",
     "doubleAd": "Doubler (pub)",

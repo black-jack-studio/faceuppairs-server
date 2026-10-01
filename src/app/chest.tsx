@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { canClaimDaily, localDay, nextStreakDay, STREAK_BONUS_DAY, STREAK_REWARDS } from "@/game/economy";
+import { canClaimDaily, localDay, nextStreakDay, STREAK_REWARDS } from "@/game/economy";
 import { showRewarded, useAds } from "@/lib/ads";
 import { track } from "@/lib/analytics";
 import { formatCountdown, nextLocalMidnight } from "@/lib/format";
@@ -99,10 +99,7 @@ export default function Chest() {
               <View style={styles.dayIcon}>
                 {done ? <Text style={styles.dayCheck}>✓</Text> : <Emoji asset={UI_EMOJI.coin} size={DAY_COIN_SIZE} />}
               </View>
-              <Text style={[styles.dayCoins, done && styles.dayDone]}>
-                {coins}
-                {day === STREAK_BONUS_DAY && <Text style={styles.dayBonus}>{"\n"}+1</Text>}
-              </Text>
+              <Text style={[styles.dayCoins, done && styles.dayDone]}>{coins}</Text>
             </View>
           );
         })}
@@ -194,11 +191,6 @@ const styles = StyleSheet.create({
   },
   dayDone: {
     color: colors.faint,
-  },
-  dayBonus: {
-    color: colors.muted,
-    fontSize: 11,
-    fontWeight: "700",
   },
   streak: {
     color: colors.text,
