@@ -7,7 +7,7 @@ import { BOOSTER_PRICES, type BoosterId } from "@/game/economy";
 import { ICON_PACKS, type IconPack } from "@/game/iconPacks";
 import { track } from "@/lib/analytics";
 import { formatScore } from "@/lib/format";
-import { hapticSuccess } from "@/lib/haptics";
+import { hapticSuccess, hapticTick } from "@/lib/haptics";
 import {
   buy,
   COIN_PACK_IDS,
@@ -178,7 +178,7 @@ export default function Shop() {
             >
               <AppButton
                 label={t("shop.buyWithCoins", { price: BOOSTER_PRICES[id] })}
-                onPress={() => buyBooster(id)}
+                        onPress={() => buyBooster(id)}
               />
             </Item>
           ))}
@@ -329,7 +329,11 @@ function PackTile({
     action = (
       <AppButton
         label={t("shop.equip")}
-        onPress={() => useWallet.getState().setActivePack(pack.id)}
+        variant="primary"
+        onPress={() => {
+          hapticTick();
+          useWallet.getState().setActivePack(pack.id);
+        }}
       />
     );
   else if (pack.price.kind === "coins") {
@@ -355,10 +359,14 @@ function PackTile({
         ))}
       </View>
       <Text style={styles.itemTitle}>{t(`shop.packNames.${pack.id}`)}</Text>
-      {action}
+      <View style={styles.packAction}>{action}</View>
     </View>
   );
 }
+
+// Fixed slot under each pack: a button appearing or turning into "Equipped" animates inside
+// it instead of changing the tile's height and pushing the grid around.
+const PACK_ACTION_HEIGHT = 52;
 
 const styles = StyleSheet.create({
   content: {
@@ -431,6 +439,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     backgroundColor: colors.card,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  packAction: {
+    height: PACK_ACTION_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
   },
