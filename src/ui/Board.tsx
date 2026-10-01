@@ -29,7 +29,7 @@ export function Board({ state, boardKey, onCardPress, revealAll = false }: Board
 
   const size = area
     ? Math.floor(
-        Math.min((area.width - gap * (GRID_COLUMNS - 1)) / GRID_COLUMNS, (area.height - BOARD_TOP_PADDING - gap * (rows - 1)) / rows),
+        Math.min((area.width - gap * (GRID_COLUMNS - 1)) / GRID_COLUMNS, (area.height - BOARD_TOP_PADDING * 2 - gap * (rows - 1)) / rows),
       )
     : 0;
 
@@ -60,12 +60,13 @@ export function Board({ state, boardKey, onCardPress, revealAll = false }: Board
 }
 
 const styles = StyleSheet.create({
-  // Anchored under the HUD: the eye goes there first, and the free space falls to the boosters.
+  // Centred in the space left between the HUD and the bottom: a short board (3–4 rows) no
+  // longer leaves a big empty band under it.
   area: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: BOARD_TOP_PADDING,
+    justifyContent: "center",
+    paddingVertical: BOARD_TOP_PADDING,
   },
   grid: {
     flexDirection: "row",

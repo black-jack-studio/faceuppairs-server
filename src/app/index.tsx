@@ -11,6 +11,7 @@ import { SEASON_PAIRS, seasonOn } from "@/game/seasons";
 import { utcDay } from "@/game/run";
 import { LEVEL_COUNT } from "@/game/levels";
 import { useAds } from "@/lib/ads";
+import { wakeServer } from "@/lib/api";
 import { formatScore } from "@/lib/format";
 import { hapticImpact } from "@/lib/haptics";
 import { promptNickname } from "@/lib/promptNickname";
@@ -65,6 +66,7 @@ export default function Home() {
   // Back home after earning an app icon (level 25, all 3 stars, a 7-day streak): celebrate it.
   useFocusEffect(
     useCallback(() => {
+      wakeServer();
       const timer = setTimeout(() => {
         const id = useWallet.getState().takeIconReveal();
         if (id) router.push({ pathname: "/icon-unlocked", params: { id } });

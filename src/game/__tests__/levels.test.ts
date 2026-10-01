@@ -23,6 +23,17 @@ describe("levels", () => {
     }
   });
 
+  it("keeps 3 rows for the first 12 levels, then grows a row every 18 levels", () => {
+    const cards = (n: number) => getLevel(n)!.board.pairs * 2;
+    expect(cards(1)).toBe(12);
+    expect(cards(12)).toBe(12);
+    expect(cards(13)).toBe(16);
+    expect(cards(30)).toBe(16);
+    expect(cards(31)).toBe(20);
+    expect(cards(85)).toBe(32);
+    expect(cards(100)).toBe(32);
+  });
+
   it("uses the same star rules for every level with the same grid size", () => {
     const rulesBySize = new Map<number, string>();
     for (const level of LEVELS) {

@@ -14,10 +14,13 @@ export interface Level {
 
 export const LEVEL_COUNT = 100;
 
-// One more row of 4 cards every 20 levels after a short 3-row intro: 12 → 16 → 20 → 24 → 28 → 32.
+// 3 rows for the first 12 levels, then one more row of 4 cards every 18 levels:
+// 12 → 16 → 20 → 24 → 28 → 32 cards (levels 1–12, 13–30, 31–48, 49–66, 67–84, 85–100).
+const INTRO_LEVELS = 12;
+const LEVELS_PER_SIZE = 18;
 function rowsFor(level: number): number {
-  if (level <= 4) return 3;
-  return Math.min(4 + Math.floor((level - 5) / 20), 8);
+  if (level <= INTRO_LEVELS) return 3;
+  return Math.min(4 + Math.floor((level - INTRO_LEVELS - 1) / LEVELS_PER_SIZE), 8);
 }
 
 // With perfect memory, clearing n pairs takes about 1.6n moves on average; 3 stars asks for

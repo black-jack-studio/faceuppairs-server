@@ -5,10 +5,13 @@ import type { Credentials } from "./account";
 
 const TIMEOUT_MS = 10_000;
 /**
- * Starting a game must never keep a player staring at a spinner: past this, the game starts
- * offline (unranked) instead.
+ * How long a game start waits for the server before playing offline (unranked). Truly offline
+ * fails at once; this only covers a slow server, which on Render's free plan can take several
+ * seconds to wake up (see wakeServer).
  */
-export const START_TIMEOUT_MS = 3_000;
+export const START_TIMEOUT_MS = 8_000;
+const WAKE_TIMEOUT_MS = 60_000;
+const WAKE_INTERVAL_MS = 4 * 60_000;
 
 export type ApiResult<T> =
   | { ok: true; status: number; data: T }
@@ -42,6 +45,20 @@ async function request<T>(
   } finally {
     clearTimeout(timer);
   }
+}
+
+let lastWake = 0;
+
+/**
+ * Render's free plan puts the API to sleep after 15 idle minutes, and waking it takes longer
+ * than a game start waits — which made online games start unranked. Pinging it on launch and
+ * on the home screen means it's awake by the time a game starts.
+ */
+export function wakeServer() {
+  const now = Date.now();
+  if (now - lastWake < WAKE_INTERVAL_MS) return;
+  lastWake = now;
+  void request("GET", "/health", { timeoutMs: WAKE_TIMEOUT_MS });
 }
 
 export type BoardKind = "endless" | "weekly" | "daily";

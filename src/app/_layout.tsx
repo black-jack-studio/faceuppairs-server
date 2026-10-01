@@ -12,6 +12,7 @@ import { initAds, useAds } from "@/lib/ads";
 import { identify, setAnalyticsEnabled } from "@/lib/analytics";
 import { flushNickname } from "@/lib/nickname";
 import { FxLayer } from "@/fx/FxLayer";
+import { wakeServer } from "@/lib/api";
 import { initPurchases } from "@/lib/purchases";
 import { scheduleReminders } from "@/lib/reminders";
 import { flushRuns } from "@/lib/runQueue";
@@ -42,6 +43,7 @@ function useStoresHydrated(): boolean {
 
 /** Everything that needs the network, retried whenever the app comes back to the foreground. */
 async function syncWithServer() {
+  wakeServer();
   await flushPendingDeletion();
   const account = await ensureAccount();
   if (!account) return;
