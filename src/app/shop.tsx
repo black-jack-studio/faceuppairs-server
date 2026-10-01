@@ -25,6 +25,9 @@ import { Emoji, UI_EMOJI } from "@/ui/Emoji";
 import { Screen } from "@/ui/Screen";
 import { colors } from "@/ui/theme";
 
+// Same width for every button of the boosters list, so their edges line up.
+const BOOSTER_BUTTON_WIDTH = 84;
+
 // Development only: the store has no products yet, show the Pairs+ button anyway to judge the
 // layout. Release builds always show the store's own price (or "unavailable").
 const DEV_PREVIEW_PLUS_PRICE = __DEV__ ? "3,99 €" : undefined;
@@ -123,11 +126,11 @@ export default function Shop() {
         <Section title={t("shop.boosters")}>
           <Item
             icon={UI_EMOJI.coin}
-            title={t("shop.freeCoins")}
-            description={t("shop.freeCoinsDesc", { coins: FREE_COINS_REWARD, left: freeCoinsLeft, max: FREE_COINS_PER_DAY })}
+            title={t("shop.freeCoins", { coins: FREE_COINS_REWARD })}
+            description={t("shop.freeCoinsLeft", { left: freeCoinsLeft, max: FREE_COINS_PER_DAY })}
           >
             {freeCoinsLeft > 0 ? (
-              <AppButton label={t("shop.watchAd")} disabled={!rewardedReady} onPress={watchForCoins} />
+              <AppButton label={t("shop.watchAd")} width={BOOSTER_BUTTON_WIDTH} disabled={!rewardedReady} onPress={watchForCoins} />
             ) : (
               <Text style={styles.packState}>{t("shop.freeCoinsDone")}</Text>
             )}
@@ -140,6 +143,7 @@ export default function Shop() {
             >
               <AppButton
                 label={t("shop.buyWithCoins", { price: BOOSTER_PRICES[id] })}
+                width={BOOSTER_BUTTON_WIDTH}
                         onPress={() => buyBooster(id)}
               />
             </Item>

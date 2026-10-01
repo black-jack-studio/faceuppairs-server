@@ -162,10 +162,10 @@
       "nature": "Nature",
       "travel": "Transports"
     },
-    "freeCoins": "Pièces gratuites",
-    "freeCoinsDesc": "+{{coins}} pièces par pub · {{left}}/{{max}} aujourd'hui",
+    "freeCoins": "+{{coins}} pièces",
     "watchAd": "Regarder",
-    "freeCoinsDone": "Reviens demain"
+    "freeCoinsDone": "Reviens demain",
+    "freeCoinsLeft": "{{left}}/{{max}} restantes aujourd'hui"
   },
   "tracking": {
     "title": "Des pubs qui te ressemblent",

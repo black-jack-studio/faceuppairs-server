@@ -162,10 +162,10 @@
       "nature": "Nature",
       "travel": "Travel"
     },
-    "freeCoins": "Free coins",
-    "freeCoinsDesc": "+{{coins}} coins per ad · {{left}}/{{max}} left today",
+    "freeCoins": "+{{coins}} coins",
     "watchAd": "Watch",
-    "freeCoinsDone": "Back tomorrow"
+    "freeCoinsDone": "Back tomorrow",
+    "freeCoinsLeft": "{{left}}/{{max}} left today"
   },
   "tracking": {
     "title": "Ads that suit you",
