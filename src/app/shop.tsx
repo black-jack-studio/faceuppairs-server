@@ -22,8 +22,8 @@ import { useWallet } from "@/store/wallet";
 import { AppButton } from "@/ui/AppButton";
 import { CoinsPill } from "@/ui/CoinsPill";
 import { Emoji, UI_EMOJI } from "@/ui/Emoji";
-import { Screen } from "@/ui/Screen";
-import { colors } from "@/ui/theme";
+import { Screen, useHeaderInset } from "@/ui/Screen";
+import { colors, space } from "@/ui/theme";
 
 // Same width for every button of the boosters list, so their edges line up.
 const BOOSTER_BUTTON_WIDTH = 84;
@@ -63,6 +63,7 @@ export default function Shop() {
     }
   };
 
+  const headerInset = useHeaderInset();
   const rewardedReady = useAds((s) => s.rewardedReady);
   const today = localDay();
   const freeCoinsLeft = FREE_COINS_PER_DAY - (wallet.freeCoins.day === today ? wallet.freeCoins.count : 0);
@@ -84,24 +85,30 @@ export default function Shop() {
   };
 
   return (
-    <Screen trailing={<CoinsPill />}>
+    <Screen trailing={<CoinsPill />} overlayHeader>
       <ScrollView
+        style={styles.scroll}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Shown even before the store answers, so the offer is always visible. */}
-        <View style={styles.section}>
+        {/* Shown even before the store answers, so the offer is always visible. Runs edge to edge
+            and up under the header, so the top of the screen reads as one black panel. */}
+        <View style={[styles.plusPanel, { paddingTop: headerInset + 8 }]}>
+          <View style={styles.plusOverscroll} />
           <PlusOffer
             owned={wallet.isPlus}
             price={price(PRODUCT_IDS.plus) ?? DEV_PREVIEW_PLUS_PRICE}
             onBuy={() => purchase(PRODUCT_IDS.plus)}
           />
-          {store.available && !wallet.starterPackBought && (
+        </View>
+
+        {store.available && !wallet.starterPackBought && (
+          <View style={styles.section}>
             <Item icon={UI_EMOJI.gift} title={t("shop.starter")} description={t("shop.starterDesc")}>
               <BuyButton price={price(PRODUCT_IDS.starterPack)} onPress={() => purchase(PRODUCT_IDS.starterPack)} />
             </Item>
-          )}
-        </View>
+          </View>
+        )}
 
         {store.available && (
           <Section title={t("shop.coins")}>
@@ -350,8 +357,12 @@ function PackTile({
 const PACK_ACTION_HEIGHT = 52;
 
 const styles = StyleSheet.create({
+  // Spans the full width (the Screen gutter is cancelled) so the Pairs+ panel can reach both edges.
+  scroll: {
+    marginHorizontal: -space.screen,
+  },
   content: {
-    paddingTop: 16,
+    paddingHorizontal: space.screen,
     paddingBottom: 40,
     gap: 28,
   },
@@ -391,6 +402,23 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: 13,
     lineHeight: 18,
+  },
+  plusPanel: {
+    marginHorizontal: -space.screen,
+    paddingHorizontal: space.screen,
+    paddingBottom: 28,
+    backgroundColor: colors.card,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+  },
+  // Pulling down past the top shows more black, never the grey board.
+  plusOverscroll: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: "100%",
+    height: 1000,
+    backgroundColor: colors.card,
   },
   plus: {
     alignItems: "center",

@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BackButton } from "./AppButton";
 import { colors, space } from "./theme";
@@ -15,15 +15,33 @@ interface ScreenProps {
   trailing?: ReactNode;
   /** Game screens: narrower side gutter so the board gets the width. */
   compact?: boolean;
+  /** Content runs to the top edge and scrolls under the header; it must pad itself with `useHeaderInset()`. */
+  overlayHeader?: boolean;
   children: ReactNode;
 }
 
-export function Screen({ title, onBack, showBack = true, trailing, compact = false, children }: ScreenProps) {
+export const HEADER_HEIGHT = 56;
+
+/** Top padding for `overlayHeader` content: status bar plus header. */
+export function useHeaderInset() {
+  return useSafeAreaInsets().top + HEADER_HEIGHT;
+}
+
+export function Screen({
+  title,
+  onBack,
+  showBack = true,
+  trailing,
+  compact = false,
+  overlayHeader = false,
+  children,
+}: ScreenProps) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   return (
-    <SafeAreaView style={styles.screen} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.screen} edges={overlayHeader ? ["bottom"] : ["top", "bottom"]}>
       {(showBack || title || trailing) && (
-        <View style={styles.header}>
+        <View style={[styles.header, overlayHeader && [styles.headerOverlay, { top: insets.top }]]}>
           <View style={styles.side}>
             {showBack && <BackButton label={t("back")} onPress={onBack ?? (() => router.back())} />}
           </View>
@@ -48,11 +66,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.board,
   },
   header: {
-    height: 56,
+    height: HEADER_HEIGHT,
     paddingHorizontal: space.screen - 4,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  headerOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 1,
   },
   side: {
     width: 88,
