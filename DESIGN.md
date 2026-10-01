@@ -106,4 +106,4 @@ Packs d'icônes (`src/game/iconPacks.ts`) : chaque pack remplit les 24 emplaceme
 
 ## Icône de l'app et splash
 
-L'icône est une vue du jeu, pas un logo : fond `#1C1C1E`, grille 2×2 de cartes noires à angles droits, une paire de cerises Fluent trouvée en diagonale. Généré dans `assets/images/` (icon, android-icon-foreground/background/monochrome, splash-icon, favicon). Le splash reprend la même grille sur fond `#1C1C1E`.
+L'icône est une forme, pas une vue du jeu : motif « fusion » — deux cartes arrondies qui se fondent l'une dans l'autre, en blanc pur sur noir pur (jamais de crème ni de dégradé). Fichier `assets/images/icon.png` (1024×1024, coins arrondis à 22 %), référencé par `ios.icon` dans `app.json`. Les autres assets (android-icon-*, splash-icon, favicon) restent dans `assets/images/`; le splash garde le fond `#1C1C1E`.

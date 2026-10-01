@@ -131,12 +131,14 @@ Principe : tout tourne en local d'abord (API + base + app sur simulateur, pubs d
 | H | Conformité : manifeste iOS (pub + achats + analytics), texte ATT FR/EN, politique / CGU / assistance réécrites, Réglages (restaurer, abonnement, confidentialité pub, rappels) | ✅ fait |
 | I | Build natif iOS local (build de développement) | ✅ fait (simulateur) |
 | K | Audit (16 points) : sécurité serveur, anti-triche temporel, file hors ligne, consentement avant pseudo, pseudo pris, écrans de fin, plateau, boutique hors ligne, classement au-delà du top 100, icône | ✅ fait, testé |
-| J | Mise en ligne | guide pas à pas : `DEPLOY.md` |
+| J | Mise en ligne | serveur ✅ en ligne (Render + Supabase, `https://faceuppairs-server.onrender.com`, migration 001 appliquée) ; builds iOS : `codemagic.yaml` prêt, en attente de la validation du compte Apple organisation (Team ID à vérifier dans `app.json`) ; guide : `DEPLOY.md` |
 
 Cosmétiques : **packs d'icônes uniquement**. Pas de dos de cartes colorés — DESIGN.md impose des cartes noires dans tous les états.
 
 ## Points ouverts
 - Nom définitif et bundle ID (à figer avant la création de l'app sur App Store Connect).
 - Adresse de contact : `help.faceup@gmail.com` par défaut (même éditeur), ou une adresse dédiée.
-- Icône et splash : première version faite (grille 2×2, paire de cerises) — à valider.
+- Icône : motif « fusion » (deux cartes qui fusionnent, noir et blanc purs, coins arrondis 22 %) — fait ; splash à harmoniser si besoin.
+- Compte Apple : conversion en organisation en cours ; ensuite créer l'app App Store Connect `com.beaudoin.faceuppairs`, groupe Codemagic `pairs_env` (`EXPO_PUBLIC_API_URL`), premier build `ios-testflight`.
+- Migrations serveur : jamais au démarrage, `npm run migrate` (ou SQL Editor Supabase). Connexion Supabase via **Session pooler** (le host direct est en IPv6 seul) ; `#` du mot de passe encodé `%23`.
 - Prix des produits (suggestions dans `DEPLOY.md` §5).
