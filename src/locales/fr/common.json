@@ -39,6 +39,11 @@
     "levels": "Niveaux",
     "careerDone": "Tu as terminé tous les niveaux."
   },
+  "secret": {
+    "title": "Grille secrète",
+    "done": "Grille secrète terminée",
+    "noCoins": "Les pièces de la grille secrète sont déjà gagnées pour cette fois."
+  },
   "boosters": {
     "peek": "Aperçu",
     "hint": "Indice",
@@ -112,7 +117,6 @@
   },
   "chest": {
     "title": "Coffre du jour",
-    "subtitle": "Reviens chaque jour : les récompenses grossissent.",
     "day": "J{{n}}",
     "claim": "Récupérer",
     "claimed": "Reviens demain",

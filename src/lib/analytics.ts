@@ -17,7 +17,9 @@ export type AnalyticsEvent =
   | "purchase"
   | "ad_rewarded_shown"
   | "ad_rewarded_earned"
-  | "ad_interstitial_shown";
+  | "ad_interstitial_shown"
+  | "secret_board_opened"
+  | "secret_board_complete";
 
 export function track(event: AnalyticsEvent, properties?: Record<string, string | number | boolean>) {
   client?.capture(event, properties);

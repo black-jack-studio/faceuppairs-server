@@ -15,6 +15,8 @@ import { AppButtonGroup, CloseButton } from "@/ui/AppButton";
 import { Emoji, UI_EMOJI } from "@/ui/Emoji";
 import { colors, space } from "@/ui/theme";
 
+const DAY_COIN_SIZE = 20;
+
 export default function Chest() {
   const { t, i18n } = useTranslation();
   const today = localDay();
@@ -79,7 +81,6 @@ export default function Chest() {
       </View>
       <View style={styles.hero}>
         <Emoji asset={UI_EMOJI.gift} size={88} />
-        <Text style={styles.subtitle}>{t("chest.subtitle")}</Text>
       </View>
 
       <View style={styles.days} accessibilityRole="list">
@@ -90,14 +91,18 @@ export default function Chest() {
           return (
             <View
               key={day}
-              style={[styles.day, isToday && styles.dayToday]}
+              style={styles.day}
               accessible
               accessibilityLabel={`${t("chest.day", { n: day })}, ${t("chest.reward", { count: coins })}`}
             >
-              <Text style={[styles.dayLabel, done && styles.dayDone]}>{t("chest.day", { n: day })}</Text>
-              {!done && <Emoji asset={UI_EMOJI.coin} size={18} />}
-              <Text style={[styles.dayCoins, done && styles.dayDone]}>{done ? "✓" : coins}</Text>
-              {day === STREAK_BONUS_DAY && <Text style={styles.dayBonus}>+1</Text>}
+              <Text style={[styles.dayLabel, isToday && styles.dayLabelToday]}>{t("chest.day", { n: day })}</Text>
+              <View style={styles.dayIcon}>
+                {done ? <Text style={styles.dayCheck}>✓</Text> : <Emoji asset={UI_EMOJI.coin} size={DAY_COIN_SIZE} />}
+              </View>
+              <Text style={[styles.dayCoins, done && styles.dayDone]}>
+                {coins}
+                {day === STREAK_BONUS_DAY && <Text style={styles.dayBonus}>{"\n"}+1</Text>}
+              </Text>
             </View>
           );
         })}
@@ -129,7 +134,6 @@ export default function Chest() {
 
 const styles = StyleSheet.create({
   sheet: {
-    flex: 1,
     backgroundColor: colors.board,
     paddingHorizontal: space.screen,
     paddingTop: 32,
@@ -159,22 +163,26 @@ const styles = StyleSheet.create({
     gap: 6,
     marginTop: 8,
   },
-  // Same object as a grid card: black, square corners (DESIGN.md).
   day: {
     flex: 1,
-    aspectRatio: 0.7,
-    backgroundColor: colors.card,
     alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-  },
-  dayToday: {
-    borderWidth: 1,
-    borderColor: colors.text,
+    gap: 6,
   },
   dayLabel: {
     color: colors.muted,
-    fontSize: 11,
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  dayLabelToday: {
+    color: colors.text,
+  },
+  dayIcon: {
+    height: DAY_COIN_SIZE,
+    justifyContent: "center",
+  },
+  dayCheck: {
+    color: colors.faint,
+    fontSize: 16,
     fontWeight: "700",
   },
   dayCoins: {
@@ -182,13 +190,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "800",
     fontVariant: ["tabular-nums"],
+    textAlign: "center",
   },
   dayDone: {
     color: colors.faint,
   },
   dayBonus: {
-    color: colors.text,
-    fontSize: 10,
+    color: colors.muted,
+    fontSize: 11,
     fontWeight: "700",
   },
   streak: {
@@ -214,5 +223,6 @@ const styles = StyleSheet.create({
   actions: {
     alignItems: "center",
     marginTop: 8,
+    paddingBottom: 24,
   },
 });

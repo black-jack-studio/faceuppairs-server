@@ -26,6 +26,9 @@ export function endlessCoins(score: number): number {
 
 export const DAILY_CHALLENGE_COINS = 50;
 
+/** Easter-egg board, first clear per app launch. */
+export const SECRET_BOARD_COINS = 50;
+
 /** Pairs+ subscribers get this on top of the daily chest. */
 export const PLUS_DAILY_COINS = 100;
 

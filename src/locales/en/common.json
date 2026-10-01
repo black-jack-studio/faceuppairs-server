@@ -39,6 +39,11 @@
     "levels": "Levels",
     "careerDone": "You've finished every level."
   },
+  "secret": {
+    "title": "Secret board",
+    "done": "Secret board cleared",
+    "noCoins": "You've already earned this secret board's coins for now."
+  },
   "boosters": {
     "peek": "Peek",
     "hint": "Hint",
@@ -112,7 +117,6 @@
   },
   "chest": {
     "title": "Daily chest",
-    "subtitle": "Come back every day: rewards grow.",
     "day": "D{{n}}",
     "claim": "Collect",
     "claimed": "Come back tomorrow",

@@ -93,9 +93,10 @@ export default function RootLayout() {
         <Stack.Screen name="play/level/[n]" options={{ gestureEnabled: false }} />
         <Stack.Screen name="play/endless" options={{ gestureEnabled: false }} />
         <Stack.Screen name="play/daily" options={{ gestureEnabled: false }} />
+        <Stack.Screen name="play/secret" options={{ gestureEnabled: false }} />
         <Stack.Screen name="legal/[doc]" options={{ ...sheet, sheetAllowedDetents: [0.75, 1] }} />
         <Stack.Screen name="settings/username" options={{ ...sheet, sheetAllowedDetents: [0.6] }} />
-        <Stack.Screen name="chest" options={{ ...sheet, sheetAllowedDetents: [0.78] }} />
+        <Stack.Screen name="chest" options={{ ...sheet, sheetAllowedDetents: "fitToContents" }} />
       </Stack>
     </>
   );
