@@ -243,8 +243,6 @@
       "candy": "Bonbon"
     },
     "inUse": "Utilisée",
-    "available": "Disponible",
-    "price": "{{price}} pièces",
     "level": "Finis le niveau {{level}}",
     "streak": "Série de {{days}} jours",
     "allStars": "100 niveaux en 3 étoiles",
@@ -254,6 +252,11 @@
     "unlockedTitle": "Nouvelle icône débloquée !",
     "unlockedBody": "{{name}} t'attend dans la galerie d'icônes.",
     "see": "Voir",
-    "later": "Plus tard"
+    "later": "Plus tard",
+    "use": "Utiliser",
+    "buyFor": "Acheter · {{price}}",
+    "levelProgress": "Niveau {{level}} · {{current}}/{{target}}",
+    "streakProgress": "Série · {{current}}/{{target}}",
+    "allStarsProgress": "3 étoiles · {{current}}/{{target}}"
   }
 }

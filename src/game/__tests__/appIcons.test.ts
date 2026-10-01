@@ -12,13 +12,13 @@ describe("app icons", () => {
   });
 
   it("counts finished levels in order for the level icon", () => {
-    const mint = getAppIcon("mint")!;
+    const candy = getAppIcon("candy")!;
     const stars: Record<number, number> = {};
     for (let l = 1; l <= 11; l++) stars[l] = 1;
     stars[20] = 3; // a gap: level 12 isn't finished
-    expect(iconProgress(mint, { stars, streak: 0 })).toEqual({ current: 11, target: 25 });
+    expect(iconProgress(candy, { stars, streak: 0 })).toEqual({ current: 11, target: 25 });
     for (let l = 1; l <= 25; l++) stars[l] = 2;
-    expect(earnedByPlay(mint, { stars, streak: 0 })).toBe(true);
+    expect(earnedByPlay(candy, { stars, streak: 0 })).toBe(true);
   });
 
   it("tracks the chest streak and the 3-star collection", () => {

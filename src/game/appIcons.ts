@@ -21,8 +21,8 @@ export const APP_ICONS: readonly AppIconDef[] = [
   { id: "night", native: "Night", unlock: { kind: "free" } },
   { id: "blue", native: "Blue", unlock: { kind: "coins", amount: 2_000 } },
   { id: "red", native: "Red", unlock: { kind: "coins", amount: 2_500 } },
-  { id: "candy", native: "Candy", unlock: { kind: "coins", amount: 3_000 } },
-  { id: "mint", native: "Mint", unlock: { kind: "level", level: 25 } },
+  { id: "mint", native: "Mint", unlock: { kind: "coins", amount: 3_000 } },
+  { id: "candy", native: "Candy", unlock: { kind: "level", level: 25 } },
   { id: "violet", native: "Violet", unlock: { kind: "streak", days: 7 } },
   { id: "gold", native: "Gold", unlock: { kind: "allStars" } },
 ];

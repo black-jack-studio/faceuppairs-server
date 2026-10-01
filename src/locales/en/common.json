@@ -243,8 +243,6 @@
       "candy": "Candy"
     },
     "inUse": "In use",
-    "available": "Available",
-    "price": "{{price}} coins",
     "level": "Finish level {{level}}",
     "streak": "{{days}}-day streak",
     "allStars": "All 100 levels at 3 stars",
@@ -254,6 +252,11 @@
     "unlockedTitle": "New icon unlocked!",
     "unlockedBody": "{{name}} is waiting in the icon gallery.",
     "see": "See",
-    "later": "Later"
+    "later": "Later",
+    "use": "Use",
+    "buyFor": "Buy · {{price}}",
+    "levelProgress": "Level {{level}} · {{current}}/{{target}}",
+    "streakProgress": "Streak · {{current}}/{{target}}",
+    "allStarsProgress": "3 stars · {{current}}/{{target}}"
   }
 }
