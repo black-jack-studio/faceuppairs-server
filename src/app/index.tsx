@@ -27,7 +27,7 @@ const homeDeal = dealHome(Math.random);
 // Label width of the two main buttons, so Career and Endless are exactly the same size.
 const HERO_BUTTON_WIDTH = 240;
 const HERO_OFFSET = 96;
-const SECONDARY_BUTTON_WIDTH = 118;
+const SECONDARY_BUTTON_WIDTH = 126;
 // Lets the home screen appear first, so the alert lands on the game rather than a blank screen.
 const FIRST_PROMPT_DELAY_MS = 600;
 const CONSENT_WAIT_MAX_MS = 8_000;

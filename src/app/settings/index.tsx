@@ -1,7 +1,7 @@
 import * as Application from "expo-application";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Alert, Linking, Platform, ScrollView, StyleSheet, Switch, Text } from "react-native";
+import { Alert, Linking, Platform, ScrollView, StyleSheet, Text } from "react-native";
 
 import { APP_NAME, SUPPORT_EMAIL } from "@/config/app";
 import { deviceLanguage } from "@/i18n";
@@ -12,8 +12,11 @@ import { useProgress } from "@/store/progress";
 import { useSettings, type Language } from "@/store/settings";
 import { ListRow } from "@/ui/ListRow";
 import { Screen } from "@/ui/Screen";
+import { AppSwitch } from "@/ui/AppSwitch";
 import { Segmented } from "@/ui/Segmented";
 import { colors } from "@/ui/theme";
+
+const LANGUAGE_PICKER_WIDTH = 124;
 
 export default function Settings() {
   const { t } = useTranslation("settings");
@@ -64,17 +67,18 @@ export default function Settings() {
         <ListRow label={t("nickname")} value={nickname ?? t("nicknameUnset")} onPress={() => router.push("/settings/username")} />
         <ListRow
           label={t("haptics")}
-          accessory={<Switch value={haptics} onValueChange={setHaptics} accessibilityLabel={t("haptics")} />}
+          accessory={<AppSwitch value={haptics} onValueChange={setHaptics} label={t("haptics")} />}
         />
         <ListRow
           label={t("notifications")}
-          accessory={<Switch value={reminders} onValueChange={toggleReminders} accessibilityLabel={t("notifications")} />}
+          accessory={<AppSwitch value={reminders} onValueChange={toggleReminders} label={t("notifications")} />}
         />
         <ListRow
           label={t("language")}
           accessory={
             <Segmented
               accessibilityLabel={t("language")}
+              width={LANGUAGE_PICKER_WIDTH}
               value={language}
               onChange={(lang: Language) => setLanguage(lang)}
               options={[

@@ -11,9 +11,11 @@ interface SegmentedProps<T extends string> {
   onChange: (value: T) => void;
   accessibilityLabel: string;
   stretch?: boolean;
+  /** Fixed width, for a control sitting next to a label. */
+  width?: number;
 }
 
-export function Segmented<T extends string>({ options, value, onChange, accessibilityLabel, stretch = false }: SegmentedProps<T>) {
+export function Segmented<T extends string>({ options, value, onChange, accessibilityLabel, stretch = false, width }: SegmentedProps<T>) {
   // iOS 26+: Apple's own segmented control, which draws the Liquid Glass selection itself.
   if (USE_LIQUID_GLASS) {
     return (
@@ -22,7 +24,12 @@ export function Segmented<T extends string>({ options, value, onChange, accessib
           label={accessibilityLabel}
           selection={value}
           onSelectionChange={(selection) => onChange(selection as T)}
-          modifiers={[pickerStyle("segmented"), controlSize("large"), ...(stretch ? [frame({ maxWidth: Infinity })] : [])]}
+          modifiers={[
+            pickerStyle("segmented"),
+            // Full-width tab bars get the large size; a picker next to a label stays regular.
+            controlSize(stretch ? "large" : "regular"),
+            ...(stretch ? [frame({ maxWidth: Infinity })] : width !== undefined ? [frame({ width })] : []),
+          ]}
         >
           {options.map((option) => (
             <SwiftText key={option.value} modifiers={[tag(option.value)]}>
@@ -34,7 +41,7 @@ export function Segmented<T extends string>({ options, value, onChange, accessib
     );
   }
   return (
-    <View style={[styles.track, stretch && styles.stretch]} accessibilityRole="radiogroup" accessibilityLabel={accessibilityLabel}>
+    <View style={[styles.track, stretch && styles.stretch, width !== undefined && { width }]} accessibilityRole="radiogroup" accessibilityLabel={accessibilityLabel}>
       {options.map((option) => {
         const selected = option.value === value;
         return (
@@ -43,7 +50,7 @@ export function Segmented<T extends string>({ options, value, onChange, accessib
             onPress={() => onChange(option.value)}
             accessibilityRole="radio"
             accessibilityState={{ checked: selected }}
-            style={[styles.segment, stretch && styles.segmentStretch, selected && styles.selected]}
+            style={[styles.segment, (stretch || width !== undefined) && styles.segmentStretch, selected && styles.selected]}
           >
             <Text style={[styles.text, selected && styles.textSelected]} numberOfLines={1}>
               {option.label}

@@ -15,6 +15,8 @@ import {
   foregroundStyle,
   frame,
   labelStyle,
+  lineLimit,
+  minimumScaleFactor,
 } from "@expo/ui/swift-ui/modifiers";
 import { isGlassEffectAPIAvailable, isLiquidGlassAvailable } from "expo-glass-effect";
 import { router } from "expo-router";
@@ -72,6 +74,9 @@ function GlassButton({ label, onPress, variant = "secondary", size = "regular", 
       <SwiftText
         modifiers={[
           font({ size: FONT_SIZE[size], weight: size === "hero" ? "bold" : "semibold" }),
+          // A label never wraps: it shrinks a little first ("Daily Challenge" on two lines looked broken).
+          lineLimit(1),
+          minimumScaleFactor(0.8),
           ...(variant === "destructive" ? [foregroundStyle(colors.danger)] : []),
           ...sizing,
         ]}
