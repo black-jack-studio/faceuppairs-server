@@ -1,5 +1,3 @@
-import { getPack } from "@/game/iconPacks";
-
 import type { Fx } from "./store";
 
 // Each pack hides one pair that sets off its own little show when it's found.
@@ -18,13 +16,4 @@ const SECRET_PAIRS: Record<string, { slot: number; fx: Fx }> = {
 export function secretPairFx(packId: string, slot: string): Fx | null {
   const secret = SECRET_PAIRS[packId];
   return secret && Number(slot) === secret.slot ? secret.fx : null;
-}
-
-/** For the dev gallery: every pack's secret pair and its effect. */
-export function allSecretPairs(): { packId: string; asset: string; fx: Fx }[] {
-  return Object.entries(SECRET_PAIRS).map(([packId, { slot, fx }]) => ({
-    packId,
-    asset: getPack(packId).icons[slot].asset,
-    fx,
-  }));
 }
