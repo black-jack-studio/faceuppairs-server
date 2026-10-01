@@ -6,6 +6,7 @@ import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { BOOSTER_PRICES, type BoosterId } from "@/game/economy";
 import { ICON_PACKS, type IconPack } from "@/game/iconPacks";
 import { track } from "@/lib/analytics";
+import { appIconsSupported } from "@/lib/appIcons";
 import { formatScore } from "@/lib/format";
 import { hapticSuccess, hapticTick } from "@/lib/haptics";
 import {
@@ -140,6 +141,14 @@ export default function Shop() {
             ))}
           </View>
         </Section>
+
+        {appIconsSupported && (
+          <Section title={t("appIcons.title")}>
+            <Item title={t("appIcons.shopTeaser")}>
+              <AppButton label={t("appIcons.see")} onPress={() => router.push("/app-icon")} />
+            </Item>
+          </Section>
+        )}
 
         <View style={styles.footer}>
           {store.available && (

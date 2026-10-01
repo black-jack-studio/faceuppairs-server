@@ -34,12 +34,18 @@ interface AdsState {
    * wait for it: iOS shows one modal at a time, and a dropped consent form means no ads at all.
    */
   consentSettled: boolean;
+  /**
+   * UMP answered, so privacyOptionsRequired reflects the player's region. False when consent
+   * couldn't be gathered (offline, no ad units): other consent decisions then assume it applies.
+   */
+  consentRegionKnown: boolean;
 }
 
 export const useAds = create<AdsState>(() => ({
   rewardedReady: false,
   privacyOptionsRequired: false,
   consentSettled: false,
+  consentRegionKnown: false,
 }));
 
 let initialized = false;
@@ -62,6 +68,7 @@ export async function initAds(): Promise<void> {
     useAds.setState({
       privacyOptionsRequired: consent.privacyOptionsRequirementStatus === AdsConsentPrivacyOptionsRequirementStatus.REQUIRED,
       consentSettled: true,
+      consentRegionKnown: true,
     });
     if (!consent.canRequestAds) return;
     await mobileAds().initialize();

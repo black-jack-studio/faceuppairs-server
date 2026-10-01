@@ -29,7 +29,7 @@
       },
       {
         "title": "Mesure d'audience",
-        "body": "Nous mesurons l'usage de l'application (écrans visités, parties jouées, achats et publicités vus) avec PostHog, rattaché à ton identifiant anonyme, afin d'améliorer le jeu. Ces données ne sont ni vendues ni utilisées pour la publicité."
+        "body": "Nous mesurons l'usage de l'application (écrans visités, parties jouées, achats et publicités vus) avec PostHog, rattaché à ton identifiant anonyme, afin d'améliorer le jeu. Ces données ne sont ni vendues ni utilisées pour la publicité. Dans l'Espace économique européen et au Royaume-Uni, cette mesure reste désactivée tant que tu ne l'as pas activée ; partout, tu peux l'activer ou la couper à tout moment dans Réglages → Statistiques d'usage."
       },
       {
         "title": "Ce que nous ne collectons pas",

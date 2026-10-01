@@ -3,14 +3,17 @@ import { useRef, useState } from "react";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Alert, Linking, Platform, ScrollView, StyleSheet, Text } from "react-native";
+import { useShallow } from "zustand/react/shallow";
 
 import { APP_NAME, SUPPORT_EMAIL } from "@/config/app";
 import { deviceLanguage } from "@/i18n";
 import { showAdPrivacyOptions, useAds } from "@/lib/ads";
+import { analyticsAvailable } from "@/lib/analytics";
+import { appIconsSupported } from "@/lib/appIcons";
 import { restore } from "@/lib/purchases";
 import { cancelReminders, notificationStatus, requestNotifications, scheduleReminders } from "@/lib/reminders";
 import { useProgress } from "@/store/progress";
-import { useSettings, type Language } from "@/store/settings";
+import { analyticsAllowed, useSettings, type Language } from "@/store/settings";
 import { ListRow } from "@/ui/ListRow";
 import { Screen } from "@/ui/Screen";
 import { AppSwitch } from "@/ui/AppSwitch";
@@ -32,6 +35,14 @@ export default function Settings() {
   const setLanguage = useSettings((s) => s.setLanguage);
   const nickname = useProgress((s) => s.nickname);
   const adPrivacyRequired = useAds((s) => s.privacyOptionsRequired);
+  const consent = useAds(
+    useShallow((s) => ({
+      consentSettled: s.consentSettled,
+      consentRegionKnown: s.consentRegionKnown,
+      privacyOptionsRequired: s.privacyOptionsRequired,
+    })),
+  );
+  const analytics = analyticsAllowed(useSettings((s) => s.analytics), consent);
   const version = Application.nativeApplicationVersion ?? "dev";
   // Seven quick taps on the version number open the credits (an easter egg, like Android's
   // developer options).
@@ -91,6 +102,7 @@ export default function Settings() {
           label={t("notifications")}
           accessory={<AppSwitch value={reminders} onValueChange={toggleReminders} label={t("notifications")} />}
         />
+        {appIconsSupported && <ListRow label={t("appIcon")} onPress={() => router.push("/app-icon")} />}
         <ListRow
           label={t("language")}
           accessory={
@@ -114,6 +126,14 @@ export default function Settings() {
         <ListRow label={t("privacy")} onPress={() => router.push("/settings/privacy")} />
         {/* Google UMP: where consent applies (EEA/UK), a player must be able to change it later. */}
         {adPrivacyRequired && <ListRow label={t("adPrivacy")} onPress={showAdPrivacyOptions} />}
+        {analyticsAvailable && (
+          <ListRow
+            label={t("analytics")}
+            accessory={
+              <AppSwitch value={analytics} onValueChange={useSettings.getState().setAnalytics} label={t("analytics")} />
+            }
+          />
+        )}
         <ListRow
           label={t("credits")}
           onPress={() => router.push({ pathname: "/legal/[doc]", params: { doc: "credits" } })}

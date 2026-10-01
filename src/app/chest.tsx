@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { canClaimDaily, localDay, nextStreakDay, STREAK_REWARDS } from "@/game/economy";
 import { showRewarded, useAds } from "@/lib/ads";
 import { track } from "@/lib/analytics";
+import { announceEarnedAppIcons } from "@/lib/appIcons";
 import { formatCountdown, nextLocalMidnight } from "@/lib/format";
 import { hapticSuccess } from "@/lib/haptics";
 import { requestNotifications, scheduleReminders } from "@/lib/reminders";
@@ -34,6 +35,8 @@ export default function Chest() {
     setClaimed(result);
     hapticSuccess();
     track("chest_claimed", { day: currentDay, coins: result.coins });
+    // A 7-day streak unlocks an app icon.
+    setTimeout(() => announceEarnedAppIcons(t), 900);
     afterClaim();
   };
 

@@ -26,6 +26,8 @@ interface WalletData {
   lastInterstitialAt: number | null;
   /** Daily Challenge: one ranked attempt per UTC day. */
   daily: { day: string | null; played: boolean; bestScore: number };
+  /** Home-screen icons bought with coins or earned by playing (kept even if a streak breaks). */
+  ownedAppIcons: string[];
 }
 
 interface WalletState extends WalletData {
@@ -37,6 +39,7 @@ interface WalletState extends WalletData {
   consumeBooster: (id: BoosterId) => boolean;
   claimDaily: (today: string) => { coins: number; bonusHint: boolean };
   unlockPack: (id: string) => void;
+  unlockAppIcons: (ids: string[]) => void;
   setActivePack: (id: string) => void;
   setEntitlements: (e: { adsRemoved?: boolean; isPlus?: boolean; hasPurchased?: boolean; starterPackBought?: boolean }) => void;
   noteGameFinished: () => void;
@@ -58,6 +61,7 @@ const initial: WalletData = {
   gamesSinceInterstitial: 0,
   lastInterstitialAt: null,
   daily: { day: null, played: false, bestScore: 0 },
+  ownedAppIcons: [],
 };
 
 export const useWallet = create<WalletState>()(
@@ -91,6 +95,11 @@ export const useWallet = create<WalletState>()(
       },
       unlockPack: (id) => set((s) => (s.ownedPacks.includes(id) ? s : { ownedPacks: [...s.ownedPacks, id] })),
       setActivePack: (id) => set({ activePack: id }),
+      unlockAppIcons: (ids) =>
+        set((s) => {
+          const fresh = ids.filter((id) => !s.ownedAppIcons.includes(id));
+          return fresh.length ? { ownedAppIcons: [...s.ownedAppIcons, ...fresh] } : s;
+        }),
       setEntitlements: (e) =>
         set((s) => ({
           adsRemoved: e.adsRemoved ?? s.adsRemoved,

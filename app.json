@@ -23,7 +23,10 @@
       },
       "infoPlist": {
         "CFBundleDevelopmentRegion": "en",
-        "CFBundleLocalizations": ["en", "fr"],
+        "CFBundleLocalizations": [
+          "en",
+          "fr"
+        ],
         "CFBundleAllowMixedLocalizations": true
       },
       "privacyManifests": {
@@ -48,19 +51,25 @@
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeGameplayContent",
             "NSPrivacyCollectedDataTypeLinked": true,
             "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
           },
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeOtherUserContent",
             "NSPrivacyCollectedDataTypeLinked": true,
             "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
           },
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypePurchaseHistory",
             "NSPrivacyCollectedDataTypeLinked": true,
             "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
           },
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeProductInteraction",
@@ -75,19 +84,25 @@
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeAdvertisingData",
             "NSPrivacyCollectedDataTypeLinked": true,
             "NSPrivacyCollectedDataTypeTracking": true,
-            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"]
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+            ]
           },
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
             "NSPrivacyCollectedDataTypeLinked": true,
             "NSPrivacyCollectedDataTypeTracking": true,
-            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"]
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+            ]
           }
         ],
         "NSPrivacyAccessedAPITypes": [
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
           }
         ]
       }
@@ -145,7 +160,68 @@
           "color": "#FFFFFF"
         }
       ],
-      "expo-dev-client"
+      "expo-dev-client",
+      [
+        "expo-alternate-app-icons",
+        [
+          {
+            "name": "Night",
+            "ios": "./assets/images/app-icons/night.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/night-foreground.png",
+              "backgroundColor": "#000000"
+            }
+          },
+          {
+            "name": "Gold",
+            "ios": "./assets/images/app-icons/gold.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/gold-foreground.png",
+              "backgroundColor": "#000000"
+            }
+          },
+          {
+            "name": "Blue",
+            "ios": "./assets/images/app-icons/blue.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/blue-foreground.png",
+              "backgroundColor": "#0A84FF"
+            }
+          },
+          {
+            "name": "Red",
+            "ios": "./assets/images/app-icons/red.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/red-foreground.png",
+              "backgroundColor": "#FF3B30"
+            }
+          },
+          {
+            "name": "Violet",
+            "ios": "./assets/images/app-icons/violet.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/violet-foreground.png",
+              "backgroundColor": "#5E5CE6"
+            }
+          },
+          {
+            "name": "Mint",
+            "ios": "./assets/images/app-icons/mint.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/mint-foreground.png",
+              "backgroundColor": "#30D158"
+            }
+          },
+          {
+            "name": "Candy",
+            "ios": "./assets/images/app-icons/candy.png",
+            "android": {
+              "foregroundImage": "./assets/images/app-icons/candy-foreground.png",
+              "backgroundColor": "#FF8FC7"
+            }
+          }
+        ]
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

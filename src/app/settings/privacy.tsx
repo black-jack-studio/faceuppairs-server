@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Alert, ScrollView } from "react-native";
 
 import { deleteAccount } from "@/lib/account";
+import { resetAnalytics } from "@/lib/analytics";
 import { clearQueuedRuns } from "@/lib/runQueue";
 import { useProgress } from "@/store/progress";
 import { useSettings } from "@/store/settings";
@@ -28,6 +29,7 @@ export default function Privacy() {
         style: "destructive",
         onPress: async () => {
           await deleteAccount();
+          resetAnalytics();
           await clearQueuedRuns();
           useProgress.getState().reset();
           useSettings.getState().reset();

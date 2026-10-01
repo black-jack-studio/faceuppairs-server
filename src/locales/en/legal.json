@@ -29,7 +29,7 @@
       },
       {
         "title": "Analytics",
-        "body": "We measure how the app is used (screens visited, games played, purchases and ads seen) with PostHog, linked to your anonymous ID, to improve the game. This data is never sold or used for advertising."
+        "body": "We measure how the app is used (screens visited, games played, purchases and ads seen) with PostHog, linked to your anonymous ID, to improve the game. This data is never sold or used for advertising. In the European Economic Area and the United Kingdom it stays off until you turn it on; anywhere, you can turn it on or off at any time in Settings → Usage statistics."
       },
       {
         "title": "What we don't collect",

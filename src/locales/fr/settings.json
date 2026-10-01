@@ -51,5 +51,7 @@
       "cooldown_one": "Tu pourras changer de pseudo dans {{count}} jour.",
       "cooldown_other": "Tu pourras changer de pseudo dans {{count}} jours."
     }
-  }
+  },
+  "appIcon": "Icône de l'app",
+  "analytics": "Statistiques d'usage"
 }

@@ -228,5 +228,32 @@
         "You're a machine"
       ]
     }
+  },
+  "appIcons": {
+    "title": "App icon",
+    "shopTeaser": "Change your home screen icon",
+    "names": {
+      "original": "Original",
+      "night": "Night",
+      "gold": "Gold",
+      "blue": "Blue",
+      "red": "Red",
+      "violet": "Violet",
+      "mint": "Mint",
+      "candy": "Candy"
+    },
+    "inUse": "In use",
+    "available": "Available",
+    "price": "{{price}} coins",
+    "level": "Finish level {{level}}",
+    "streak": "{{days}}-day streak",
+    "allStars": "All 100 levels at 3 stars",
+    "buyTitle": "Unlock {{name}}?",
+    "buyBody": "For {{price}} coins.",
+    "buy": "Unlock",
+    "unlockedTitle": "New icon unlocked!",
+    "unlockedBody": "{{name}} is waiting in the icon gallery.",
+    "see": "See",
+    "later": "Later"
   }
 }

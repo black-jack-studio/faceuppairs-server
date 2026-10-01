@@ -228,5 +228,32 @@
         "T'es une machine"
       ]
     }
+  },
+  "appIcons": {
+    "title": "Icône de l'app",
+    "shopTeaser": "Change l'icône de ton écran d'accueil",
+    "names": {
+      "original": "Original",
+      "night": "Nuit",
+      "gold": "Or",
+      "blue": "Bleu",
+      "red": "Rouge",
+      "violet": "Violet",
+      "mint": "Menthe",
+      "candy": "Bonbon"
+    },
+    "inUse": "Utilisée",
+    "available": "Disponible",
+    "price": "{{price}} pièces",
+    "level": "Finis le niveau {{level}}",
+    "streak": "Série de {{days}} jours",
+    "allStars": "100 niveaux en 3 étoiles",
+    "buyTitle": "Débloquer {{name}} ?",
+    "buyBody": "Pour {{price}} pièces.",
+    "buy": "Débloquer",
+    "unlockedTitle": "Nouvelle icône débloquée !",
+    "unlockedBody": "{{name}} t'attend dans la galerie d'icônes.",
+    "see": "Voir",
+    "later": "Plus tard"
   }
 }

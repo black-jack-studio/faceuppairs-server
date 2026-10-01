@@ -4,18 +4,19 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AppState } from "react-native";
+import { useShallow } from "zustand/react/shallow";
 
 import { applyLanguage } from "@/i18n";
 import { ensureAccount, flushPendingDeletion } from "@/lib/account";
-import { initAds } from "@/lib/ads";
-import { identify } from "@/lib/analytics";
+import { initAds, useAds } from "@/lib/ads";
+import { identify, setAnalyticsEnabled } from "@/lib/analytics";
 import { flushNickname } from "@/lib/nickname";
 import { FxLayer } from "@/fx/FxLayer";
 import { initPurchases } from "@/lib/purchases";
 import { scheduleReminders } from "@/lib/reminders";
 import { flushRuns } from "@/lib/runQueue";
 import { useProgress } from "@/store/progress";
-import { useSettings } from "@/store/settings";
+import { analyticsAllowed, useSettings } from "@/store/settings";
 import { useWallet } from "@/store/wallet";
 import { colors } from "@/ui/theme";
 
@@ -52,11 +53,25 @@ async function syncWithServer() {
 export default function RootLayout() {
   const hydrated = useStoresHydrated();
   const language = useSettings((s) => s.language);
+  const analyticsChoice = useSettings((s) => s.analytics);
+  const consent = useAds(
+    useShallow((s) => ({
+      consentSettled: s.consentSettled,
+      consentRegionKnown: s.consentRegionKnown,
+      privacyOptionsRequired: s.privacyOptionsRequired,
+    })),
+  );
   const { t } = useTranslation();
 
   useEffect(() => {
     applyLanguage(language);
   }, [language]);
+
+  // GDPR / CNIL: usage statistics only with consent where the law requires it.
+  const analyticsOn = analyticsAllowed(analyticsChoice, consent);
+  useEffect(() => {
+    setAnalyticsEnabled(analyticsOn);
+  }, [analyticsOn]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -98,6 +113,7 @@ export default function RootLayout() {
         <Stack.Screen name="legal/[doc]" options={{ ...sheet, sheetAllowedDetents: [0.75, 1] }} />
         <Stack.Screen name="settings/username" options={{ ...sheet, sheetAllowedDetents: [0.6] }} />
         <Stack.Screen name="chest" options={{ ...sheet, sheetAllowedDetents: "fitToContents" }} />
+        <Stack.Screen name="app-icon" options={{ ...sheet, sheetAllowedDetents: "fitToContents" }} />
       </Stack>
       <FxLayer />
     </>
