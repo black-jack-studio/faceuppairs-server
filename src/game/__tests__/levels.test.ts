@@ -23,6 +23,16 @@ describe("levels", () => {
     }
   });
 
+  it("uses the same star rules for every level with the same grid size", () => {
+    const rulesBySize = new Map<number, string>();
+    for (const level of LEVELS) {
+      const rules = `${level.moves3}/${level.moves2}/${level.seconds3}`;
+      const size = level.board.pairs;
+      expect(rulesBySize.get(size) ?? rules).toBe(rules);
+      rulesBySize.set(size, rules);
+    }
+  });
+
   it("awards stars on moves and time", () => {
     const level = getLevel(10)!;
     expect(starsFor(level, level.moves3, level.seconds3 * 1000)).toBe(3);

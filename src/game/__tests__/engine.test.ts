@@ -1,5 +1,5 @@
 import { setupBoard } from "../board";
-import { createGame, elapsedMs, flip, partnerOf, replay, resolveMismatch, type GameState } from "../engine";
+import { adjacentPairs, createGame, elapsedMs, flip, partnerOf, replay, resolveMismatch, type GameState } from "../engine";
 import { createRng } from "../rng";
 
 const config = { pairs: 8, lookalikeRatio: 0, revealMs: 600 };
@@ -115,5 +115,16 @@ describe("replay", () => {
     expect(replayed.phase).toBe("complete");
     expect(replayed.moves).toBe(state.moves);
     expect(replayed.memoryErrors).toBe(state.memoryErrors);
+  });
+});
+
+describe("shuffle", () => {
+  it("never leaves a pair side by side or stacked", () => {
+    for (let seed = 1; seed <= 300; seed++) {
+      for (const pairs of [6, 8, 10, 12, 14, 16]) {
+        const icons = Array.from({ length: pairs }, (_, i) => String(i));
+        expect(adjacentPairs(createGame(icons, createRng(seed)).icons)).toBe(0);
+      }
+    }
   });
 });

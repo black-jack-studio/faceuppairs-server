@@ -31,7 +31,8 @@ import { colors } from "@/ui/theme";
 
 type Mode = "endless" | "daily";
 const NEXT_BOARD_DELAY_MS = 700;
-const LIFE_SIZE = 18;
+// Five hearts must fit the header's 88 pt side slot.
+const LIFE_SIZE = 16;
 const RESULT_BUTTON_WIDTH = 220;
 
 interface Session {
@@ -357,7 +358,7 @@ const styles = StyleSheet.create({
   },
   lives: {
     flexDirection: "row",
-    gap: 2,
+    gap: 1,
   },
   lifeLost: {
     opacity: 0.2,

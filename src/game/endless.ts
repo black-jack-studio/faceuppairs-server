@@ -1,6 +1,6 @@
 import type { BoardConfig } from "./board";
 
-export const STARTING_LIVES = 3;
+export const STARTING_LIVES = 5;
 
 export const SCORING = {
   pointsPerPair: 100,

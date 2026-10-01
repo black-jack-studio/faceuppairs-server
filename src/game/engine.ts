@@ -29,8 +29,24 @@ export type FlipResult =
   | { kind: "match"; icon: string; streak: number; complete: boolean }
   | { kind: "mismatch"; memoryError: boolean };
 
+export const GRID_COLUMNS = 4;
+const SPREAD_ATTEMPTS = 200;
+
+/** Pairs whose two cards touch (side by side or one above the other). */
+export function adjacentPairs(icons: readonly string[]): number {
+  let count = 0;
+  icons.forEach((icon, i) => {
+    if (i % GRID_COLUMNS < GRID_COLUMNS - 1 && icons[i + 1] === icon) count++;
+    if (icons[i + GRID_COLUMNS] === icon) count++;
+  });
+  return count;
+}
+
 export function createGame(pairIcons: readonly string[], rng: Rng): GameState {
-  const icons = shuffle([...pairIcons, ...pairIcons], rng);
+  // Pure chance leaves ~1.6 pairs touching on a 4×4 board, which reads as a lazy shuffle.
+  // Reshuffle with the same rng until no pair touches: still deterministic for the server.
+  let icons = shuffle([...pairIcons, ...pairIcons], rng);
+  for (let attempt = 0; attempt < SPREAD_ATTEMPTS && adjacentPairs(icons) > 0; attempt++) icons = shuffle(icons, rng);
   return {
     icons,
     matched: icons.map(() => false),

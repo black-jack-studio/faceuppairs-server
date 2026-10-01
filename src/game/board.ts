@@ -10,7 +10,7 @@ export interface BoardConfig {
   revealMs: number;
 }
 
-export const GRID_COLUMNS = 4;
+export { GRID_COLUMNS } from "./engine";
 
 /** Same seed + same config always yields the same board, on the device and on the server. */
 export function setupBoard(seed: number, config: BoardConfig): GameState {

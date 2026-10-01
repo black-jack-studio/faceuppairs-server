@@ -12,29 +12,35 @@ export interface Level {
   seconds3: number;
 }
 
-export const LEVEL_COUNT = 60;
+export const LEVEL_COUNT = 100;
 
-// With perfect memory, clearing n pairs takes about 1.6n moves on average; 3 stars asks for
-// close to that, 2 stars leaves room for a few slips.
+// One more row of 4 cards every 20 levels after a short 3-row intro: 12 → 16 → 20 → 24 → 28 → 32.
 function rowsFor(level: number): number {
-  if (level <= 2) return 3;
-  if (level <= 25) return 4;
-  if (level <= 45) return 5;
-  return 6;
+  if (level <= 4) return 3;
+  return Math.min(4 + Math.floor((level - 5) / 20), 8);
 }
 
+// With perfect memory, clearing n pairs takes about 1.6n moves on average; 3 stars asks for
+// close to that, 2 stars leaves room for a few slips. Star thresholds depend only on the grid
+// size (same rules for every level with the same number of rows); the 3-star clock goes from
+// 4 s per pair on 3 rows to 3 s on 8. Within a size, look-alikes and a shorter mismatch reveal
+// carry the difficulty (look-alikes reach 100 % around level 80).
+function secondsPerPair(rows: number): number {
+  return 4 - (rows - 3) * 0.2;
+}
 function buildLevel(number: number): Level {
-  const pairs = (rowsFor(number) * 4) / 2;
+  const rows = rowsFor(number);
+  const pairs = (rows * 4) / 2;
   const progress = (number - 1) / (LEVEL_COUNT - 1);
-  const lookalikeRatio = number <= 5 ? 0 : Math.min(0.2 + progress * 0.8, 1);
-  const revealMs = Math.round(900 - progress * 450);
+  const lookalikeRatio = number <= 4 ? 0 : Math.min(0.2 + progress, 1);
+  const revealMs = Math.round(900 - progress * 500);
 
   return {
     number,
     board: { pairs, lookalikeRatio, revealMs },
     moves3: Math.ceil(pairs * 1.75),
     moves2: Math.ceil(pairs * 2.5),
-    seconds3: pairs * 4,
+    seconds3: Math.round(pairs * secondsPerPair(rows)),
   };
 }
 

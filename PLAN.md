@@ -72,7 +72,7 @@ Pas de compte, mais le serveur stocke un identifiant anonyme + pseudo + scores. 
 - Paquet de 8 paires tirées dans le pool d'emojis, mélange avec une graine (`seed`) → une partie est rejouable à l'identique, ce qui permet au serveur de **recalculer le score** (anti-triche).
 - États : `idle → une carte retournée → deux cartes → résolution (paire : restent visibles ; sinon se retournent après ~600 ms, saisie bloquée) → terminé`.
 - **Carrière** : niveaux définis dans `levels.ts` (nombre de paires, pool d'icônes, présence de distracteurs), 1 à 3 étoiles selon coups + temps.
-- **Infini** : grilles enchaînées, 3 vies. Une vie se perd sur une **erreur de mémoire** : rater une paire alors que la carte correspondante avait déjà été vue. Un raté "à l'aveugle" (carte jamais vue) ne coûte rien — c'est ce qui rend le mode vraiment basé sur la mémoire.
+- **Infini** : grilles enchaînées, 5 vies. Une vie se perd sur une **erreur de mémoire** : rater une paire alors que la carte correspondante avait déjà été vue. Un raté "à l'aveugle" (carte jamais vue) ne coûte rien — c'est ce qui rend le mode vraiment basé sur la mémoire.
 - Score Infini v1 : 100 pts par paire × multiplicateur de série (x1 → x5, remis à x1 sur un raté) + bonus de grille terminée + bonus de vitesse. Constantes regroupées dans `scoring.ts` pour être réglées après les premiers tests.
 
 ## 5. Leaderboard global (étape à part)
@@ -88,7 +88,7 @@ Pas de compte, mais le serveur stocke un identifiant anonyme + pseudo + scores. 
 src/app/                   écrans (expo-router)
   _layout.tsx              stack, splash tenu jusqu'au chargement de la progression
   index.tsx                accueil : Carrière / Infini / Réglages
-  career.tsx               carte des 60 niveaux
+  career.tsx               carte des 100 niveaux
   play/level/[n].tsx       partie Carrière
   play/endless.tsx         partie Infini
   settings/index.tsx       réglages
@@ -108,7 +108,7 @@ src/
 
 ## 7. Ordre de livraison
 
-1. ✅ **Fait** — scaffold Expo SDK 57 + `app.json` conforme, tokens de design, moteur + 46 tests, Carrière (60 niveaux, étoiles), progression locale, Réglages + pages légales + règles du jeu en FR/EN, filtre de pseudos, suppression des données.
+1. ✅ **Fait** — scaffold Expo SDK 57 + `app.json` conforme, tokens de design, moteur + 46 tests, Carrière (100 niveaux, étoiles), progression locale, Réglages + pages légales + règles du jeu en FR/EN, filtre de pseudos, suppression des données.
 2. ✅ **Fait (v1 jouable)** — mode Infini (vies, série, score, record local). Reste : réglage fin des constantes après tests en main.
 3. **Tout le reste, d'abord en local, puis en ligne** (décision : tout faire, cf. `MONETISATION.md`) — détail en §8.
 4. Préparation stores : icône, splash, captures, fiches, classification d'âge, Data safety, builds EAS.
