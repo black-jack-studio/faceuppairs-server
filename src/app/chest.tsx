@@ -121,7 +121,7 @@ export default function Chest() {
           <AppButtonGroup buttons={[{ label: t("chest.doubleAd"), size: "large", onPress: double }]} />
         ) : (
           <Text style={styles.subtitle}>
-            {t("chest.claimed")} · {formatCountdown(nextLocalMidnight(), i18n.language)}
+            {formatCountdown(nextLocalMidnight(), i18n.language)}
           </Text>
         )}
       </View>

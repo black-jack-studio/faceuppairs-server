@@ -120,7 +120,6 @@
     "title": "Coffre du jour",
     "day": "J{{n}}",
     "claim": "Récupérer",
-    "claimed": "Reviens demain",
     "streak_one": "Série : {{count}} jour",
     "streak_other": "Série : {{count}} jours",
     "reward": "+{{count}} pièces",

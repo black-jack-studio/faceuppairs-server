@@ -120,7 +120,6 @@
     "title": "Daily chest",
     "day": "D{{n}}",
     "claim": "Collect",
-    "claimed": "Come back tomorrow",
     "streak_one": "Streak: {{count}} day",
     "streak_other": "Streak: {{count}} days",
     "reward": "+{{count}} coins",
