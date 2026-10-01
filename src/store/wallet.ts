@@ -28,6 +28,8 @@ interface WalletData {
   daily: { day: string | null; played: boolean; bestScore: number };
   /** Home-screen icons bought with coins or earned by playing (kept even if a streak breaks). */
   ownedAppIcons: string[];
+  /** Icons earned but not yet celebrated: shown one by one when the player is back home. */
+  pendingIconReveals: string[];
 }
 
 interface WalletState extends WalletData {
@@ -40,6 +42,9 @@ interface WalletState extends WalletData {
   claimDaily: (today: string) => { coins: number; bonusHint: boolean };
   unlockPack: (id: string) => void;
   unlockAppIcons: (ids: string[]) => void;
+  queueIconReveals: (ids: string[]) => void;
+  /** Takes the next icon to celebrate off the queue. */
+  takeIconReveal: () => string | null;
   setActivePack: (id: string) => void;
   setEntitlements: (e: { adsRemoved?: boolean; isPlus?: boolean; hasPurchased?: boolean; starterPackBought?: boolean }) => void;
   noteGameFinished: () => void;
@@ -62,6 +67,7 @@ const initial: WalletData = {
   lastInterstitialAt: null,
   daily: { day: null, played: false, bestScore: 0 },
   ownedAppIcons: [],
+  pendingIconReveals: [],
 };
 
 export const useWallet = create<WalletState>()(
@@ -95,6 +101,14 @@ export const useWallet = create<WalletState>()(
       },
       unlockPack: (id) => set((s) => (s.ownedPacks.includes(id) ? s : { ownedPacks: [...s.ownedPacks, id] })),
       setActivePack: (id) => set({ activePack: id }),
+      queueIconReveals: (ids) =>
+        set((s) => ({ pendingIconReveals: [...s.pendingIconReveals, ...ids.filter((id) => !s.pendingIconReveals.includes(id))] })),
+      takeIconReveal: () => {
+        const [next, ...rest] = get().pendingIconReveals;
+        if (!next) return null;
+        set({ pendingIconReveals: rest });
+        return next;
+      },
       unlockAppIcons: (ids) =>
         set((s) => {
           const fresh = ids.filter((id) => !s.ownedAppIcons.includes(id));

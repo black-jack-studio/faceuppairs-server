@@ -23,21 +23,12 @@ import { formatScore } from "@/lib/format";
 import { hapticSuccess, hapticTick } from "@/lib/haptics";
 import { useWallet } from "@/store/wallet";
 import { AppButton, CloseButton } from "@/ui/AppButton";
+import { APP_ICON_PREVIEWS } from "@/ui/appIconPreviews";
 import { colors, space } from "@/ui/theme";
 
 // Leave the sheet's dismissal animation time before opening the next screen.
 const SHEET_CLOSE_MS = 350;
 
-const PREVIEWS: Record<string, number> = {
-  original: require("../../assets/images/app-icons/original-preview.png"),
-  night: require("../../assets/images/app-icons/night-preview.png"),
-  blue: require("../../assets/images/app-icons/blue-preview.png"),
-  red: require("../../assets/images/app-icons/red-preview.png"),
-  candy: require("../../assets/images/app-icons/candy-preview.png"),
-  mint: require("../../assets/images/app-icons/mint-preview.png"),
-  violet: require("../../assets/images/app-icons/violet-preview.png"),
-  gold: require("../../assets/images/app-icons/gold-preview.png"),
-};
 const COLUMNS = 2;
 const COLUMN_GAP = 20;
 // Extra room the glass capsule adds around its label.
@@ -153,7 +144,7 @@ export default function AppIconGallery() {
           return (
             <View key={icon.id} style={[styles.tile, { width: tile }]}>
               <Image
-                source={PREVIEWS[icon.id]}
+                source={APP_ICON_PREVIEWS[icon.id]}
                 style={[
                   {
                     width: iconSize,

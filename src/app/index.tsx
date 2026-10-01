@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -35,6 +35,8 @@ const SECONDARY_BUTTON_WIDTH = 126;
 // Lets the home screen appear first, so the alert lands on the game rather than a blank screen.
 const FIRST_PROMPT_DELAY_MS = 600;
 const CONSENT_WAIT_MAX_MS = 8_000;
+// Lets the home screen settle after the game closes before the sheet rises.
+const ICON_REVEAL_DELAY_MS = 500;
 
 export default function Home() {
   const { t, i18n } = useTranslation();
@@ -59,6 +61,17 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
   const takenNotice = useProgress((s) => s.nicknameTakenNotice);
+
+  // Back home after earning an app icon (level 25, all 3 stars, a 7-day streak): celebrate it.
+  useFocusEffect(
+    useCallback(() => {
+      const timer = setTimeout(() => {
+        const id = useWallet.getState().takeIconReveal();
+        if (id) router.push({ pathname: "/icon-unlocked", params: { id } });
+      }, ICON_REVEAL_DELAY_MS);
+      return () => clearTimeout(timer);
+    }, []),
+  );
 
   useEffect(() => {
     if (nickname !== null || nicknamePrompted || !(consentSettled || consentWaitOver)) return;

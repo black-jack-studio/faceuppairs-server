@@ -18,7 +18,7 @@ import { formatDuration } from "@/lib/format";
 import { hapticImpact } from "@/lib/haptics";
 import { leaveFinishedGame } from "@/lib/postGame";
 import { levelQuip } from "@/lib/quips";
-import { announceEarnedAppIcons } from "@/lib/appIcons";
+import { queueEarnedAppIcons } from "@/lib/appIcons";
 import { END_OF_GAME_DELAY_MS, useDelayedTrue } from "@/lib/useDelayedTrue";
 import { useLeaveGuard } from "@/lib/useLeaveGuard";
 import { useProgress } from "@/store/progress";
@@ -33,7 +33,6 @@ import { colors } from "@/ui/theme";
 // Ask for a review only after a clearly good moment, once (same restraint as FaceUp).
 const REVIEW_MIN_LEVEL = 5;
 const RESULT_BUTTON_WIDTH = 220;
-const APP_ICON_ANNOUNCE_DELAY_MS = 1800;
 
 export default function LevelScreen() {
   const { n } = useLocalSearchParams<{ n: string }>();
@@ -72,8 +71,8 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
     useWallet.getState().addCoins(coins);
     setCoinsEarned(coins);
     track("level_complete", { level: level.number, stars, moves: state.moves });
-    // Finishing level 25 or the last 3-star level can unlock an app icon.
-    setTimeout(() => announceEarnedAppIcons(t), APP_ICON_ANNOUNCE_DELAY_MS);
+    // Finishing level 25 or the last 3-star level can unlock an app icon (celebrated back home).
+    queueEarnedAppIcons();
     // Not a single memory slip: the full-screen celebration.
     if (state.memoryErrors === 0) {
       playFx({ kind: "perfect", emojis: getPack(useWallet.getState().activePack).icons.map((i) => i.asset) });
@@ -84,7 +83,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
         .then((available) => (available ? StoreReview.requestReview() : undefined))
         .catch(() => {});
     }
-  }, [complete, stars, level.number, previousStars, state.moves, state.memoryErrors, t]);
+  }, [complete, stars, level.number, previousStars, state.moves, state.memoryErrors]);
 
   // Uses an owned booster, or buys one with coins; offers the shop (or an ad, for hints) otherwise.
   const spendBooster = async (id: BoosterId, apply: () => void) => {

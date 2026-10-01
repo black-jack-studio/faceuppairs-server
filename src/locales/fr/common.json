@@ -250,13 +250,13 @@
     "buyBody": "Pour {{price}} pièces.",
     "buy": "Débloquer",
     "unlockedTitle": "Nouvelle icône débloquée !",
-    "unlockedBody": "{{name}} t'attend dans la galerie d'icônes.",
     "see": "Voir",
-    "later": "Plus tard",
     "use": "Utiliser",
     "buyFor": "Acheter · {{price}}",
     "levelProgress": "Niveau {{level}} · {{current}}/{{target}}",
     "streakProgress": "Série · {{current}}/{{target}}",
-    "allStarsProgress": "3 étoiles · {{current}}/{{target}}"
+    "allStarsProgress": "3 étoiles · {{current}}/{{target}}",
+    "equip": "Équiper",
+    "gallery": "Voir la galerie"
   }
 }

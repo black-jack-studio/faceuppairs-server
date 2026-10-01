@@ -1,7 +1,4 @@
 import { getAppIconName, setAlternateAppIcon, supportsAlternateIcons } from "expo-alternate-app-icons";
-import { router } from "expo-router";
-import type { TFunction } from "i18next";
-import { Alert } from "react-native";
 
 import { APP_ICONS, earnedByPlay, type AppIconDef } from "@/game/appIcons";
 import { useProgress } from "@/store/progress";
@@ -44,14 +41,12 @@ export function collectEarnedAppIcons(): AppIconDef[] {
   return fresh;
 }
 
-/** After a level or a chest: "New icon unlocked", with a shortcut to the gallery. */
-export function announceEarnedAppIcons(t: TFunction) {
+/**
+ * After a level or a chest: lock in what was just earned and queue it, so the "new icon"
+ * sheet greets the player the next time they're back on the home screen (not mid-replay).
+ */
+export function queueEarnedAppIcons() {
   if (!appIconsSupported) return;
   const fresh = collectEarnedAppIcons();
-  if (!fresh.length) return;
-  const name = t(`appIcons.names.${fresh[0].id}`);
-  Alert.alert(t("appIcons.unlockedTitle"), t("appIcons.unlockedBody", { name }), [
-    { text: t("appIcons.later"), style: "cancel" },
-    { text: t("appIcons.see"), onPress: () => router.push("/app-icon") },
-  ]);
+  if (fresh.length) useWallet.getState().queueIconReveals(fresh.map((icon) => icon.id));
 }

@@ -114,6 +114,7 @@ export default function RootLayout() {
         <Stack.Screen name="settings/username" options={{ ...sheet, sheetAllowedDetents: [0.6] }} />
         <Stack.Screen name="chest" options={{ ...sheet, sheetAllowedDetents: "fitToContents" }} />
         <Stack.Screen name="app-icon" options={{ ...sheet, sheetAllowedDetents: [0.92] }} />
+        <Stack.Screen name="icon-unlocked" options={{ ...sheet, sheetAllowedDetents: "fitToContents" }} />
       </Stack>
       <FxLayer />
     </>

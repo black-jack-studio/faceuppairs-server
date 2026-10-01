@@ -250,13 +250,13 @@
     "buyBody": "For {{price}} coins.",
     "buy": "Unlock",
     "unlockedTitle": "New icon unlocked!",
-    "unlockedBody": "{{name}} is waiting in the icon gallery.",
     "see": "See",
-    "later": "Later",
     "use": "Use",
     "buyFor": "Buy · {{price}}",
     "levelProgress": "Level {{level}} · {{current}}/{{target}}",
     "streakProgress": "Streak · {{current}}/{{target}}",
-    "allStarsProgress": "3 stars · {{current}}/{{target}}"
+    "allStarsProgress": "3 stars · {{current}}/{{target}}",
+    "equip": "Equip",
+    "gallery": "See the gallery"
   }
 }
