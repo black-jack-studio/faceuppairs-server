@@ -23,6 +23,7 @@ import { colors, space } from "@/ui/theme";
 const PREVIEW_ICONS = [null, "alien", null, "flying_saucer"] as const;
 // Label width of the two main buttons, so Career and Endless are exactly the same size.
 const HERO_BUTTON_WIDTH = 240;
+const HERO_OFFSET = 96;
 const SECONDARY_BUTTON_WIDTH = 118;
 // Lets the home screen appear first, so the alert lands on the game rather than a blank screen.
 const FIRST_PROMPT_DELAY_MS = 600;
@@ -64,13 +65,8 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.topBar}>
-        <IconButton
-          label={t("home.settings")}
-          systemImage="gearshape.fill"
-          fallbackGlyph="⚙︎"
-          onPress={() => router.push("/settings")}
-        />
-        <View style={styles.topRight}>
+        <View style={styles.topLeft}>
+          <CoinsPill />
           <View>
             <IconButton
               label={chestReady ? t("chest.ready") : t("home.chest")}
@@ -81,8 +77,13 @@ export default function Home() {
             />
             {chestReady && <NotificationDot />}
           </View>
-          <CoinsPill />
         </View>
+        <IconButton
+          label={t("home.settings")}
+          systemImage="gearshape.fill"
+          fallbackGlyph="⚙︎"
+          onPress={() => router.push("/settings")}
+        />
       </View>
       {/* Title near the top; stats and the two main buttons in the middle of the screen; the
           Daily / Leaderboard pills pinned at the bottom. */}
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  topRight: {
+  topLeft: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
@@ -195,6 +196,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     marginTop: 24,
+    // Moves the cards and title down without shifting the sections below them.
+    transform: [{ translateY: HERO_OFFSET }],
   },
   preview: {
     flexDirection: "row",
