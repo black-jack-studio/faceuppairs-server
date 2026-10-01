@@ -1,5 +1,9 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import { dealHome, HOME_CARD_COUNT, SECRET_BOARD } from "../homeDeal";
 import { ICON_PACKS } from "../iconPacks";
+import { SEASON_PAIRS, seasonOn } from "../seasons";
 import { setupBoard } from "../board";
 import { createRng } from "../rng";
 
@@ -23,5 +27,25 @@ describe("dealHome", () => {
 describe("SECRET_BOARD", () => {
   it("deals 32 cards, 8 rows of 4", () => {
     expect(setupBoard(42, SECRET_BOARD).icons).toHaveLength(32);
+  });
+});
+
+describe("seasons", () => {
+  it("dresses the home cards for each occasion, and only around it", () => {
+    expect(seasonOn(new Date(2026, 9, 31))).toBe("halloween");
+    expect(seasonOn(new Date(2026, 9, 23))).toBeNull();
+    expect(seasonOn(new Date(2026, 11, 24))).toBe("christmas");
+    expect(seasonOn(new Date(2026, 11, 31))).toBe("newYear");
+    expect(seasonOn(new Date(2027, 0, 1))).toBe("newYear");
+    expect(seasonOn(new Date(2027, 1, 14))).toBe("valentine");
+    expect(seasonOn(new Date(2026, 6, 14))).toBeNull();
+    const { cards } = dealHome(createRng(3), SEASON_PAIRS.halloween);
+    expect(cards.filter((c) => c !== null).map((c) => c!.asset).sort()).toEqual(["ghost", "jack_o_lantern"]);
+  });
+
+  it("ships an image for every seasonal emoji", () => {
+    for (const pair of Object.values(SEASON_PAIRS)) {
+      for (const icon of pair) expect(fs.existsSync(path.join(__dirname, `../../../assets/emoji/${icon.asset}.webp`))).toBe(true);
+    }
   });
 });

@@ -178,5 +178,55 @@
     "streakBody": "Open the game today so you don't lose it.",
     "dailyTitle": "Today's daily challenge is live",
     "dailyBody": "One ranked run, the same for everyone. Your move."
+  },
+  "quips": {
+    "level": {
+      "3": [
+        "Elephant memory",
+        "Clean. Very clean.",
+        "Did you cheat?",
+        "Titanium brain",
+        "Hats off",
+        "Now that's work"
+      ],
+      "2": [
+        "Not bad at all",
+        "Almost perfect",
+        "Solid",
+        "There's potential",
+        "Nice, nothing more"
+      ],
+      "1": [
+        "Done… barely",
+        "It counts, technically",
+        "We'll call that a win",
+        "You can do better and you know it",
+        "Scraped through"
+      ]
+    },
+    "run": {
+      "low": [
+        "Seriously? That's it?",
+        "My grandma does better. Without glasses.",
+        "A goldfish would've lasted longer",
+        "Were you playing with your eyes closed?",
+        "Ouch. Just ouch.",
+        "We'll pretend we didn't see that"
+      ],
+      "mid": [
+        "Not great, not terrible. Just meh.",
+        "Meh. Again?",
+        "Barely warming up",
+        "Fine. Nothing more.",
+        "Your memory's acting up"
+      ],
+      "high": [
+        "Now we're talking!",
+        "Monstrous",
+        "That's a run",
+        "Respect. Truly.",
+        "You're a machine"
+      ]
+    }
   }
 }

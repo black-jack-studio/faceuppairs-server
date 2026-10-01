@@ -16,6 +16,7 @@ import { api, START_TIMEOUT_MS } from "@/lib/api";
 import { formatCountdown, formatScore, nextUtcMidnight } from "@/lib/format";
 import { hapticSuccess } from "@/lib/haptics";
 import { leaveFinishedGame } from "@/lib/postGame";
+import { runQuip } from "@/lib/quips";
 import { buy, PRODUCT_IDS, useStore } from "@/lib/purchases";
 import { submitRun } from "@/lib/runQueue";
 import { END_OF_GAME_DELAY_MS, useDelayedTrue } from "@/lib/useDelayedTrue";
@@ -249,6 +250,7 @@ function RunResults({
   const [bestBefore] = useState(() => useProgress.getState().bestEndless);
   const isBest = mode === "endless" && score > bestBefore;
   const finalized = useRef(false);
+  const [quipSeed] = useState(Math.random);
 
   // Runs once: local records, coins, analytics, then the server.
   useEffect(() => {
@@ -295,7 +297,7 @@ function RunResults({
 
   return (
     <ResultPanel
-      title={t("endless.gameOver")}
+      title={runQuip(t, score, quipSeed) || t("endless.gameOver")}
       headline={<Text style={styles.finalScore}>{formatScore(score, i18n.language)}</Text>}
       stats={[]}
     >

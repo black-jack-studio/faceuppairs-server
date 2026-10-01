@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import * as Haptics from "expo-haptics";
+
+import { secretPairFx } from "@/fx/secretPairs";
+import { playFx } from "@/fx/store";
 import { hapticError, hapticImpact, hapticSuccess, hapticTick } from "@/lib/haptics";
+import { useWallet } from "@/store/wallet";
 
 import { elapsedMs, flip, resolveMismatch, type FlipResult, type GameState } from "./engine";
 
@@ -39,12 +44,17 @@ export function useBoardGame(initial: GameState, { revealMs, memoryErrorsCost = 
       }
       commit(next);
 
+      // One feel per outcome, the same in every mode: a tick to flip, a firm knock for a pair,
+      // a soft bump for a miss, the success buzz to clear the board, the error buzz when a
+      // miss costs a life.
       if (result.kind === "first") hapticTick();
       else if (result.kind === "match") {
         if (result.complete) hapticSuccess();
-        else hapticImpact();
+        else hapticImpact(Haptics.ImpactFeedbackStyle.Medium);
+        const secret = secretPairFx(useWallet.getState().activePack, result.icon);
+        if (secret) playFx(secret);
       } else if (result.memoryError && memoryErrorsCost) hapticError();
-      else hapticTick();
+      else hapticImpact(Haptics.ImpactFeedbackStyle.Soft);
 
       onResultRef.current?.(result, next);
 

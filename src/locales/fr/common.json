@@ -178,5 +178,55 @@
     "streakBody": "Ouvre le jeu aujourd'hui pour ne pas la perdre.",
     "dailyTitle": "Le défi du jour est disponible",
     "dailyBody": "Une seule partie classée, la même pour tout le monde. À toi de jouer."
+  },
+  "quips": {
+    "level": {
+      "3": [
+        "Mémoire d'éléphant",
+        "Propre. Très propre.",
+        "T'as triché ou quoi ?",
+        "Cerveau en titane",
+        "Chapeau bas",
+        "Ça, c'est du travail"
+      ],
+      "2": [
+        "Pas mal du tout",
+        "Presque parfait",
+        "Solide",
+        "On sent le potentiel",
+        "Bien joué, sans plus"
+      ],
+      "1": [
+        "Fini… de justesse",
+        "Ça passe, mais bon",
+        "On va dire que ça compte",
+        "Tu peux mieux faire, et tu le sais",
+        "Victoire à l'arrache"
+      ]
+    },
+    "run": {
+      "low": [
+        "Sérieux ? C'était ça ?",
+        "Ma grand-mère fait mieux. Sans lunettes.",
+        "Un poisson rouge aurait tenu plus longtemps",
+        "Tu jouais les yeux fermés ?",
+        "Aïe. Juste aïe.",
+        "On va faire comme si on n'avait rien vu"
+      ],
+      "mid": [
+        "Pas ouf, pas nul. Juste moyen.",
+        "Bof. On réessaie ?",
+        "Tu chauffes à peine",
+        "Correct. Sans plus.",
+        "Ta mémoire fait des siennes"
+      ],
+      "high": [
+        "Là, on parle !",
+        "Monstrueux",
+        "Ça, c'est une partie",
+        "Respect. Vraiment.",
+        "T'es une machine"
+      ]
+    }
   }
 }

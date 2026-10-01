@@ -10,6 +10,7 @@ import { ensureAccount, flushPendingDeletion } from "@/lib/account";
 import { initAds } from "@/lib/ads";
 import { identify } from "@/lib/analytics";
 import { flushNickname } from "@/lib/nickname";
+import { FxLayer } from "@/fx/FxLayer";
 import { initPurchases } from "@/lib/purchases";
 import { scheduleReminders } from "@/lib/reminders";
 import { flushRuns } from "@/lib/runQueue";
@@ -98,6 +99,7 @@ export default function RootLayout() {
         <Stack.Screen name="settings/username" options={{ ...sheet, sheetAllowedDetents: [0.6] }} />
         <Stack.Screen name="chest" options={{ ...sheet, sheetAllowedDetents: "fitToContents" }} />
       </Stack>
+      <FxLayer />
     </>
   );
 }

@@ -6,6 +6,8 @@ import { StyleSheet, Text, View } from "react-native";
 import { setupBoard } from "@/game/board";
 import { SECRET_BOARD_COINS } from "@/game/economy";
 import { SECRET_BOARD } from "@/game/homeDeal";
+import { getPack } from "@/game/iconPacks";
+import { playFx } from "@/fx/store";
 import { randomSeed } from "@/game/rng";
 import { useBoardGame, useElapsed } from "@/game/useBoardGame";
 import { track } from "@/lib/analytics";
@@ -46,10 +48,13 @@ export default function SecretBoardScreen() {
     recorded.current = true;
     hapticSuccess();
     track("secret_board_complete", { moves: state.moves });
+    if (state.memoryErrors === 0) {
+      playFx({ kind: "perfect", emojis: getPack(useWallet.getState().activePack).icons.map((i) => i.asset) });
+    }
     if (!rewarded) return;
     rewardClaimedThisLaunch = true;
     useWallet.getState().addCoins(SECRET_BOARD_COINS);
-  }, [complete, rewarded, state.moves]);
+  }, [complete, rewarded, state.moves, state.memoryErrors]);
 
   return (
     <Screen

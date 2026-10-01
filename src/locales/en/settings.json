@@ -10,6 +10,7 @@
   "feedback": "Feedback",
   "feedbackSubject": "{{app}} — Feedback",
   "version": "Version {{version}}",
+  "madeWithLove": "Made with love by",
   "privacyTitle": "Privacy",
   "privacyPolicy": "Privacy Policy",
   "legalNotice": "Legal Notice",

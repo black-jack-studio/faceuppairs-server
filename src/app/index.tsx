@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { APP_NAME } from "@/config/app";
 import { canClaimDaily, localDay } from "@/game/economy";
 import { dealHome } from "@/game/homeDeal";
+import { SEASON_PAIRS, seasonOn, type SeasonId } from "@/game/seasons";
 import { utcDay } from "@/game/run";
 import { LEVEL_COUNT } from "@/game/levels";
 import { useAds } from "@/lib/ads";
@@ -17,13 +18,16 @@ import { totalStars, useProgress } from "@/store/progress";
 import { useWallet } from "@/store/wallet";
 import { AppButtonGroup, IconButton } from "@/ui/AppButton";
 import { CoinsPill } from "@/ui/CoinsPill";
-import { Emoji, UI_EMOJI } from "@/ui/Emoji";
+import { UI_EMOJI } from "@/ui/Emoji";
+import { HomePreviewCard } from "@/ui/HomePreviewCard";
 import { NotificationDot } from "@/ui/NotificationDot";
 import { colors, space } from "@/ui/theme";
 
-// Dealt once per launch (module scope): two face-up icons from any pack, two face-down cards,
-// one of which secretly opens the 8×4 board.
-const homeDeal = dealHome(Math.random);
+// Dealt once per launch (module scope): two face-up icons from one pack (or the occasion's,
+// around Halloween, Christmas…), two face-down cards, one of which secretly opens the 8×4 board.
+const season = seasonOn(new Date());
+const launchDeal = dealHome(Math.random, season ? SEASON_PAIRS[season] : undefined);
+const PREVIEW_CARD_SIZE = 52;
 // Label width of the two main buttons, so Career and Endless are exactly the same size.
 const HERO_BUTTON_WIDTH = 240;
 const HERO_OFFSET = 96;
@@ -41,6 +45,12 @@ export default function Home() {
   const markNicknamePrompted = useProgress((s) => s.markNicknamePrompted);
   const chestReady = useWallet((s) => canClaimDaily(s.streak, localDay()));
   const dailyOpen = useWallet((s) => !(s.daily.day === utcDay() && s.daily.played));
+  // Development: `/?season=halloween` previews an occasion's cards.
+  const { season: seasonPreview } = useLocalSearchParams<{ season?: SeasonId }>();
+  const homeDeal = useMemo(
+    () => (__DEV__ && seasonPreview && SEASON_PAIRS[seasonPreview] ? dealHome(Math.random, SEASON_PAIRS[seasonPreview]) : launchDeal),
+    [seasonPreview],
+  );
 
   // First launch only: ask for a nickname right away. Marked as shown when it is shown, so
   // "Later" never turns into a prompt on every launch (it stays reachable in Settings).
@@ -93,7 +103,9 @@ export default function Home() {
       <View style={styles.hero}>
         <View style={styles.preview} accessible={false}>
           {homeDeal.cards.map((icon, i) =>
-            i === homeDeal.secretIndex ? (
+            icon ? (
+              <HomePreviewCard key={`${i}-${icon.asset}`} asset={icon.asset} size={PREVIEW_CARD_SIZE} />
+            ) : i === homeDeal.secretIndex ? (
               <Pressable
                 key={i}
                 style={styles.previewCard}
@@ -104,9 +116,7 @@ export default function Home() {
                 }}
               />
             ) : (
-              <View key={i} style={styles.previewCard}>
-                {icon && <Emoji asset={icon.asset} size={34} />}
-              </View>
+              <View key={i} style={styles.previewCard} />
             ),
           )}
         </View>

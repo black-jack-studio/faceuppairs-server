@@ -11,7 +11,8 @@ export interface HomeDeal {
   secretIndex: number;
 }
 
-export function dealHome(rng: Rng): HomeDeal {
+/** `fixedPair`: an occasion's two emojis instead of a random pack (see seasons.ts). */
+export function dealHome(rng: Rng, fixedPair?: readonly PackIcon[]): HomeDeal {
   const positions = shuffle(
     Array.from({ length: HOME_CARD_COUNT }, (_, i) => i),
     rng,
@@ -20,7 +21,7 @@ export function dealHome(rng: Rng): HomeDeal {
   const hidden = positions.slice(2);
   // Both icons from one pack (any pack, locked ones included: it doubles as a preview).
   const pack = ICON_PACKS[Math.floor(rng() * ICON_PACKS.length)];
-  const icons = pick(pack.icons, shown.length, rng);
+  const icons = fixedPair ? shuffle(fixedPair, rng) : pick(pack.icons, shown.length, rng);
   const cards: (PackIcon | null)[] = Array.from({ length: HOME_CARD_COUNT }, () => null);
   shown.forEach((position, i) => {
     cards[position] = icons[i];

@@ -7,6 +7,8 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import { setupBoard } from "@/game/board";
 import { BOOSTER_PRICES, levelCoins, PEEK_MS, type BoosterId } from "@/game/economy";
 import { applyHint } from "@/game/engine";
+import { getPack } from "@/game/iconPacks";
+import { playFx } from "@/fx/store";
 import { getLevel, LEVEL_COUNT, starsFor, type Level } from "@/game/levels";
 import { randomSeed } from "@/game/rng";
 import { useBoardGame, useElapsed } from "@/game/useBoardGame";
@@ -15,6 +17,7 @@ import { track } from "@/lib/analytics";
 import { formatDuration } from "@/lib/format";
 import { hapticImpact } from "@/lib/haptics";
 import { leaveFinishedGame } from "@/lib/postGame";
+import { levelQuip } from "@/lib/quips";
 import { END_OF_GAME_DELAY_MS, useDelayedTrue } from "@/lib/useDelayedTrue";
 import { useLeaveGuard } from "@/lib/useLeaveGuard";
 import { useProgress } from "@/store/progress";
@@ -51,6 +54,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
   const [coinsEarned, setCoinsEarned] = useState(0);
   const [doubled, setDoubled] = useState(false);
   const recorded = useRef(false);
+  const [quipSeed] = useState(Math.random);
 
   const complete = state.phase === "complete";
   const showResults = useDelayedTrue(complete, END_OF_GAME_DELAY_MS);
@@ -66,13 +70,17 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
     useWallet.getState().addCoins(coins);
     setCoinsEarned(coins);
     track("level_complete", { level: level.number, stars, moves: state.moves });
+    // Not a single memory slip: the full-screen celebration.
+    if (state.memoryErrors === 0) {
+      playFx({ kind: "perfect", emojis: getPack(useWallet.getState().activePack).icons.map((i) => i.asset) });
+    }
     if (stars === 3 && level.number >= REVIEW_MIN_LEVEL && !progress.reviewRequested) {
       progress.markReviewRequested();
       StoreReview.isAvailableAsync()
         .then((available) => (available ? StoreReview.requestReview() : undefined))
         .catch(() => {});
     }
-  }, [complete, stars, level.number, previousStars, state.moves]);
+  }, [complete, stars, level.number, previousStars, state.moves, state.memoryErrors]);
 
   // Uses an owned booster, or buys one with coins; offers the shop (or an ad, for hints) otherwise.
   const spendBooster = async (id: BoosterId, apply: () => void) => {
@@ -165,7 +173,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
 
       {showResults && (
         <ResultPanel
-          title={t("game.levelComplete")}
+          title={levelQuip(t, stars, quipSeed) || t("game.levelComplete")}
           headline={<StarRow earned={stars} size={40} />}
           stats={[
             { label: t("game.moves"), value: String(state.moves) },

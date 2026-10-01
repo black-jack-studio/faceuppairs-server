@@ -1,4 +1,5 @@
 import * as Application from "expo-application";
+import { useRef, useState } from "react";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Alert, Linking, Platform, ScrollView, StyleSheet, Text } from "react-native";
@@ -13,10 +14,13 @@ import { useSettings, type Language } from "@/store/settings";
 import { ListRow } from "@/ui/ListRow";
 import { Screen } from "@/ui/Screen";
 import { AppSwitch } from "@/ui/AppSwitch";
+import { CreditsReveal } from "@/ui/CreditsReveal";
 import { Segmented } from "@/ui/Segmented";
 import { colors } from "@/ui/theme";
 
 const LANGUAGE_PICKER_WIDTH = 124;
+const VERSION_TAPS = 7;
+const VERSION_TAP_WINDOW_MS = 700;
 
 export default function Settings() {
   const { t } = useTranslation("settings");
@@ -29,6 +33,20 @@ export default function Settings() {
   const nickname = useProgress((s) => s.nickname);
   const adPrivacyRequired = useAds((s) => s.privacyOptionsRequired);
   const version = Application.nativeApplicationVersion ?? "dev";
+  // Seven quick taps on the version number open the credits (an easter egg, like Android's
+  // developer options).
+  const [creditsOpen, setCreditsOpen] = useState(false);
+  const versionTaps = useRef({ count: 0, last: 0 });
+  const onVersionTap = () => {
+    const now = Date.now();
+    const taps = versionTaps.current;
+    taps.count = now - taps.last < VERSION_TAP_WINDOW_MS ? taps.count + 1 : 1;
+    taps.last = now;
+    if (taps.count >= VERSION_TAPS) {
+      taps.count = 0;
+      setCreditsOpen(true);
+    }
+  };
 
   // Same as FaceUp: the mail app opens pre-filled with version + platform, no backend needed.
   const sendFeedback = () => {
@@ -102,7 +120,10 @@ export default function Settings() {
         />
         <ListRow label={t("feedback")} onPress={sendFeedback} />
 
-        <Text style={styles.version}>{t("version", { version })}</Text>
+        <Text style={styles.version} onPress={onVersionTap} suppressHighlighting>
+          {t("version", { version })}
+        </Text>
+        <CreditsReveal visible={creditsOpen} onClose={() => setCreditsOpen(false)} />
       </ScrollView>
     </Screen>
   );
