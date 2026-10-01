@@ -8,7 +8,7 @@ import { validateUsername } from "../../src/moderation/usernameFilter";
 import { dailySeed, scoreRun, suspicion, type RunLog } from "../../src/game/run";
 import { randomSeed } from "../../src/game/rng";
 
-import { boardEndsAt, boardKey, isoWeek, utcDayOf, type BoardKind } from "./boards";
+import { boardEndsAt, boardKey, utcDayOf, type BoardKind } from "./boards";
 import type { Db } from "./db";
 import { renderLegalPage } from "./legal";
 import { hashToken, newPublicRef, newToken, placeholderName, RateLimiter, tokenMatches } from "./security";
@@ -237,7 +237,7 @@ export function createApp({ db, now = () => new Date(), trustProxy = false, regi
     const boards =
       run.mode === "daily"
         ? [`daily:${typeof run.day === "string" ? run.day.slice(0, 10) : utcDayOf(run.day as Date)}`]
-        : ["endless", `week:${isoWeek(finishedAt)}`];
+        : [boardKey("endless", finishedAt), boardKey("weekly", finishedAt)];
     for (const board of boards) {
       await db.query(
         `insert into best_scores (board, player_id, score, achieved_at) values ($1, $2, $3, $4)

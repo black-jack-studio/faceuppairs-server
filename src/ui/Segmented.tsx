@@ -1,5 +1,8 @@
+import { Host, Picker, Text as SwiftText } from "@expo/ui/swift-ui";
+import { controlSize, frame, pickerStyle, tag } from "@expo/ui/swift-ui/modifiers";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import { USE_LIQUID_GLASS } from "./AppButton";
 import { colors, radius } from "./theme";
 
 interface SegmentedProps<T extends string> {
@@ -11,6 +14,25 @@ interface SegmentedProps<T extends string> {
 }
 
 export function Segmented<T extends string>({ options, value, onChange, accessibilityLabel, stretch = false }: SegmentedProps<T>) {
+  // iOS 26+: Apple's own segmented control, which draws the Liquid Glass selection itself.
+  if (USE_LIQUID_GLASS) {
+    return (
+      <Host matchContents={stretch ? { vertical: true } : true} style={stretch ? styles.stretch : undefined}>
+        <Picker
+          label={accessibilityLabel}
+          selection={value}
+          onSelectionChange={(selection) => onChange(selection as T)}
+          modifiers={[pickerStyle("segmented"), controlSize("large"), ...(stretch ? [frame({ maxWidth: Infinity })] : [])]}
+        >
+          {options.map((option) => (
+            <SwiftText key={option.value} modifiers={[tag(option.value)]}>
+              {option.label}
+            </SwiftText>
+          ))}
+        </Picker>
+      </Host>
+    );
+  }
   return (
     <View style={[styles.track, stretch && styles.stretch]} accessibilityRole="radiogroup" accessibilityLabel={accessibilityLabel}>
       {options.map((option) => {

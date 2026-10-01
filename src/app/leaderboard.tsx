@@ -100,6 +100,15 @@ export default function LeaderboardScreen() {
     else listRef.current?.scrollToEnd({ animated: true });
   };
 
+  const meta = data
+    ? [
+        data.total > 0 ? t("leaderboard.players", { count: data.total }) : null,
+        data.endsAt ? t("leaderboard.endsIn", { time: formatCountdown(data.endsAt, i18n.language) }) : null,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : "";
+
   return (
     <Screen title={t("leaderboard.title")}>
       <Segmented
@@ -110,16 +119,7 @@ export default function LeaderboardScreen() {
         options={BOARDS.map((b) => ({ value: b, label: t(`leaderboard.${b}`) }))}
       />
 
-      {data && (
-        <Text style={styles.meta}>
-          {[
-            t("leaderboard.players", { count: data.total }),
-            data.endsAt ? t("leaderboard.endsIn", { time: formatCountdown(data.endsAt, i18n.language) }) : null,
-          ]
-            .filter(Boolean)
-            .join(" · ")}
-        </Text>
-      )}
+      {meta ? <Text style={styles.meta}>{meta}</Text> : null}
 
       {status === "loading" && !data ? (
         <View style={styles.center}>

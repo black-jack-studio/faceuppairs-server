@@ -7,7 +7,7 @@ import { createApp, NICKNAME_COOLDOWN_MS, REPORTS_TO_MODERATE } from "../src/app
 import { createLocalDb, migrate, type Db } from "../src/db";
 
 let db: Db;
-let clock = new Date("2026-09-30T12:00:00Z");
+let clock = new Date("2026-09-16T12:00:00Z");
 let app: ReturnType<typeof createApp>;
 
 before(async () => {
@@ -17,7 +17,7 @@ before(async () => {
 after(async () => db.close());
 beforeEach(async () => {
   await db.exec("truncate players, runs, best_scores, reports cascade");
-  clock = new Date("2026-09-30T12:00:00Z");
+  clock = new Date("2026-09-16T12:00:00Z");
   app = createApp({ db, now: () => clock, registrationsPerHour: 1000 });
 });
 
@@ -146,6 +146,11 @@ describe("runs and leaderboards", () => {
     const weekly = await call("GET", "/v1/leaderboards/weekly");
     assert.equal(weekly.body.total, 2);
     assert.equal(weekly.body.me, null);
+
+    // Endless is a monthly season: it ends at the next month's start, then starts empty.
+    assert.equal(board.body.endsAt, "2026-10-01T00:00:00.000Z");
+    clock = new Date("2026-10-01T00:00:01Z");
+    assert.equal((await call("GET", "/v1/leaderboards/endless")).body.total, 0);
   });
 
   it("keeps only the best score and refuses to finish a run twice", async () => {
