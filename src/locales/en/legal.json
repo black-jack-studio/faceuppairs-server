@@ -25,7 +25,7 @@
       },
       {
         "title": "In-app purchases",
-        "body": "Purchases (coins, ad removal, packs, the Pairs+ subscription) are processed by Apple's App Store or Google Play. We never receive your payment details. Our provider RevenueCat receives purchase receipts to verify and restore your purchases."
+        "body": "Purchases (coins, packs, Pairs+) are processed by Apple's App Store or Google Play. We never receive your payment details. Our provider RevenueCat receives purchase receipts to verify and restore your purchases."
       },
       {
         "title": "Analytics",
@@ -74,11 +74,11 @@
       },
       {
         "title": "3. Virtual currency and items",
-        "body": "Coins, boosters, icon packs and other in-game items are earned by playing or bought in-app. They have no real-world value and cannot be refunded for money, exchanged or transferred outside the app. Coins and boosters are stored on your device: they can't be recovered after deleting the app or your data, unlike non-consumable purchases (ad removal, packs) and the subscription, which can be recovered with \"Restore purchases\"."
+        "body": "Coins, boosters, icon packs and other in-game items are earned by playing or bought in-app. They have no real-world value and cannot be refunded for money, exchanged or transferred outside the app. Coins and boosters are stored on your device: they can't be recovered after deleting the app or your data, unlike non-consumable purchases (Pairs+, packs), which can be recovered with \"Restore purchases\"."
       },
       {
-        "title": "4. Pairs+ subscription",
-        "body": "Pairs+ is an auto-renewing subscription, monthly or yearly, at the price shown in the app before purchase. Payment is charged to your App Store or Google Play account at confirmation. Unless cancelled at least 24 hours before the end of the current period, it renews automatically for the same length and price. You can manage or cancel it any time in Settings → Manage subscription, or in your store account settings."
+        "title": "4. Pairs+",
+        "body": "Pairs+ is a one-time purchase, at the price shown in the app before purchase, charged to your App Store or Google Play account at confirmation. It is not a subscription: nothing renews or is charged afterwards. It removes ads between games, unlocks the Faces pack and shows a crown next to your name on the leaderboards. It can be recovered with \"Restore purchases\"."
       },
       {
         "title": "5. Refunds",

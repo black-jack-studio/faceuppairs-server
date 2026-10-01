@@ -6,11 +6,10 @@ import { Alert, Linking, Platform, ScrollView, StyleSheet, Switch, Text } from "
 import { APP_NAME, SUPPORT_EMAIL } from "@/config/app";
 import { deviceLanguage } from "@/i18n";
 import { showAdPrivacyOptions, useAds } from "@/lib/ads";
-import { manageSubscription, restore } from "@/lib/purchases";
+import { restore } from "@/lib/purchases";
 import { cancelReminders, notificationStatus, requestNotifications, scheduleReminders } from "@/lib/reminders";
 import { useProgress } from "@/store/progress";
 import { useSettings, type Language } from "@/store/settings";
-import { useWallet } from "@/store/wallet";
 import { ListRow } from "@/ui/ListRow";
 import { Screen } from "@/ui/Screen";
 import { Segmented } from "@/ui/Segmented";
@@ -25,7 +24,6 @@ export default function Settings() {
   const language = useSettings((s) => s.language) ?? deviceLanguage();
   const setLanguage = useSettings((s) => s.setLanguage);
   const nickname = useProgress((s) => s.nickname);
-  const isPlus = useWallet((s) => s.isPlus);
   const adPrivacyRequired = useAds((s) => s.privacyOptionsRequired);
   const version = Application.nativeApplicationVersion ?? "dev";
 
@@ -87,7 +85,6 @@ export default function Settings() {
           }
         />
         <ListRow label={t("restorePurchases")} onPress={onRestore} />
-        {isPlus && <ListRow label={t("manageSubscription")} onPress={manageSubscription} />}
         <ListRow
           label={t("gameRules")}
           onPress={() => router.push({ pathname: "/legal/[doc]", params: { doc: "rules" } })}

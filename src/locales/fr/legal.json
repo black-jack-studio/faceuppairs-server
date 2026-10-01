@@ -25,7 +25,7 @@
       },
       {
         "title": "Achats intégrés",
-        "body": "Les achats (pièces, suppression des pubs, packs, abonnement Pairs+) sont traités par l'App Store d'Apple ou Google Play. Nous ne recevons jamais tes coordonnées bancaires. Notre prestataire RevenueCat reçoit les reçus d'achat pour vérifier et restaurer tes achats."
+        "body": "Les achats (pièces, packs, Pairs+) sont traités par l'App Store d'Apple ou Google Play. Nous ne recevons jamais tes coordonnées bancaires. Notre prestataire RevenueCat reçoit les reçus d'achat pour vérifier et restaurer tes achats."
       },
       {
         "title": "Mesure d'audience",
@@ -74,11 +74,11 @@
       },
       {
         "title": "3. Monnaie virtuelle et objets",
-        "body": "Les pièces, boosters, packs d'icônes et autres objets du jeu s'obtiennent en jouant ou par achat intégré. Ils n'ont aucune valeur réelle, ne sont ni remboursables en argent, ni échangeables, ni transférables en dehors de l'application. Les pièces et boosters sont stockés sur ton appareil : ils ne peuvent pas être restaurés après une suppression de l'application ou de tes données, contrairement aux achats non consommables (suppression des pubs, packs) et à l'abonnement, restaurables via « Restaurer les achats »."
+        "body": "Les pièces, boosters, packs d'icônes et autres objets du jeu s'obtiennent en jouant ou par achat intégré. Ils n'ont aucune valeur réelle, ne sont ni remboursables en argent, ni échangeables, ni transférables en dehors de l'application. Les pièces et boosters sont stockés sur ton appareil : ils ne peuvent pas être restaurés après une suppression de l'application ou de tes données, contrairement aux achats non consommables (Pairs+, packs), restaurables via « Restaurer les achats »."
       },
       {
-        "title": "4. Abonnement Pairs+",
-        "body": "Pairs+ est un abonnement à renouvellement automatique, mensuel ou annuel, au prix affiché dans l'application avant l'achat. Le paiement est débité sur ton compte App Store ou Google Play à la confirmation. Sauf résiliation au moins 24 heures avant la fin de la période en cours, il se renouvelle automatiquement pour la même durée et au même prix. Tu peux le gérer ou le résilier à tout moment dans Réglages → Gérer l'abonnement, ou dans les réglages de ton compte du store."
+        "title": "4. Pairs+",
+        "body": "Pairs+ est un achat unique, au prix affiché dans l'application avant l'achat, débité sur ton compte App Store ou Google Play à la confirmation. Ce n'est pas un abonnement : rien n'est renouvelé ni prélevé ensuite. Il supprime les pubs entre les parties, débloque le pack Visages et affiche une couronne à côté de ton pseudo dans le classement. Il se restaure via « Restaurer les achats »."
       },
       {
         "title": "5. Remboursements",

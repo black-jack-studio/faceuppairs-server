@@ -5,7 +5,6 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import {
   BOOSTER_PRICES,
   claimDaily as claimDailyReward,
-  PLUS_DAILY_COINS,
   type BoosterId,
   type StreakState,
 } from "@/game/economy";
@@ -36,8 +35,7 @@ interface WalletState extends WalletData {
   addBoosters: (id: BoosterId, count: number) => void;
   /** Uses one owned booster, buying it with coins if none is left. */
   consumeBooster: (id: BoosterId) => boolean;
-  /** Chest of the day; `plusCoins` is the extra Pairs+ daily grant included in `coins`. */
-  claimDaily: (today: string) => { coins: number; bonusHint: boolean; plusCoins: number };
+  claimDaily: (today: string) => { coins: number; bonusHint: boolean };
   unlockPack: (id: string) => void;
   setActivePack: (id: string) => void;
   setEntitlements: (e: { adsRemoved?: boolean; isPlus?: boolean; hasPurchased?: boolean; starterPackBought?: boolean }) => void;
@@ -83,14 +81,13 @@ export const useWallet = create<WalletState>()(
       },
       claimDaily: (today) => {
         const { next, coins, bonusHint } = claimDailyReward(get().streak, today);
-        if (coins === 0) return { coins: 0, bonusHint: false, plusCoins: 0 };
-        const plusCoins = get().isPlus ? PLUS_DAILY_COINS : 0;
+        if (coins === 0) return { coins: 0, bonusHint: false };
         set((s) => ({
           streak: next,
-          coins: s.coins + coins + plusCoins,
+          coins: s.coins + coins,
           boosters: bonusHint ? { ...s.boosters, hint: s.boosters.hint + 1 } : s.boosters,
         }));
-        return { coins: coins + plusCoins, bonusHint, plusCoins };
+        return { coins, bonusHint };
       },
       unlockPack: (id) => set((s) => (s.ownedPacks.includes(id) ? s : { ownedPacks: [...s.ownedPacks, id] })),
       setActivePack: (id) => set({ activePack: id }),

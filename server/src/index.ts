@@ -6,6 +6,7 @@ import { serve } from "@hono/node-server";
 
 import { createApp } from "./app";
 import { createLocalDb, createPostgresDb, migrate, type Db } from "./db";
+import { revenueCatPlusChecker } from "./revenuecat";
 
 const port = Number(process.env.PORT ?? 8787);
 const databaseUrl = process.env.DATABASE_URL;
@@ -25,7 +26,8 @@ if (databaseUrl) {
   console.log(`[db] local Postgres (PGlite) in ${dataDir}`);
 }
 
-const app = createApp({ db, trustProxy: production });
+const revenueCatKey = process.env.REVENUECAT_SECRET_API_KEY;
+const app = createApp({ db, trustProxy: production, hasPlus: revenueCatKey ? revenueCatPlusChecker(revenueCatKey) : undefined });
 serve({ fetch: app.fetch, port, hostname: "0.0.0.0" }, (info) => {
   console.log(`FaceUp Pairs API on http://localhost:${info.port}`);
 });

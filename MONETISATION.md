@@ -35,12 +35,11 @@ Revenu marginal, et elle casse la DA du plateau. À tester éventuellement plus 
 ### D. Achats intégrés
 | Offre | Prix indicatif | Pourquoi |
 |---|---|---|
-| **Supprimer les pubs** (interstitielles) | 3,99 € | L'achat le plus simple à comprendre ; garde les pubs récompensées, que les joueurs aiment. |
+| **Pairs+** (achat unique) | 3,99 € | Zéro pub entre les parties + pack Visages + couronne au classement. Un seul achat, pas d'abonnement (décision du 1er octobre 2026). Garde les pubs récompensées, que les joueurs aiment. |
 | **Pack de démarrage** (pièces + boosters + suppression des pubs) | 2,99 € | Proposé une seule fois, après quelques parties : meilleure conversion en premier achat. |
 | **Offre d'échec** (continuer + boosters) | 0,99–1,99 € | Proposée au game over Infini, à côté de la pub "Continuer". |
 | **Packs de pièces** | 0,99 € → 19,99 € | Pour ceux qui veulent des boosters sans regarder de pub. |
 | **Dos de cartes et packs d'icônes** | 1,99–4,99 € | Cosmétique pur : colle au fait qu'on cherche de beaux assets. Jamais de couleur *sur le plateau* sans valider la DA. |
-| **Abonnement "Pairs+"** (plus tard) | ~2,99 €/mois ou 19,99 €/an | Zéro pub + pièces quotidiennes + cosmétiques exclusifs. Modèle FaceUp Premium. À lancer seulement quand il y a assez de joueurs fidèles. |
 
 ### E. Monnaie et boosters (le moteur des achats)
 - **Pièces** gagnées en jouant (niveaux, étoiles, record battu, coffre du jour, pub).
@@ -64,10 +63,10 @@ Revenu marginal, et elle casse la DA du plateau. À tester éventuellement plus 
 
 ## 3. Ordre de mise en place
 
-1. **Avant la sortie** : pièces + boosters + pub récompensée (Continuer, Doubler, Indice) + interstitielle plafonnée + "Supprimer les pubs" + pack de démarrage. Avec la conformité ci-dessous.
+1. **Avant la sortie** : pièces + boosters + pub récompensée (Continuer, Doubler, Indice) + interstitielle plafonnée + Pairs+ (3,99 €, achat unique) + pack de démarrage. Avec la conformité ci-dessous.
 2. **Premier mois après sortie** : mesurer (rétention J1/J7, pubs vues par joueur, conversion en achat) avant de toucher aux prix.
 3. **Ensuite** : offres d'échec, cosmétiques, défi du jour, saisons.
-4. **Quand l'audience est là** : médiation de pubs par enchères (AppLovin MAX ou LevelPlay, +18–22 % de revenu pub typique), puis abonnement Pairs+.
+4. **Quand l'audience est là** : médiation de pubs par enchères (AppLovin MAX ou LevelPlay, +18–22 % de revenu pub typique).
 
 ## 4. Stack technique (repris de FaceUp)
 

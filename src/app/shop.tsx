@@ -12,7 +12,6 @@ import {
   buy,
   COIN_PACK_IDS,
   CONTENTS,
-  manageSubscription,
   PRODUCT_IDS,
   restore,
   useStore,
@@ -23,6 +22,10 @@ import { CoinsPill } from "@/ui/CoinsPill";
 import { Emoji, UI_EMOJI } from "@/ui/Emoji";
 import { Screen } from "@/ui/Screen";
 import { colors } from "@/ui/theme";
+
+// Development only: the store has no products yet, show the Pairs+ button anyway to judge the
+// layout. Release builds always show the store's own price (or "unavailable").
+const DEV_PREVIEW_PLUS_PRICE = __DEV__ ? "3,99 €" : undefined;
 
 // One icon from different groups of the pack, so the preview shows its range.
 const PREVIEW_SLOTS = [5, 0, 8, 20];
@@ -67,87 +70,24 @@ export default function Shop() {
   };
 
   return (
-    <Screen title={t("shop.title")} trailing={<CoinsPill />}>
+    <Screen trailing={<CoinsPill />}>
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {!store.available && (
-          <Text style={styles.notice}>{t("shop.unavailable")}</Text>
-        )}
-
-        {(store.available || wallet.isPlus) && (
-          <Section title={t("shop.offers")}>
-            {wallet.isPlus ? (
-              <Item
-                icon={UI_EMOJI.crown}
-                title={t("shop.plusActive")}
-                description={t("shop.plusDesc")}
-              >
-                <AppButton
-                  label={t("settings:manageSubscription")}
-                  onPress={manageSubscription}
-                />
-              </Item>
-            ) : (
-              <Item
-                icon={UI_EMOJI.crown}
-                title={t("shop.plus")}
-                description={t("shop.plusDesc")}
-              >
-                <View style={styles.stack}>
-                  <AppButton
-                    label={
-                      price(PRODUCT_IDS.plusYearly)
-                        ? t("shop.plusYearly", {
-                            price: price(PRODUCT_IDS.plusYearly),
-                          })
-                        : "—"
-                    }
-                    variant="primary"
-                    disabled={!price(PRODUCT_IDS.plusYearly)}
-                    onPress={() => purchase(PRODUCT_IDS.plusYearly)}
-                  />
-                  <AppButton
-                    label={
-                      price(PRODUCT_IDS.plusMonthly)
-                        ? t("shop.plusMonthly", {
-                            price: price(PRODUCT_IDS.plusMonthly),
-                          })
-                        : "—"
-                    }
-                    disabled={!price(PRODUCT_IDS.plusMonthly)}
-                    onPress={() => purchase(PRODUCT_IDS.plusMonthly)}
-                  />
-                </View>
-              </Item>
-            )}
-            {!wallet.starterPackBought && (
-              <Item
-                icon={UI_EMOJI.gift}
-                title={t("shop.starter")}
-                description={t("shop.starterDesc")}
-              >
-                <BuyButton
-                  price={price(PRODUCT_IDS.starterPack)}
-                  onPress={() => purchase(PRODUCT_IDS.starterPack)}
-                />
-              </Item>
-            )}
-            {!wallet.adsRemoved && (
-              <Item
-                icon={UI_EMOJI.sparkles}
-                title={t("shop.removeAds")}
-                description={t("shop.removeAdsDesc")}
-              >
-                <BuyButton
-                  price={price(PRODUCT_IDS.removeAds)}
-                  onPress={() => purchase(PRODUCT_IDS.removeAds)}
-                />
-              </Item>
-            )}
-          </Section>
-        )}
+        {/* Shown even before the store answers, so the offer is always visible. */}
+        <View style={styles.section}>
+          <PlusOffer
+            owned={wallet.isPlus}
+            price={price(PRODUCT_IDS.plus) ?? DEV_PREVIEW_PLUS_PRICE}
+            onBuy={() => purchase(PRODUCT_IDS.plus)}
+          />
+          {store.available && !wallet.starterPackBought && (
+            <Item icon={UI_EMOJI.gift} title={t("shop.starter")} description={t("shop.starterDesc")}>
+              <BuyButton price={price(PRODUCT_IDS.starterPack)} onPress={() => purchase(PRODUCT_IDS.starterPack)} />
+            </Item>
+          )}
+        </View>
 
         {store.available && (
           <Section title={t("shop.coins")}>
@@ -205,7 +145,6 @@ export default function Shop() {
           {store.available && (
             <>
               <AppButton label={t("shop.restore")} onPress={onRestore} />
-              <Text style={styles.terms}>{t("shop.subscriptionTerms")}</Text>
             </>
           )}
           <View style={styles.links}>
@@ -276,17 +215,49 @@ function Item({
   );
 }
 
+// The one offer that matters most: what you get, at a glance, and one centered button.
+const PLUS_PERKS = [
+  { icon: "prohibited", label: "shop.plusNoAds" },
+  { icon: "smiling_face_with_sunglasses", label: "shop.plusFaces" },
+  { icon: UI_EMOJI.crown, label: "shop.plusCrown" },
+] as const;
+
+function PlusOffer({ owned, price, onBuy }: { owned: boolean; price?: string; onBuy: () => void }) {
+  const { t } = useTranslation();
+  return (
+    <View style={styles.plus}>
+      <View style={styles.plusHeader}>
+        <Text style={styles.plusTitle} accessibilityRole="header">
+          {t("shop.plus")}
+        </Text>
+        <Text style={styles.plusTagline}>{owned ? t("shop.plusActive") : t("shop.plusTagline")}</Text>
+      </View>
+      <View style={styles.plusPerks}>
+        {PLUS_PERKS.map((perk) => (
+          <View key={perk.label} style={styles.plusPerk}>
+            <Emoji asset={perk.icon} size={40} />
+            <Text style={styles.plusPerkLabel}>{t(perk.label)}</Text>
+          </View>
+        ))}
+      </View>
+      {!owned && <BuyButton primary price={price} onPress={onBuy} />}
+    </View>
+  );
+}
+
 // No price means the store couldn't load this product: say so instead of a dead button.
 function BuyButton({
   price,
   onPress,
+  primary = false,
 }: {
   price?: string;
   onPress: () => void;
+  primary?: boolean;
 }) {
   const { t } = useTranslation();
   if (!price) return <Text style={styles.packState}>{t("shop.notSold")}</Text>;
-  return <AppButton label={price} onPress={onPress} />;
+  return <AppButton label={price} variant={primary ? "primary" : "secondary"} onPress={onPress} />;
 }
 
 function PackTile({
@@ -370,14 +341,9 @@ const PACK_ACTION_HEIGHT = 52;
 
 const styles = StyleSheet.create({
   content: {
+    paddingTop: 16,
     paddingBottom: 40,
     gap: 28,
-  },
-  notice: {
-    color: colors.muted,
-    fontSize: 14,
-    textAlign: "center",
-    marginTop: 8,
   },
   section: {
     gap: 4,
@@ -413,9 +379,39 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
   },
-  stack: {
+  plus: {
+    alignItems: "center",
+    gap: 20,
+    paddingVertical: 8,
+  },
+  plusHeader: {
+    alignItems: "center",
+    gap: 4,
+  },
+  plusTitle: {
+    color: colors.text,
+    fontSize: 26,
+    fontWeight: "800",
+  },
+  plusTagline: {
+    color: colors.muted,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  plusPerks: {
+    flexDirection: "row",
+    alignSelf: "stretch",
+  },
+  plusPerk: {
+    flex: 1,
+    alignItems: "center",
     gap: 8,
-    alignItems: "flex-end",
+  },
+  plusPerkLabel: {
+    color: colors.text,
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center",
   },
   packs: {
     flexDirection: "row",
@@ -458,12 +454,6 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: "center",
     gap: 12,
-  },
-  terms: {
-    color: colors.faint,
-    fontSize: 11,
-    lineHeight: 16,
-    textAlign: "center",
   },
   links: {
     flexDirection: "row",

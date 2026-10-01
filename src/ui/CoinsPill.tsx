@@ -1,6 +1,6 @@
 import { Button, Host, HStack, Image, Text as SwiftText } from "@expo/ui/swift-ui";
 import { buttonStyle, controlSize, font, foregroundStyle, monospacedDigit } from "@expo/ui/swift-ui/modifiers";
-import { router } from "expo-router";
+import { router, usePathname } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -21,7 +21,11 @@ export function CoinsPill() {
   const { t, i18n } = useTranslation();
   const coins = useWallet((s) => s.coins);
   const amount = formatScore(coins, i18n.language);
-  const open = () => router.push("/shop");
+  const pathname = usePathname();
+  // Already in the shop: the button still reacts to the touch but goes nowhere.
+  const open = () => {
+    if (pathname !== "/shop") router.push("/shop");
+  };
   const a11y = `${t("coinsA11y", { count: coins })}, ${t("home.shop")}`;
 
   if (USE_LIQUID_GLASS) {

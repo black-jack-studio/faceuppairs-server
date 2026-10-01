@@ -51,7 +51,7 @@ Un **nouveau projet**, jamais celui de FaceUp (la base de FaceUp est sa prod, sa
 
    | ID produit | Type | Prix suggéré |
    |---|---|---|
-   | `faceup_pairs.remove_ads` | Non consommable | 3,99 € |
+   | `faceup_pairs.plus` | Non consommable | 3,99 € |
    | `faceup_pairs.starter_pack` | Non consommable | 2,99 € |
    | `faceup_pairs.pack_sports` | Non consommable | 1,99 € |
    | `faceup_pairs.revive_offer` | Consommable | 0,99 € |
@@ -60,7 +60,7 @@ Un **nouveau projet**, jamais celui de FaceUp (la base de FaceUp est sa prod, sa
    | `faceup_pairs.coins_8000` | Consommable | 6,99 € |
    | `faceup_pairs.coins_20000` | Consommable | 14,99 € |
 
-3. Abonnements → groupe **Pairs+** → `faceup_pairs.plus_monthly` (1 mois, ~2,99 €) et `faceup_pairs.plus_yearly` (1 an, ~19,99 €).
+3. Pas d'abonnement : Pairs+ est l'achat non consommable `faceup_pairs.plus` (zéro pub, pack Visages, couronne au classement).
 4. Chaque produit a besoin d'un nom, d'une description et d'une capture de revue : je te fournirai les textes et les captures depuis le simulateur.
 5. **Envoie-moi l'Apple ID de l'app** (le nombre dans "Informations sur l'app").
 
@@ -68,12 +68,13 @@ Un **nouveau projet**, jamais celui de FaceUp (la base de FaceUp est sa prod, sa
 
 1. app.revenuecat.com → nouveau projet `FaceUp Pairs`.
 2. Ajoute l'app iOS (bundle ID ci-dessus) et suis leur assistant pour la clé App Store Connect (comme pour FaceUp).
-3. Products → importe les 10 produits. Entitlements → crée :
-   - `no_ads` ← remove_ads, starter_pack, plus_monthly, plus_yearly
-   - `plus` ← plus_monthly, plus_yearly
+3. Products → importe les 9 produits. Entitlements → crée :
+   - `no_ads` ← plus, starter_pack
+   - `plus` ← plus
    - `pack_sports` ← pack_sports
 4. **Envoie-moi la clé SDK publique iOS** (`appl_…`) — et plus tard l'Android (`goog_…`). Elles sont faites pour être dans l'app.
-5. Bonus pour tester tout de suite : RevenueCat fournit un **Test Store** (clé `test_…`) qui simule les achats sans App Store. Envoie-la aussi si tu veux que je teste la boutique avant que les produits Apple soient validés.
+5. **Couronne Pairs+ au classement** : RevenueCat → Project settings → API keys → crée une clé secrète (`sk_…`) et ajoute-la sur Render en `REVENUECAT_SECRET_API_KEY`. Le serveur s'en sert pour vérifier l'achat avant d'afficher la couronne. Sans elle, l'achat marche mais la couronne n'apparaît pas.
+6. Bonus pour tester tout de suite : RevenueCat fournit un **Test Store** (clé `test_…`) qui simule les achats sans App Store. Envoie-la aussi si tu veux que je teste la boutique avant que les produits Apple soient validés.
 
 ## 7. PostHog — les statistiques
 

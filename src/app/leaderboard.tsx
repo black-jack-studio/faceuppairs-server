@@ -9,8 +9,9 @@ import { formatCountdown, formatScore } from "@/lib/format";
 import { hapticTick } from "@/lib/haptics";
 import { promptNickname } from "@/lib/promptNickname";
 import { useProgress } from "@/store/progress";
+import { useWallet } from "@/store/wallet";
 import { AppButton } from "@/ui/AppButton";
-import { Emoji, MEDALS } from "@/ui/Emoji";
+import { Emoji, MEDALS, UI_EMOJI } from "@/ui/Emoji";
 import { Screen } from "@/ui/Screen";
 import { Segmented } from "@/ui/Segmented";
 import { colors } from "@/ui/theme";
@@ -24,6 +25,7 @@ export default function LeaderboardScreen() {
   const params = useLocalSearchParams<{ board?: string }>();
   const [kind, setKind] = useState<BoardKind>(BOARDS.includes(params.board as BoardKind) ? (params.board as BoardKind) : "endless");
   const [data, setData] = useState<Leaderboard | null>(null);
+  const isPlus = useWallet((s) => s.isPlus);
   const [status, setStatus] = useState<"loading" | "ready" | "offline">("loading");
   const [refreshing, setRefreshing] = useState(false);
   const hiddenRefs = useProgress((s) => s.hiddenRefs);
@@ -156,7 +158,9 @@ export default function LeaderboardScreen() {
                 <Text style={styles.gap} accessibilityElementsHidden>
                   …
                 </Text>
-                <Row entry={{ rank: data.me.rank, name: data.me.name, score: data.me.score, ref: "me", isMe: true }} />
+                <Row
+                  entry={{ rank: data.me.rank, name: data.me.name, score: data.me.score, ref: "me", isMe: true, plus: isPlus }}
+                />
               </>
             ) : null
           }
@@ -178,6 +182,8 @@ export default function LeaderboardScreen() {
   );
 }
 
+const CROWN_SIZE = 18;
+
 function Row({ entry, onPress }: { entry: LeaderboardEntry; onPress?: () => void }) {
   const { t, i18n } = useTranslation();
   return (
@@ -197,10 +203,13 @@ function Row({ entry, onPress }: { entry: LeaderboardEntry; onPress?: () => void
           </Text>
         )}
       </View>
-      <Text style={[styles.name, entry.isMe && styles.nameMe]} numberOfLines={1}>
-        {entry.name}
-        {entry.isMe ? ` · ${t("leaderboard.you")}` : ""}
-      </Text>
+      <View style={styles.nameCell}>
+        <Text style={[styles.name, entry.isMe && styles.nameMe]} numberOfLines={1}>
+          {entry.name}
+          {entry.isMe ? ` · ${t("leaderboard.you")}` : ""}
+        </Text>
+        {entry.plus && <Emoji asset={UI_EMOJI.crown} size={CROWN_SIZE} label="Pairs+" />}
+      </View>
       <Text style={styles.points}>{formatScore(entry.score, i18n.language)}</Text>
     </Pressable>
   );
@@ -260,8 +269,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontVariant: ["tabular-nums"],
   },
-  name: {
+  nameCell: {
     flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  name: {
+    flexShrink: 1,
     color: colors.text,
     fontSize: 16,
     fontWeight: "600",

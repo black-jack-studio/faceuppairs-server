@@ -10,6 +10,7 @@ import { randomSeed } from "../../src/game/rng";
 
 import { boardEndsAt, boardKey, utcDayOf, type BoardKind } from "./boards";
 import type { Db } from "./db";
+import type { PlusChecker } from "./revenuecat";
 import { renderLegalPage } from "./legal";
 import { hashToken, newPublicRef, newToken, placeholderName, RateLimiter, tokenMatches } from "./security";
 
@@ -42,6 +43,7 @@ interface Player {
   nickname: string | null;
   nickname_changed_at: string | Date | null;
   moderated: boolean;
+  plus: boolean;
 }
 
 type Env = { Variables: { player: Player } };
@@ -53,13 +55,15 @@ export interface AppOptions {
   trustProxy?: boolean;
   /** New accounts per client address per hour (tests raise it: they all share one address). */
   registrationsPerHour?: number;
+  /** Verifies a Pairs+ purchase (RevenueCat). Without it the crown can't be granted. */
+  hasPlus?: PlusChecker;
 }
 
 function displayName(p: { nickname: string | null; moderated: boolean; public_ref: string }): string {
   return p.nickname && !p.moderated ? p.nickname : placeholderName(p.public_ref);
 }
 
-export function createApp({ db, now = () => new Date(), trustProxy = false, registrationsPerHour = 10 }: AppOptions) {
+export function createApp({ db, now = () => new Date(), trustProxy = false, registrationsPerHour = 10, hasPlus }: AppOptions) {
   const app = new Hono<Env>();
   const ipLimiter = new RateLimiter(120, 60_000);
   const registerLimiter = new RateLimiter(registrationsPerHour, 60 * 60_000);
@@ -115,7 +119,22 @@ export function createApp({ db, now = () => new Date(), trustProxy = false, regi
 
   app.get("/v1/players/me", auth, (c) => {
     const p = c.get("player");
-    return c.json({ nickname: p.nickname, displayName: displayName(p), moderated: p.moderated });
+    return c.json({ nickname: p.nickname, displayName: displayName(p), moderated: p.moderated, plus: p.plus });
+  });
+
+  // The app calls this after a Pairs+ purchase (and on launch while it owns it); the crown is
+  // set from RevenueCat's answer, so a client can't award it to itself.
+  app.post("/v1/players/me/plus", auth, async (c) => {
+    if (!hasPlus) return c.json({ error: "not_configured" }, 503);
+    const p = c.get("player");
+    let plus: boolean;
+    try {
+      plus = await hasPlus(p.id);
+    } catch {
+      return c.json({ error: "verification_failed" }, 502);
+    }
+    if (plus !== p.plus) await db.query("update players set plus = $1 where id = $2", [plus, p.id]);
+    return c.json({ plus });
   });
 
   app.put("/v1/players/me/nickname", auth, async (c) => {
@@ -263,8 +282,15 @@ export function createApp({ db, now = () => new Date(), trustProxy = false, regi
     const at = now();
     const board = boardKey(kind, at);
 
-    const top = await db.query<{ score: number; public_ref: string; nickname: string | null; moderated: boolean; player_id: string }>(
-      `select b.score, b.player_id, p.public_ref, p.nickname, p.moderated
+    const top = await db.query<{
+      score: number;
+      public_ref: string;
+      nickname: string | null;
+      moderated: boolean;
+      plus: boolean;
+      player_id: string;
+    }>(
+      `select b.score, b.player_id, p.public_ref, p.nickname, p.moderated, p.plus
          from best_scores b join players p on p.id = b.player_id
         where b.board = $1
         order by b.score desc, b.achieved_at asc
@@ -311,6 +337,7 @@ export function createApp({ db, now = () => new Date(), trustProxy = false, regi
         name: displayName(row),
         ref: row.public_ref,
         score: row.score,
+        plus: row.plus,
         isMe: row.player_id === meId,
       })),
       me,

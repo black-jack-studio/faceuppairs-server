@@ -51,6 +51,8 @@ export interface LeaderboardEntry {
   name: string;
   ref: string;
   score: number;
+  /** Owns Pairs+: a crown next to the name. */
+  plus?: boolean;
   isMe: boolean;
 }
 
@@ -67,6 +69,7 @@ export const api = {
   me: (auth: Credentials) => request<{ nickname: string | null; displayName: string; moderated: boolean }>("GET", "/v1/players/me", { auth }),
   setNickname: (auth: Credentials, nickname: string) =>
     request<{ nickname: string }>("PUT", "/v1/players/me/nickname", { auth, body: { nickname } }),
+  syncPlus: (auth: Credentials) => request<{ plus: boolean }>("POST", "/v1/players/me/plus", { auth }),
   deleteMe: (auth: Credentials) => request<null>("DELETE", "/v1/players/me", { auth }),
   startRun: (auth: Credentials, mode: "endless" | "daily", timeoutMs = START_TIMEOUT_MS) =>
     request<{ runId: string; seed: number; day: string | null }>("POST", "/v1/runs", { auth, body: { mode }, timeoutMs }),

@@ -9,6 +9,7 @@ import { createLocalDb, migrate, type Db } from "../src/db";
 let db: Db;
 let clock = new Date("2026-09-16T12:00:00Z");
 let app: ReturnType<typeof createApp>;
+const plusOwners = new Set<string>();
 
 before(async () => {
   db = await createLocalDb();
@@ -18,7 +19,8 @@ after(async () => db.close());
 beforeEach(async () => {
   await db.exec("truncate players, runs, best_scores, reports cascade");
   clock = new Date("2026-09-16T12:00:00Z");
-  app = createApp({ db, now: () => clock, registrationsPerHour: 1000 });
+  plusOwners.clear();
+  app = createApp({ db, now: () => clock, registrationsPerHour: 1000, hasPlus: async (id) => plusOwners.has(id) });
 });
 
 async function call(method: string, path: string, opts: { auth?: string; body?: unknown } = {}) {
@@ -201,6 +203,23 @@ describe("runs and leaderboards", () => {
     clock = new Date("2026-10-01T09:00:00Z");
     const tomorrow = (await call("POST", "/v1/runs", { auth: a, body: { mode: "daily" } })).body;
     assert.notEqual(tomorrow.seed, runA.seed);
+  });
+});
+
+describe("Pairs+ crown", () => {
+  it("is shown on the leaderboard only once RevenueCat confirms the purchase", async () => {
+    const a = await newPlayer("King");
+    const run = (await call("POST", "/v1/runs", { auth: a, body: { mode: "endless" } })).body;
+    await call("POST", `/v1/runs/${run.runId}/finish`, { auth: a, body: { boards: playRun(run.seed, 1), reviveAt: null } });
+    const crown = async () => (await call("GET", "/v1/leaderboards/endless")).body.entries[0].plus;
+
+    // Claiming it without a purchase does nothing.
+    assert.deepEqual((await call("POST", "/v1/players/me/plus", { auth: a })).body, { plus: false });
+    assert.equal(await crown(), false);
+
+    plusOwners.add(a.split(".")[0]);
+    assert.deepEqual((await call("POST", "/v1/players/me/plus", { auth: a })).body, { plus: true });
+    assert.equal(await crown(), true);
   });
 });
 

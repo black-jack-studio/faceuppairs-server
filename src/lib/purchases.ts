@@ -5,13 +5,15 @@ import { REVENUECAT_API_KEY } from "@/config/env";
 import { ICON_PACKS } from "@/game/iconPacks";
 import { useWallet } from "@/store/wallet";
 
+import { getCredentials } from "./account";
 import { track } from "./analytics";
+import { api } from "./api";
 
 // Store products (same ids in App Store Connect, Google Play Console and RevenueCat).
 // Prices always come from the store (priceString) — never written in the app, same rule as
 // FaceUp's shop.
 export const PRODUCT_IDS = {
-  removeAds: "faceup_pairs.remove_ads",
+  plus: "faceup_pairs.plus",
   starterPack: "faceup_pairs.starter_pack",
   reviveOffer: "faceup_pairs.revive_offer",
   coins1: "faceup_pairs.coins_1000",
@@ -19,11 +21,10 @@ export const PRODUCT_IDS = {
   coins3: "faceup_pairs.coins_8000",
   coins4: "faceup_pairs.coins_20000",
   packSports: "faceup_pairs.pack_sports",
-  plusMonthly: "faceup_pairs.plus_monthly",
-  plusYearly: "faceup_pairs.plus_yearly",
 } as const;
 
-// RevenueCat entitlements granted by the non-consumables and subscriptions above.
+// RevenueCat entitlements granted by the non-consumables above (no subscription: Pairs+ is a
+// one-time purchase — no ads, the Faces pack and a crown on the leaderboards).
 const ENTITLEMENTS = { noAds: "no_ads", plus: "plus", packSports: "pack_sports" } as const;
 
 /** What each consumable (or the one-time starter pack) puts in the wallet. */
@@ -56,30 +57,40 @@ function applyCustomerInfo(info: CustomerInfo) {
   wallet.setEntitlements({
     isPlus,
     adsRemoved: noAds,
-    hasPurchased: wallet.hasPurchased || info.nonSubscriptionTransactions.length > 0 || info.activeSubscriptions.length > 0,
+    hasPurchased: wallet.hasPurchased || info.nonSubscriptionTransactions.length > 0,
   });
   if (active[ENTITLEMENTS.packSports]) wallet.unlockPack("sports");
-  // A pack reached through Pairs+ stays usable only while subscribed.
+  if (isPlus) syncPlusBadge();
+  // A refunded Pairs+ takes its pack back.
   if (!isPlus) {
     const plusPacks = ICON_PACKS.filter((p) => p.price.kind === "plus").map((p) => p.id);
     if (plusPacks.includes(wallet.activePack)) wallet.setActivePack("bar");
   }
 }
 
+let badgeSynced = false;
+
+/** Asks the server to check the purchase with RevenueCat and show the crown. Once per launch. */
+async function syncPlusBadge() {
+  if (badgeSynced) return;
+  const credentials = await getCredentials();
+  if (!credentials) return;
+  const res = await api.syncPlus(credentials);
+  if (res.ok) badgeSynced = true;
+}
+
 export async function initPurchases(): Promise<void> {
   if (configured || !REVENUECAT_API_KEY) return;
   try {
-    Purchases.configure({ apiKey: REVENUECAT_API_KEY });
+    // RevenueCat's customer id is the player id, so the server can verify Pairs+ for the crown.
+    const credentials = await getCredentials();
+    Purchases.configure({ apiKey: REVENUECAT_API_KEY, appUserID: credentials?.id });
     configured = true;
     Purchases.addCustomerInfoUpdateListener(applyCustomerInfo);
     applyCustomerInfo(await Purchases.getCustomerInfo());
     const products = await Purchases.getProducts(Object.values(PRODUCT_IDS));
-    const subscriptions = await Purchases.getProducts(
-      [PRODUCT_IDS.plusMonthly, PRODUCT_IDS.plusYearly],
-      Purchases.PRODUCT_CATEGORY.SUBSCRIPTION,
-    );
     const byId: StoreState["products"] = {};
-    for (const product of [...products, ...subscriptions]) {
+    for (const product of products) {
       storeProducts.set(product.identifier, product);
       byId[product.identifier] = { priceString: product.priceString, title: product.title };
     }
@@ -113,7 +124,7 @@ export async function buy(productId: string): Promise<PurchaseOutcome> {
   }
 }
 
-/** "Restore purchases": non-consumables and subscriptions come back; coins never do. */
+/** "Restore purchases": non-consumables come back; coins never do. */
 export async function restore(): Promise<"restored" | "none" | "failed"> {
   if (!configured) return "failed";
   try {
@@ -127,8 +138,4 @@ export async function restore(): Promise<"restored" | "none" | "failed"> {
   } catch {
     return "failed";
   }
-}
-
-export async function manageSubscription(): Promise<void> {
-  if (configured) await Purchases.showManageSubscriptions().catch(() => {});
 }
