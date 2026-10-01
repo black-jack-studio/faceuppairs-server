@@ -9,15 +9,14 @@ export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? (__DEV__ ? "http://loc
 
 // AdMob ad unit ids (not secrets: they ship inside the app anyway). Development builds always
 // use Google's test units instead (TestIds in ads.ts), so clicking around is never a policy risk.
-// Android has no units yet: no id means no ads there.
 export const ADMOB_UNITS = {
   rewarded: Platform.select({
     ios: process.env.EXPO_PUBLIC_ADMOB_IOS_REWARDED ?? "ca-app-pub-9106120973763702/7971939419",
-    android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_REWARDED,
+    android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_REWARDED ?? "ca-app-pub-9106120973763702/4214415392",
   }),
   interstitial: Platform.select({
     ios: process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL ?? "ca-app-pub-9106120973763702/4891403941",
-    android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL,
+    android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL ?? "ca-app-pub-9106120973763702/2378414534",
   }),
 };
 
