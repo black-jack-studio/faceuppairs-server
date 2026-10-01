@@ -24,7 +24,7 @@ import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Emoji } from "./Emoji";
 import type { EmojiAsset } from "./emojiImages";
-import { colors, radius } from "./theme";
+import { colors, glass } from "./theme";
 
 // DESIGN.md: iOS 26+ uses the native Liquid Glass material (system capsule, interactive
 // highlight); everything else gets the flat radius-12 fallback.
@@ -87,7 +87,12 @@ function GlassButton({ label, onPress, variant = "secondary", size = "regular", 
   );
 }
 
+// Same capsule and sizes as the iOS glass buttons (measured from them), with a frosted fill.
+const FALLBACK_HEIGHT: Record<Size, number> = { regular: 46, large: 50, hero: 54 };
+const FALLBACK_CHROME = 40;
+
 function FallbackButton({ label, onPress, variant = "secondary", size = "regular", width, disabled = false }: AppButtonProps) {
+  const height = FALLBACK_HEIGHT[size];
   return (
     <Pressable
       onPress={onPress}
@@ -96,18 +101,21 @@ function FallbackButton({ label, onPress, variant = "secondary", size = "regular
       accessibilityState={{ disabled }}
       style={({ pressed }) => [
         styles.base,
-        size === "large" && styles.large,
-        size === "hero" && styles.hero,
-        width !== undefined && { width: width + 48 },
+        { height, borderRadius: height / 2 },
+        width !== undefined && { width: width + FALLBACK_CHROME },
         variant === "primary" ? styles.primary : styles.secondary,
-        (pressed || disabled) && styles.dimmed,
+        pressed && styles.pressed,
+        disabled && styles.disabled,
       ]}
     >
       <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.8}
         style={[
           styles.label,
-          { fontSize: FONT_SIZE[size], color: labelColor(variant) },
-          size !== "regular" && styles.labelBold,
+          { fontSize: FONT_SIZE[size], color: disabled && variant !== "primary" ? colors.muted : labelColor(variant) },
+          size === "hero" && styles.labelBold,
         ]}
       >
         {label}
@@ -154,6 +162,8 @@ export function AppButtonGroup({ buttons, direction = "vertical" }: { buttons: A
 }
 
 const EMOJI_ICON_SIZE = 28;
+// Same as the iOS glass circle (controlSize large).
+const ICON_BUTTON_SIZE = 48;
 
 interface IconButtonProps {
   /** Spoken by VoiceOver; the button shows only the icon. */
@@ -201,7 +211,7 @@ export function IconButton({ label, systemImage, fallbackGlyph, emoji, onPress }
       accessibilityRole="button"
       accessibilityLabel={label}
       hitSlop={12}
-      style={({ pressed }) => [styles.icon, pressed && styles.dimmed]}
+      style={({ pressed }) => [styles.icon, pressed && styles.pressed]}
     >
       {emoji ? <Emoji asset={emoji} size={EMOJI_ICON_SIZE} /> : <Text style={styles.iconGlyph}>{fallbackGlyph}</Text>}
     </Pressable>
@@ -223,30 +233,25 @@ export function CloseButton({ label }: { label: string }) {
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: 48,
-    paddingHorizontal: 24,
-    borderRadius: radius.button,
+    paddingHorizontal: FALLBACK_CHROME / 2,
     alignItems: "center",
     justifyContent: "center",
-  },
-  large: {
-    minHeight: 56,
-    minWidth: 220,
-  },
-  hero: {
-    minHeight: 68,
-    minWidth: 260,
+    borderWidth: StyleSheet.hairlineWidth * 2,
   },
   primary: {
     backgroundColor: colors.accent,
+    borderColor: glass.primaryEdge,
   },
   secondary: {
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.hairline,
+    backgroundColor: glass.fill,
+    borderColor: glass.edge,
   },
-  dimmed: {
-    opacity: 0.6,
+  pressed: {
+    transform: [{ scale: 0.96 }],
+    opacity: 0.85,
+  },
+  disabled: {
+    opacity: 0.45,
   },
   label: {
     fontWeight: "600",
@@ -264,8 +269,12 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   icon: {
-    width: 44,
-    height: 44,
+    width: ICON_BUTTON_SIZE,
+    height: ICON_BUTTON_SIZE,
+    borderRadius: ICON_BUTTON_SIZE / 2,
+    backgroundColor: glass.fill,
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    borderColor: glass.edge,
     alignItems: "center",
     justifyContent: "center",
   },

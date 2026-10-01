@@ -25,5 +25,14 @@ export function AppSwitch({ value, onValueChange, label }: AppSwitchProps) {
       </Host>
     );
   }
-  return <Switch value={value} onValueChange={onValueChange} accessibilityLabel={label} />;
+  return (
+    <Switch
+      value={value}
+      onValueChange={onValueChange}
+      accessibilityLabel={label}
+      // iOS's green and white, rather than Material's tinted thumb.
+      trackColor={{ false: "rgba(255,255,255,0.16)", true: "#30D158" }}
+      thumbColor="#FFFFFF"
+    />
+  );
 }

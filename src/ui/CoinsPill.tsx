@@ -9,7 +9,7 @@ import { useWallet } from "@/store/wallet";
 
 import { USE_LIQUID_GLASS } from "./AppButton";
 import { Emoji, UI_EMOJI } from "./Emoji";
-import { colors } from "./theme";
+import { colors, glass } from "./theme";
 
 const COIN_SIZE = 20;
 // The glass button's own leading padding: the coin emoji (which SwiftUI can't draw) is laid
@@ -70,21 +70,25 @@ const styles = StyleSheet.create({
     width: COIN_SIZE,
     justifyContent: "center",
   },
+  // Android: the iOS glass capsule's size, frosted.
   pill: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    minHeight: 36,
-    paddingHorizontal: 12,
-    borderRadius: 18,
-    backgroundColor: colors.card,
+    height: 48,
+    paddingHorizontal: 18,
+    borderRadius: 24,
+    backgroundColor: glass.fill,
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    borderColor: glass.edge,
   },
   pressed: {
-    opacity: 0.7,
+    transform: [{ scale: 0.96 }],
+    opacity: 0.85,
   },
   value: {
     color: colors.text,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "700",
     fontVariant: ["tabular-nums"],
   },

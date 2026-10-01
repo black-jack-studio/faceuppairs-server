@@ -15,6 +15,15 @@ export const colors = {
   danger: "#FF6B6B",
 } as const;
 
+// Android stand-in for Liquid Glass (not available there): a faint frosted fill and a light
+// edge, on the same capsule shapes and sizes as iOS's glass buttons.
+export const glass = {
+  fill: "rgba(255,255,255,0.06)",
+  edge: "rgba(255,255,255,0.18)",
+  primaryEdge: "rgba(255,255,255,0.28)",
+  selected: "rgba(255,255,255,0.16)",
+} as const;
+
 export const radius = {
   card: 0,
   button: 12,

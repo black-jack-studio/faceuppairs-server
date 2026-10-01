@@ -3,7 +3,7 @@ import { controlSize, frame, pickerStyle, tag } from "@expo/ui/swift-ui/modifier
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { USE_LIQUID_GLASS } from "./AppButton";
-import { colors, radius } from "./theme";
+import { colors, glass } from "./theme";
 
 interface SegmentedProps<T extends string> {
   options: { value: T; label: string }[];
@@ -63,12 +63,15 @@ export function Segmented<T extends string>({ options, value, onChange, accessib
 }
 
 const styles = StyleSheet.create({
+  // Android: same capsule as iOS's segmented control, frosted, with a lighter pill.
   track: {
     flexDirection: "row",
     gap: 4,
     padding: 3,
-    borderRadius: radius.button,
-    backgroundColor: colors.card,
+    borderRadius: 999,
+    backgroundColor: glass.fill,
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    borderColor: glass.edge,
   },
   stretch: {
     alignSelf: "stretch",
@@ -77,7 +80,7 @@ const styles = StyleSheet.create({
     minWidth: 44,
     minHeight: 32,
     paddingHorizontal: 10,
-    borderRadius: radius.button - 3,
+    borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -86,14 +89,14 @@ const styles = StyleSheet.create({
     minHeight: 36,
   },
   selected: {
-    backgroundColor: colors.text,
+    backgroundColor: glass.selected,
   },
   text: {
-    color: colors.muted,
-    fontSize: 13,
-    fontWeight: "700",
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: "600",
   },
   textSelected: {
-    color: colors.buttonPrimaryText,
+    color: colors.text,
   },
 });
