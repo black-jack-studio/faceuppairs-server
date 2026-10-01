@@ -20,6 +20,8 @@ import { isGlassEffectAPIAvailable, isLiquidGlassAvailable } from "expo-glass-ef
 import { router } from "expo-router";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { Emoji } from "./Emoji";
+import type { EmojiAsset } from "./emojiImages";
 import { colors, radius } from "./theme";
 
 // DESIGN.md: iOS 26+ uses the native Liquid Glass material (system capsule, interactive
@@ -146,27 +148,46 @@ export function AppButtonGroup({ buttons, direction = "vertical" }: { buttons: A
   );
 }
 
+const EMOJI_ICON_SIZE = 28;
+
 interface IconButtonProps {
   /** Spoken by VoiceOver; the button shows only the icon. */
   label: string;
   systemImage: string;
   /** Shown instead of the SF Symbol where Liquid Glass isn't available. */
   fallbackGlyph: string;
+  /** Fluent 3D emoji drawn in place of the symbol. */
+  emoji?: EmojiAsset;
   onPress: () => void;
 }
 
 /** Round icon-only button: native glass circle with an SF Symbol on iOS 26+. */
-export function IconButton({ label, systemImage, fallbackGlyph, onPress }: IconButtonProps) {
+export function IconButton({ label, systemImage, fallbackGlyph, emoji, onPress }: IconButtonProps) {
   if (USE_LIQUID_GLASS) {
+    // The native glass circle keeps its own touch handling; a Fluent emoji, which SwiftUI can't
+    // draw, sits on top of its (hidden) symbol.
     return (
-      <Host matchContents>
-        <Button
-          label={label}
-          systemImage={systemImage as never}
-          onPress={onPress}
-          modifiers={[buttonStyle("glass"), labelStyle("iconOnly"), buttonBorderShape("circle"), controlSize("large")]}
-        />
-      </Host>
+      <View>
+        <Host matchContents>
+          <Button
+            label={label}
+            systemImage={systemImage as never}
+            onPress={onPress}
+            modifiers={[
+              buttonStyle("glass"),
+              labelStyle("iconOnly"),
+              buttonBorderShape("circle"),
+              controlSize("large"),
+              ...(emoji ? [foregroundStyle("#00000000")] : []),
+            ]}
+          />
+        </Host>
+        {emoji && (
+          <View style={styles.emojiOverlay} pointerEvents="none">
+            <Emoji asset={emoji} size={EMOJI_ICON_SIZE} />
+          </View>
+        )}
+      </View>
     );
   }
   return (
@@ -177,7 +198,7 @@ export function IconButton({ label, systemImage, fallbackGlyph, onPress }: IconB
       hitSlop={12}
       style={({ pressed }) => [styles.icon, pressed && styles.dimmed]}
     >
-      <Text style={styles.iconGlyph}>{fallbackGlyph}</Text>
+      {emoji ? <Emoji asset={emoji} size={EMOJI_ICON_SIZE} /> : <Text style={styles.iconGlyph}>{fallbackGlyph}</Text>}
     </Pressable>
   );
 }
@@ -240,6 +261,11 @@ const styles = StyleSheet.create({
   icon: {
     width: 44,
     height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emojiOverlay: {
+    ...StyleSheet.absoluteFill,
     alignItems: "center",
     justifyContent: "center",
   },

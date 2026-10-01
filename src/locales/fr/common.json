@@ -168,12 +168,14 @@
   },
   "notifications": {
     "title": "Ne rate pas ton coffre",
-    "body": "On te prévient quand ton coffre du jour est prêt, et avant que ta série ne se perde. Rien d'autre.",
+    "body": "On te prévient quand ton coffre et le défi du jour sont prêts, et avant que ta série ne se perde. Rien d'autre.",
     "allow": "Activer",
     "later": "Plus tard",
     "chestTitle": "Ton coffre du jour est prêt",
     "chestBody": "Viens récupérer tes pièces et garder ta série.",
     "streakTitle": "Ta série t'attend",
-    "streakBody": "Ouvre le jeu aujourd'hui pour ne pas la perdre."
+    "streakBody": "Ouvre le jeu aujourd'hui pour ne pas la perdre.",
+    "dailyTitle": "Le défi du jour est disponible",
+    "dailyBody": "Une seule partie classée, la même pour tout le monde. À toi de jouer."
   }
 }

@@ -168,12 +168,14 @@
   },
   "notifications": {
     "title": "Don't miss your chest",
-    "body": "We'll let you know when your daily chest is ready, and before your streak runs out. Nothing else.",
+    "body": "We'll let you know when your daily chest and daily challenge are ready, and before your streak runs out. Nothing else.",
     "allow": "Turn on",
     "later": "Later",
     "chestTitle": "Your daily chest is ready",
     "chestBody": "Come collect your coins and keep your streak.",
     "streakTitle": "Your streak is waiting",
-    "streakBody": "Open the game today so you don't lose it."
+    "streakBody": "Open the game today so you don't lose it.",
+    "dailyTitle": "Today's daily challenge is live",
+    "dailyBody": "One ranked run, the same for everyone. Your move."
   }
 }

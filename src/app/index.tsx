@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { APP_NAME } from "@/config/app";
 import { canClaimDaily, localDay } from "@/game/economy";
 import { getPack } from "@/game/iconPacks";
+import { utcDay } from "@/game/run";
 import { LEVEL_COUNT } from "@/game/levels";
 import { useAds } from "@/lib/ads";
 import { formatScore } from "@/lib/format";
@@ -15,7 +16,8 @@ import { totalStars, useProgress } from "@/store/progress";
 import { useWallet } from "@/store/wallet";
 import { AppButtonGroup, IconButton } from "@/ui/AppButton";
 import { CoinsPill } from "@/ui/CoinsPill";
-import { Emoji } from "@/ui/Emoji";
+import { Emoji, UI_EMOJI } from "@/ui/Emoji";
+import { NotificationDot } from "@/ui/NotificationDot";
 import { colors, space } from "@/ui/theme";
 
 // Two face-down cards, two face-up ones from the equipped pack (slots from different groups).
@@ -35,6 +37,7 @@ export default function Home() {
   const nicknamePrompted = useProgress((s) => s.nicknamePrompted);
   const markNicknamePrompted = useProgress((s) => s.markNicknamePrompted);
   const chestReady = useWallet((s) => canClaimDaily(s.streak, localDay()));
+  const dailyOpen = useWallet((s) => !(s.daily.day === utcDay() && s.daily.played));
   const pack = getPack(useWallet((s) => s.activePack));
 
   // First launch only: ask for a nickname right away. Marked as shown when it is shown, so
@@ -75,9 +78,10 @@ export default function Home() {
               label={chestReady ? t("chest.ready") : t("home.chest")}
               systemImage="gift.fill"
               fallbackGlyph="🎁"
+              emoji={UI_EMOJI.gift}
               onPress={() => router.push("/chest")}
             />
-            {chestReady && <View style={styles.dot} pointerEvents="none" />}
+            {chestReady && <NotificationDot />}
           </View>
           <CoinsPill />
         </View>
@@ -131,23 +135,31 @@ export default function Home() {
       </View>
 
       <View style={styles.actions}>
-        <AppButtonGroup
-          direction="horizontal"
-          buttons={[
-            {
-              label: t("home.daily"),
-              size: "large",
-              width: SECONDARY_BUTTON_WIDTH,
-              onPress: () => router.push("/play/daily"),
-            },
-            {
-              label: t("home.leaderboard"),
-              size: "large",
-              width: SECONDARY_BUTTON_WIDTH,
-              onPress: () => router.push("/leaderboard"),
-            },
-          ]}
-        />
+        <View style={styles.actionsRow}>
+          <View>
+            <AppButtonGroup
+              buttons={[
+                {
+                  label: t("home.daily"),
+                  size: "large",
+                  width: SECONDARY_BUTTON_WIDTH,
+                  onPress: () => router.push("/play/daily"),
+                },
+              ]}
+            />
+            {dailyOpen && <NotificationDot />}
+          </View>
+          <AppButtonGroup
+            buttons={[
+              {
+                label: t("home.leaderboard"),
+                size: "large",
+                width: SECONDARY_BUTTON_WIDTH,
+                onPress: () => router.push("/leaderboard"),
+              },
+            ]}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -171,16 +183,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   // Monochrome badge: DESIGN.md keeps color off everything but the primary button.
-  dot: {
-    position: "absolute",
-    top: 2,
-    right: 2,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: colors.text,
-    borderWidth: 2,
-    borderColor: colors.board,
+  actionsRow: {
+    flexDirection: "row",
+    gap: 14,
   },
   center: {
     flex: 1,
