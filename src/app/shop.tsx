@@ -169,7 +169,7 @@ export default function Shop() {
 
         {appIconsSupported && (
           <Section title={t("appIcons.title")}>
-            <Item title={t("appIcons.shopTeaser")}>
+            <Item title={t("appIcons.shopTeaser")} last>
               <AppButton label={t("appIcons.see")} onPress={() => router.push("/app-icon")} />
             </Item>
           </Section>
@@ -181,32 +181,6 @@ export default function Shop() {
               <AppButton label={t("shop.restore")} onPress={onRestore} />
             </>
           )}
-          <View style={styles.links}>
-            <Text
-              style={styles.link}
-              accessibilityRole="link"
-              onPress={() =>
-                router.push({
-                  pathname: "/legal/[doc]",
-                  params: { doc: "terms" },
-                })
-              }
-            >
-              {t("shop.terms")}
-            </Text>
-            <Text
-              style={styles.link}
-              accessibilityRole="link"
-              onPress={() =>
-                router.push({
-                  pathname: "/legal/[doc]",
-                  params: { doc: "privacy" },
-                })
-              }
-            >
-              {t("shop.privacy")}
-            </Text>
-          </View>
         </View>
       </ScrollView>
     </Screen>
@@ -228,15 +202,17 @@ function Item({
   icon,
   title,
   description,
+  last,
   children,
 }: {
   icon?: string;
   title: string;
   description?: string;
+  last?: boolean;
   children: ReactNode;
 }) {
   return (
-    <View style={styles.item}>
+    <View style={[styles.item, last && styles.itemLast]}>
       {icon ? <Emoji asset={icon} size={36} /> : null}
       <View style={styles.itemText}>
         <Text style={styles.itemTitle}>{title}</Text>
@@ -399,6 +375,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.divider,
   },
+  itemLast: {
+    borderBottomWidth: 0,
+  },
   itemText: {
     flex: 1,
     gap: 3,
@@ -488,14 +467,5 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: "center",
     gap: 12,
-  },
-  links: {
-    flexDirection: "row",
-    gap: 20,
-  },
-  link: {
-    color: colors.muted,
-    fontSize: 13,
-    textDecorationLine: "underline",
   },
 });
