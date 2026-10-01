@@ -6,7 +6,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { APP_NAME } from "@/config/app";
 import { canClaimDaily, localDay } from "@/game/economy";
-import { getPack } from "@/game/iconPacks";
 import { utcDay } from "@/game/run";
 import { LEVEL_COUNT } from "@/game/levels";
 import { useAds } from "@/lib/ads";
@@ -20,8 +19,8 @@ import { Emoji, UI_EMOJI } from "@/ui/Emoji";
 import { NotificationDot } from "@/ui/NotificationDot";
 import { colors, space } from "@/ui/theme";
 
-// Two face-down cards, two face-up ones from the equipped pack (slots from different groups).
-const PREVIEW_SLOTS = [null, 5, null, 0] as const;
+// Two face-down cards, two face-up ones: the mood of the game, whatever pack is equipped.
+const PREVIEW_ICONS = [null, "alien", null, "flying_saucer"] as const;
 // Label width of the two main buttons, so Career and Endless are exactly the same size.
 const HERO_BUTTON_WIDTH = 240;
 const SECONDARY_BUTTON_WIDTH = 118;
@@ -38,7 +37,6 @@ export default function Home() {
   const markNicknamePrompted = useProgress((s) => s.markNicknamePrompted);
   const chestReady = useWallet((s) => canClaimDaily(s.streak, localDay()));
   const dailyOpen = useWallet((s) => !(s.daily.day === utcDay() && s.daily.played));
-  const pack = getPack(useWallet((s) => s.activePack));
 
   // First launch only: ask for a nickname right away. Marked as shown when it is shown, so
   // "Later" never turns into a prompt on every launch (it stays reachable in Settings).
@@ -90,9 +88,9 @@ export default function Home() {
           Daily / Leaderboard pills pinned at the bottom. */}
       <View style={styles.hero}>
         <View style={styles.preview} accessible={false}>
-          {PREVIEW_SLOTS.map((slot, i) => (
+          {PREVIEW_ICONS.map((icon, i) => (
             <View key={i} style={styles.previewCard}>
-              {slot !== null && <Emoji asset={pack.icons[slot].asset} size={34} />}
+              {icon !== null && <Emoji asset={icon} size={34} />}
             </View>
           ))}
         </View>
