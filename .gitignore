@@ -45,3 +45,4 @@ example
 # API server
 server/.data/
 server/dist/
+credentials/

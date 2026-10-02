@@ -14,7 +14,7 @@ export const SEASON_PAIRS: Record<SeasonId, readonly [PackIcon, PackIcon]> = {
   ],
   newYear: [
     { glyph: "🎆", asset: "fireworks" },
-    { glyph: "🍾", asset: "bottle_with_popping_cork" },
+    { glyph: "🎉", asset: "party_popper" },
   ],
   valentine: [
     { glyph: "💘", asset: "heart_with_arrow" },

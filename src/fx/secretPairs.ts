@@ -2,7 +2,7 @@ import type { Fx } from "./store";
 
 // Each pack hides one pair that sets off its own little show when it's found.
 const SECRET_PAIRS: Record<string, { slot: number; fx: Fx }> = {
-  bar: { slot: 4, fx: { kind: "fountain", sprites: ["bottle_with_popping_cork", "clinking_glasses", "sparkles"] } },
+  party: { slot: 4, fx: { kind: "fountain", sprites: ["party_popper", "bubble_tea", "sparkles"] } },
   animals: { slot: 20, fx: { kind: "flyby", sprite: "unicorn", trail: "sparkles" } },
   food: { slot: 16, fx: { kind: "fountain", sprites: ["birthday_cake", "partying_face", "sparkles"] } },
   space: { slot: 20, fx: { kind: "flyby", sprite: "flying_saucer", trail: "star" } },

@@ -18,14 +18,14 @@ export interface IconPack {
 
 export const ICON_PACKS: readonly IconPack[] = [
   {
-    id: "bar",
+    id: "party",
     price: { kind: "free" },
     icons: [
-      { glyph: "🍸", asset: "cocktail_glass" },
-      { glyph: "🍹", asset: "tropical_drink" },
-      { glyph: "🍷", asset: "wine_glass" },
-      { glyph: "🥂", asset: "clinking_glasses" },
-      { glyph: "🍾", asset: "bottle_with_popping_cork" },
+      { glyph: "🥤", asset: "cup_with_straw" },
+      { glyph: "🧋", asset: "bubble_tea" },
+      { glyph: "🧃", asset: "beverage_box" },
+      { glyph: "☕", asset: "hot_beverage" },
+      { glyph: "🎉", asset: "party_popper" },
       { glyph: "🍒", asset: "cherries" },
       { glyph: "🍓", asset: "strawberry" },
       { glyph: "🍑", asset: "peach" },
@@ -259,7 +259,7 @@ export const ICON_PACKS: readonly IconPack[] = [
   },
 ];
 
-export const DEFAULT_PACK_ID = "bar";
+export const DEFAULT_PACK_ID = "party";
 
 export function getPack(id: string): IconPack {
   return ICON_PACKS.find((p) => p.id === id) ?? ICON_PACKS[0];

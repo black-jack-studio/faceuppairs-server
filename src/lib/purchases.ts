@@ -2,7 +2,7 @@ import Purchases, { type CustomerInfo, type PurchasesStoreProduct } from "react-
 import { create } from "zustand";
 
 import { REVENUECAT_API_KEY } from "@/config/env";
-import { ICON_PACKS } from "@/game/iconPacks";
+import { DEFAULT_PACK_ID, ICON_PACKS } from "@/game/iconPacks";
 import { useWallet } from "@/store/wallet";
 
 import { getCredentials } from "./account";
@@ -64,7 +64,7 @@ function applyCustomerInfo(info: CustomerInfo) {
   // A refunded Pairs+ takes its pack back.
   if (!isPlus) {
     const plusPacks = ICON_PACKS.filter((p) => p.price.kind === "plus").map((p) => p.id);
-    if (plusPacks.includes(wallet.activePack)) wallet.setActivePack("bar");
+    if (plusPacks.includes(wallet.activePack)) wallet.setActivePack(DEFAULT_PACK_ID);
   }
 }
 
