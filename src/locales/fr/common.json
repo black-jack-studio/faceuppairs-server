@@ -49,7 +49,7 @@
     "peek": "Aperçu",
     "hint": "Indice",
     "peekA11y": "Aperçu : montre toutes les cartes un instant. {{owned}} disponible(s).",
-    "hintA11y": "Indice : trouve une paire pour toi. {{owned}} disponible(s).",
+    "hintA11y": "Indice : montre un instant où se cache la paire d'une carte déjà vue. {{owned}} disponible(s).",
     "price": "{{price}} pièces",
     "notEnough": "Pas assez de pièces",
     "notEnoughBody": "Il te faut {{price}} pièces. Tu peux en gagner en jouant ou en obtenir dans la boutique.",

@@ -1,4 +1,4 @@
-import { applyHint, createGame } from "../engine";
+import { createGame, flip, hintTarget, partnerOf } from "../engine";
 import {
   canClaimDaily,
   claimDaily,
@@ -62,11 +62,23 @@ describe("interstitials", () => {
 });
 
 describe("hint booster", () => {
-  it("solves one pair without a move and can finish the board", () => {
-    let state = createGame(["A"], createRng(1));
-    state = applyHint(state, 50);
-    expect(state.pairsFound).toBe(1);
-    expect(state.moves).toBe(0);
-    expect(state.phase).toBe("complete");
+  it("is unavailable before any card has been seen", () => {
+    expect(hintTarget(createGame(["A", "B"], createRng(1)))).toBeNull();
+  });
+
+  it("points at the partner of the card currently face up", () => {
+    const state = flip(createGame(["A", "B", "C"], createRng(1)), 0, 10).state;
+    expect(hintTarget(state)).toBe(partnerOf(state, 0));
+  });
+
+  it("points at the unseen partner of a card seen earlier", () => {
+    let state = createGame(["A", "B", "C"], createRng(1));
+    const other = state.icons.findIndex((icon) => icon !== state.icons[0]);
+    state = flip(state, 0, 10).state;
+    state = flip(state, other, 20).state;
+    const target = hintTarget(state, () => 0);
+    expect(target).not.toBeNull();
+    expect(state.seen[target!]).toBe(false);
+    expect([partnerOf(state, 0), partnerOf(state, other)]).toContain(target);
   });
 });

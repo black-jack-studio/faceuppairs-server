@@ -16,12 +16,14 @@ interface BoardProps {
   onCardPress: (index: number) => void;
   /** Peek booster: every card shown face up (and not tappable) for a moment. */
   revealAll?: boolean;
+  /** Hint booster: one card shown face up for a moment. */
+  flashIndex?: number | null;
 }
 
 const BOARD_TOP_PADDING = 8;
 
 // Cards are as large as the space allows while staying perfectly square, 4 per row.
-export function Board({ state, boardKey, onCardPress, revealAll = false }: BoardProps) {
+export function Board({ state, boardKey, onCardPress, revealAll = false, flashIndex = null }: BoardProps) {
   const [area, setArea] = useState<{ width: number; height: number } | null>(null);
   const pack = getPack(useWallet((s) => s.activePack));
   const rows = state.icons.length / GRID_COLUMNS;
@@ -48,7 +50,7 @@ export function Board({ state, boardKey, onCardPress, revealAll = false }: Board
               index={i}
               icon={iconFor(pack, slot)}
               size={size}
-              faceUp={revealAll || state.faceUp.includes(i)}
+              faceUp={revealAll || i === flashIndex || state.faceUp.includes(i)}
               matched={state.matched[i]}
               onPress={onCardPress}
             />

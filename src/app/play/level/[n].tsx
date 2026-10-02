@@ -6,7 +6,7 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 
 import { setupBoard } from "@/game/board";
 import { BOOSTER_PRICES, levelCoins, PEEK_MS, type BoosterId } from "@/game/economy";
-import { applyHint } from "@/game/engine";
+import { hintTarget } from "@/game/engine";
 import { getPack } from "@/game/iconPacks";
 import { playFx } from "@/fx/store";
 import { getLevel, LEVEL_COUNT, starsFor, type Level } from "@/game/levels";
@@ -46,12 +46,13 @@ export default function LevelScreen() {
 function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
   const { t } = useTranslation();
   const [initial] = useState(() => setupBoard(randomSeed(), level.board));
-  const { state, press, reset } = useBoardGame(initial, { revealMs: level.board.revealMs });
+  const { state, press } = useBoardGame(initial, { revealMs: level.board.revealMs });
   const elapsed = useElapsed(state);
   const boosters = useWallet((s) => s.boosters);
   const rewardedReady = useAds((s) => s.rewardedReady);
   const [previousStars] = useState(() => useProgress.getState().stars[level.number] ?? 0);
   const [peeking, setPeeking] = useState(false);
+  const [flashIndex, setFlashIndex] = useState<number | null>(null);
   const [coinsEarned, setCoinsEarned] = useState(0);
   const [doubled, setDoubled] = useState(false);
   const recorded = useRef(false);
@@ -119,14 +120,19 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
       hapticImpact();
       setTimeout(() => setPeeking(false), PEEK_MS);
     });
+  // Hint: flashes where the partner of a card already seen is; the player still has to tap it.
   const hint = () =>
     spendBooster("hint", () => {
-      reset(applyHint(state, Date.now()));
+      const target = hintTarget(state);
+      if (target === null) return;
+      setFlashIndex(target);
       hapticImpact();
+      setTimeout(() => setFlashIndex(null), PEEK_MS);
     });
 
-  const canPeek = state.startedAt === null && !peeking;
-  const canHint = state.phase === "playing" && state.faceUp.length === 0 && !complete;
+  const flashing = peeking || flashIndex !== null;
+  const canPeek = state.startedAt === null && !flashing;
+  const canHint = hintTarget(state) !== null && !flashing;
   const hasNext = level.number < LEVEL_COUNT;
 
   const double = async () => {
@@ -152,8 +158,8 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
         </Text>
       </View>
 
-      <View style={styles.boardArea} pointerEvents={peeking ? "none" : "auto"}>
-        <Board state={state} boardKey="level" onCardPress={press} revealAll={peeking} />
+      <View style={styles.boardArea} pointerEvents={flashing ? "none" : "auto"}>
+        <Board state={state} boardKey="level" onCardPress={press} revealAll={peeking} flashIndex={flashIndex} />
       </View>
 
       <View style={styles.boosters}>

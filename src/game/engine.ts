@@ -131,29 +131,21 @@ export function flip(state: GameState, index: number, now: number): { state: Gam
 }
 
 /**
- * Hint booster (Career only — ranked modes never allow it): solves one pair without costing a
- * move. Prefers a pair the player hasn't fully seen, so it actually helps.
+ * Hint booster (Career only — ranked modes never allow it): picks a card the player has already
+ * seen and returns where its partner is, so the board can flash it face up for a moment. The
+ * player still has to find and tap the pair. A card currently face up comes first, then a seen
+ * card whose partner was never revealed (otherwise the hint would show nothing new).
+ * Returns null when no card has been seen yet.
  */
-export function applyHint(state: GameState, now: number): GameState {
-  if (state.phase !== "playing" || state.faceUp.length > 0) return state;
-  const unmatched = state.icons.map((_, i) => i).filter((i) => !state.matched[i]);
-  if (unmatched.length === 0) return state;
-  const target =
-    unmatched.find((i) => !state.seen[i] || !state.seen[partnerOf(state, i)]) ?? unmatched[0];
-  const partner = partnerOf(state, target);
-
-  const next: GameState = {
-    ...state,
-    matched: state.matched.map((m, i) => m || i === target || i === partner),
-    seen: state.seen.map((s, i) => s || i === target || i === partner),
-    pairsFound: state.pairsFound + 1,
-    startedAt: state.startedAt ?? now,
-  };
-  if (next.pairsFound === totalPairs(next)) {
-    next.phase = "complete";
-    next.finishedAt = now;
-  }
-  return next;
+export function hintTarget(state: GameState, random: () => number = Math.random): number | null {
+  if (state.phase === "complete") return null;
+  const open = state.faceUp.length === 1 ? state.faceUp[0] : -1;
+  if (open !== -1) return partnerOf(state, open);
+  const seen = state.icons.map((_, i) => i).filter((i) => state.seen[i] && !state.matched[i]);
+  if (seen.length === 0) return null;
+  const fresh = seen.filter((i) => !state.seen[partnerOf(state, i)]);
+  const pool = fresh.length > 0 ? fresh : seen;
+  return partnerOf(state, pool[Math.floor(random() * pool.length)]);
 }
 
 /** Turns the two mismatched cards back face down once the reveal delay has elapsed. */

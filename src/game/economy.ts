@@ -12,7 +12,7 @@ export const BOOSTER_PRICES: Record<BoosterId, number> = {
 export const REVIVE_PRICE = 150;
 
 /** How long the "peek" booster shows every card at the start of a level. */
-export const PEEK_MS = 1200;
+export const PEEK_MS = 400;
 
 export function levelCoins(stars: number, previousStars: number): number {
   if (previousStars === 0) return 10 + stars * 10;

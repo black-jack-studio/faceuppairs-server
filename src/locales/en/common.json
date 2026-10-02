@@ -49,7 +49,7 @@
     "peek": "Peek",
     "hint": "Hint",
     "peekA11y": "Peek: shows every card for a moment. {{owned}} left.",
-    "hintA11y": "Hint: finds a pair for you. {{owned}} left.",
+    "hintA11y": "Hint: briefly shows where the partner of a card you've seen is. {{owned}} left.",
     "price": "{{price}} coins",
     "notEnough": "Not enough coins",
     "notEnoughBody": "You need {{price}} coins. Earn them by playing or get some in the shop.",
