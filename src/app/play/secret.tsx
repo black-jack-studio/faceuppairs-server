@@ -24,16 +24,14 @@ import { ResultPanel, useResultWidths } from "@/ui/ResultPanel";
 import { Screen } from "@/ui/Screen";
 import { colors } from "@/ui/theme";
 
-// The secret card stays the same until the app is relaunched; coins only for the first clear.
-let rewardClaimedThisLaunch = false;
-
 export default function SecretBoardScreen() {
   const { t, i18n } = useTranslation();
   const [initial] = useState(() => setupBoard(randomSeed(), SECRET_BOARD));
   const { state, press } = useBoardGame(initial, { revealMs: SECRET_BOARD.revealMs });
   const elapsed = useElapsed(state);
   const widths = useResultWidths();
-  const [rewarded] = useState(() => !rewardClaimedThisLaunch);
+  // The prize is collected once per local day (saved on the phone), however often the app restarts.
+  const [rewarded] = useState(() => useWallet.getState().secretClaimDay !== localDay());
   const recorded = useRef(false);
 
   const complete = state.phase === "complete";
@@ -53,9 +51,7 @@ export default function SecretBoardScreen() {
     if (state.memoryErrors === 0) {
       playFx({ kind: "perfect", emojis: getPack(useWallet.getState().activePack).icons.map((i) => i.asset) });
     }
-    if (!rewarded) return;
-    rewardClaimedThisLaunch = true;
-    useWallet.getState().addCoins(SECRET_BOARD_COINS);
+    if (rewarded) useWallet.getState().claimSecret(localDay());
   }, [complete, rewarded, state.moves, state.memoryErrors]);
 
   return (

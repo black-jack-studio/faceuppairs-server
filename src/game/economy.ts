@@ -30,8 +30,8 @@ export const DAILY_CHALLENGE_COINS = 50;
 export const FREE_COINS_REWARD = 50;
 export const FREE_COINS_PER_DAY = 5;
 
-/** Easter-egg board, first clear per app launch. */
-export const SECRET_BOARD_COINS = 50;
+/** Easter-egg board: a big prize, since it is hidden — but once per local day, so relaunching the app can't farm it. */
+export const SECRET_BOARD_COINS = 500;
 
 
 /** Login streak rewards, day 1 → day 7, then the cycle restarts. Day 7 also gives a hint. */

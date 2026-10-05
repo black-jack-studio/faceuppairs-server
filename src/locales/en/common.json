@@ -43,7 +43,7 @@
   "secret": {
     "title": "Secret board",
     "done": "Secret board cleared",
-    "noCoins": "You've already earned this secret board's coins for now."
+    "noCoins": "You've already earned the secret board's coins today. Come back tomorrow."
   },
   "boosters": {
     "peek": "Peek",

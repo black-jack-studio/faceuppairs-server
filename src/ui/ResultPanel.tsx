@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn } from "react-native-reanimated";
 
 import { colors, space } from "./theme";
@@ -65,6 +66,31 @@ export function ResultPanel({ title, lead, headline, stats, children, footer }: 
 }
 
 const styles = StyleSheet.create({
+  backdrop: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "flex-end",
+  },
+  sheet: {
+    backgroundColor: "#2A2A2C",
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingTop: 28,
+    paddingHorizontal: space.screen,
+    alignItems: "center",
+    gap: 12,
+  },
+  sheetTitle: {
+    color: colors.text,
+    fontSize: 24,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  sheetFooter: {
+    alignItems: "center",
+    gap: BUTTON_GAP,
+    marginTop: 8,
+  },
   overlay: {
     ...StyleSheet.absoluteFill,
     backgroundColor: colors.board,
@@ -112,3 +138,33 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
 });
+
+interface BottomSheetPanelProps {
+  title: string;
+  lead?: ReactNode;
+  children?: ReactNode;
+  footer?: ReactNode;
+}
+
+/**
+ * A card at the bottom over the dimmed game, for a decision in the middle of a game
+ * (the last-chance offer). It is not a page: the board stays visible behind it, so the only end
+ * page is the results one. The card is opaque, like the result panels (DESIGN.md).
+ */
+export function BottomSheetPanel({ title, lead, children, footer }: BottomSheetPanelProps) {
+  const { bottom } = useSafeAreaInsets();
+  return (
+    // A fade, not a slide: the native glass buttons inside don't follow a transform, so a rising
+    // card would leave them behind and the icons over them out of place.
+    <Animated.View entering={FadeIn.duration(220)} style={styles.backdrop} accessibilityViewIsModal>
+      <View style={[styles.sheet, { paddingBottom: bottom + 16 }]}>
+        {lead}
+        <Text style={styles.sheetTitle} accessibilityRole="header">
+          {title}
+        </Text>
+        {children}
+        {footer && <View style={styles.sheetFooter}>{footer}</View>}
+      </View>
+    </Animated.View>
+  );
+}

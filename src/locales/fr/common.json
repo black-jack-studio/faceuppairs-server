@@ -43,7 +43,7 @@
   "secret": {
     "title": "Grille secrète",
     "done": "Grille secrète terminée",
-    "noCoins": "Les pièces de la grille secrète sont déjà gagnées pour cette fois."
+    "noCoins": "Tu as déjà gagné les pièces de la grille secrète aujourd'hui. Reviens demain."
   },
   "boosters": {
     "peek": "Aperçu",

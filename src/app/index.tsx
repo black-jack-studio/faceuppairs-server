@@ -162,6 +162,8 @@ export default function Home() {
                   ]}
                   accessible={false}
                   onPress={() => {
+                    // Prize already collected today: the card does nothing until local midnight.
+                    if (useWallet.getState().secretClaimDay === localDay()) return;
                     hapticImpact();
                     router.push("/play/secret");
                   }}

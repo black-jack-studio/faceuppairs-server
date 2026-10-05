@@ -6,6 +6,7 @@ import {
   BOOSTER_PRICES,
   FREE_COINS_PER_DAY,
   FREE_COINS_REWARD,
+  SECRET_BOARD_COINS,
   claimDaily as claimDailyReward,
   type BoosterId,
   type StreakState,
@@ -34,6 +35,8 @@ interface WalletData {
   pendingIconReveals: string[];
   /** Local day of the last finished game: the daily chest needs one played today. */
   playedDay: string | null;
+  /** Local day the secret board's prize was last collected. */
+  secretClaimDay: string | null;
   /** Ad-for-coins in the shop: how many were watched on `day` (local). */
   freeCoins: { day: string | null; count: number };
 }
@@ -59,6 +62,8 @@ interface WalletState extends WalletData {
   noteInterstitialShown: (at: number) => void;
   recordDaily: (day: string, score: number) => void;
   markPlayed: (day: string) => void;
+  /** Credits the secret board's prize; false when today's was already collected. */
+  claimSecret: (day: string) => boolean;
   reset: () => void;
 }
 
@@ -79,6 +84,7 @@ const initial: WalletData = {
   pendingIconReveals: [],
   freeCoins: { day: null, count: 0 },
   playedDay: null,
+  secretClaimDay: null,
 };
 
 export const useWallet = create<WalletState>()(
@@ -147,6 +153,11 @@ export const useWallet = create<WalletState>()(
               ? { day, played: true, bestScore: Math.max(s.daily.bestScore, score) }
               : { day, played: true, bestScore: score },
         })),
+      claimSecret: (day) => {
+        if (get().secretClaimDay === day) return false;
+        set((s) => ({ coins: s.coins + SECRET_BOARD_COINS, secretClaimDay: day }));
+        return true;
+      },
       markPlayed: (day) => set((s) => (s.playedDay === day ? s : { playedDay: day })),
       reset: () => set(initial),
     }),
@@ -154,7 +165,7 @@ export const useWallet = create<WalletState>()(
       name: "faceup-pairs.wallet",
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (s) => {
-        const { addCoins, spendCoins, addBoosters, consumeBooster, claimDaily, unlockPack, setActivePack, setEntitlements, noteGameFinished, noteInterstitialShown, recordDaily, markPlayed, reset, ...data } = s;
+        const { addCoins, spendCoins, addBoosters, consumeBooster, claimDaily, unlockPack, setActivePack, setEntitlements, noteGameFinished, noteInterstitialShown, recordDaily, markPlayed, claimSecret, reset, ...data } = s;
         return data;
       },
     },
