@@ -162,7 +162,8 @@
       "faces": "Visages",
       "food": "Cuisine",
       "nature": "Nature",
-      "travel": "Transports"
+      "travel": "Transports",
+      "legends": "Légendes"
     },
     "freeCoins": "+{{coins, number}} pièces",
     "watchAd": "Regarder",

@@ -162,7 +162,8 @@
       "faces": "Faces",
       "food": "Food",
       "nature": "Nature",
-      "travel": "Travel"
+      "travel": "Travel",
+      "legends": "Legends"
     },
     "freeCoins": "+{{coins, number}} coins",
     "watchAd": "Watch",
