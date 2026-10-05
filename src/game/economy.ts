@@ -66,6 +66,14 @@ export function canClaimDaily(state: StreakState, today: string): boolean {
 }
 
 /**
+ * The chest opens only once the player has finished something today (a level, a run, the secret
+ * board): `playedDay` is the local day of the last finished game.
+ */
+export function canOpenChest(state: StreakState, playedDay: string | null | undefined, today: string): boolean {
+  return playedDay === today && canClaimDaily(state, today);
+}
+
+/**
  * Claiming on the day after the last claim continues the streak; missing a day restarts it.
  * Returns the new state and the coins for the day being claimed.
  */

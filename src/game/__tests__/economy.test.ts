@@ -1,6 +1,7 @@
 import { createGame, flip, hintTarget, partnerOf } from "../engine";
 import {
   canClaimDaily,
+  canOpenChest,
   claimDaily,
   levelCoins,
   nextStreakDay,
@@ -80,5 +81,23 @@ describe("hint booster", () => {
     expect(target).not.toBeNull();
     expect(state.seen[target!]).toBe(false);
     expect([partnerOf(state, 0), partnerOf(state, other)]).toContain(target);
+  });
+});
+
+describe("daily chest needs a game played today", () => {
+  const fresh = { lastClaimDay: null, streak: 0 };
+
+  it("stays shut until something was finished today", () => {
+    expect(canOpenChest(fresh, null, "2026-09-02")).toBe(false);
+    expect(canOpenChest(fresh, "2026-09-01", "2026-09-02")).toBe(false);
+  });
+
+  it("opens once a game was finished today", () => {
+    expect(canOpenChest(fresh, "2026-09-02", "2026-09-02")).toBe(true);
+  });
+
+  it("stays shut after being claimed, even with a game played", () => {
+    const claimed = { lastClaimDay: "2026-09-02", streak: 1 };
+    expect(canOpenChest(claimed, "2026-09-02", "2026-09-02")).toBe(false);
   });
 });

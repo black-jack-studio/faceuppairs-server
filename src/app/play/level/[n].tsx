@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Alert, StyleSheet, Text, View } from "react-native";
 
 import { setupBoard } from "@/game/board";
-import { BOOSTER_PRICES, levelCoins, PEEK_MS, type BoosterId } from "@/game/economy";
+import { BOOSTER_PRICES, levelCoins, localDay, PEEK_MS, type BoosterId } from "@/game/economy";
 import { hintTarget } from "@/game/engine";
 import { getPack } from "@/game/iconPacks";
 import { playFx } from "@/fx/store";
@@ -69,6 +69,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
     recorded.current = true;
     const progress = useProgress.getState();
     progress.recordLevel(level.number, stars);
+    useWallet.getState().markPlayed(localDay());
     const coins = levelCoins(stars, previousStars);
     useWallet.getState().addCoins(coins);
     setCoinsEarned(coins);

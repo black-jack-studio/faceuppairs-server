@@ -1,10 +1,10 @@
+import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { canClaimDaily, localDay, nextStreakDay, STREAK_REWARDS } from "@/game/economy";
-import { showRewarded, useAds } from "@/lib/ads";
+import { canClaimDaily, canOpenChest, localDay, nextStreakDay, STREAK_REWARDS } from "@/game/economy";
 import { track } from "@/lib/analytics";
 import { queueEarnedAppIcons } from "@/lib/appIcons";
 import { formatCountdown, nextLocalMidnight } from "@/lib/format";
@@ -14,23 +14,25 @@ import { useSettings } from "@/store/settings";
 import { useWallet } from "@/store/wallet";
 import { AppButton, CloseButton } from "@/ui/AppButton";
 import { CoinIcon } from "@/ui/ButtonIcons";
-import { DoubleCoinsButton } from "@/ui/DoubleCoinsButton";
 import { Emoji, UI_EMOJI } from "@/ui/Emoji";
 import { useResultWidths } from "@/ui/ResultPanel";
 import { colors, space } from "@/ui/theme";
 import { SHEET_EDGES } from "@/ui/sheet";
 
 const DAY_COIN_SIZE = 20;
+// Leave the sheet's dismissal animation time before opening the level map.
+const SHEET_CLOSE_MS = 350;
 
 export default function Chest() {
   const { t, i18n } = useTranslation();
   const today = localDay();
   const streak = useWallet((s) => s.streak);
-  const rewardedReady = useAds((s) => s.rewardedReady);
   const widths = useResultWidths();
   const [claimed, setClaimed] = useState<{ coins: number; bonusHint: boolean } | null>(null);
-  const [doubled, setDoubled] = useState(false);
-  const claimable = canClaimDaily(streak, today);
+  const playedDay = useWallet((s) => s.playedDay);
+  // The chest only opens once something was finished today; until then it asks for a game.
+  const claimable = canOpenChest(streak, playedDay, today);
+  const waitingForGame = canClaimDaily(streak, today) && !claimable;
   // Day of the 7-day cycle being claimed (or just claimed).
   const currentDay = nextStreakDay(streak, today);
 
@@ -71,12 +73,10 @@ export default function Chest() {
     }, 600);
   };
 
-  const double = async () => {
-    if (!claimed || doubled) return;
-    if (await showRewarded("daily_chest")) {
-      useWallet.getState().addCoins(claimed.coins);
-      setDoubled(true);
-    }
+  // Closes the sheet, then opens the level map once it is out of the way.
+  const playNow = () => {
+    router.back();
+    setTimeout(() => router.push("/career"), SHEET_CLOSE_MS);
   };
 
   return (
@@ -94,7 +94,7 @@ export default function Chest() {
       <View style={styles.days} accessibilityRole="list">
         {STREAK_REWARDS.map((coins, i) => {
           const day = i + 1;
-          const done = day < currentDay || (day === currentDay && !claimable);
+          const done = day < currentDay || (day === currentDay && !canClaimDaily(streak, today));
           const isToday = day === currentDay;
           return (
             <View
@@ -119,16 +119,20 @@ export default function Chest() {
         <View style={styles.reward}>
           <View style={styles.rewardRow}>
             <CoinIcon />
-            <Text style={styles.rewardCoins}>{t("chest.reward", { count: doubled ? claimed.coins * 2 : claimed.coins })}</Text>
+            <Text style={styles.rewardCoins}>{t("chest.reward", { count: claimed.coins })}</Text>
           </View>
           {claimed.bonusHint && <Text style={styles.rewardBonus}>{t("chest.bonusHint")}</Text>}
-          <DoubleCoinsButton doubled={doubled} canDouble={rewardedReady} onDouble={double} />
         </View>
       )}
 
       <View style={styles.actions}>
         {claimable ? (
           <AppButton label={t("chest.claim")} variant="primary" size="large" width={widths.full} onPress={claim} />
+        ) : waitingForGame ? (
+          <>
+            <Text style={styles.subtitle}>{t("chest.playToClaim")}</Text>
+            <AppButton label={t("chest.play")} variant="primary" size="large" width={widths.full} onPress={playNow} />
+          </>
         ) : (
           <Text style={styles.subtitle}>
             {formatCountdown(nextLocalMidnight(), i18n.language)}
@@ -229,6 +233,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     alignItems: "center",
+    gap: 12,
     marginTop: 8,
     paddingBottom: 24,
   },

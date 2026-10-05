@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, View } from "react-native";
 
 import { setupBoard } from "@/game/board";
-import { SECRET_BOARD_COINS } from "@/game/economy";
+import { localDay, SECRET_BOARD_COINS } from "@/game/economy";
 import { SECRET_BOARD } from "@/game/homeDeal";
 import { getPack } from "@/game/iconPacks";
 import { playFx } from "@/fx/store";
@@ -48,6 +48,7 @@ export default function SecretBoardScreen() {
     if (!complete || recorded.current) return;
     recorded.current = true;
     hapticSuccess();
+    useWallet.getState().markPlayed(localDay());
     track("secret_board_complete", { moves: state.moves });
     if (state.memoryErrors === 0) {
       playFx({ kind: "perfect", emojis: getPack(useWallet.getState().activePack).icons.map((i) => i.asset) });

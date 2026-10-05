@@ -32,6 +32,8 @@ interface WalletData {
   ownedAppIcons: string[];
   /** Icons earned but not yet celebrated: shown one by one when the player is back home. */
   pendingIconReveals: string[];
+  /** Local day of the last finished game: the daily chest needs one played today. */
+  playedDay: string | null;
   /** Ad-for-coins in the shop: how many were watched on `day` (local). */
   freeCoins: { day: string | null; count: number };
 }
@@ -56,6 +58,7 @@ interface WalletState extends WalletData {
   noteGameFinished: () => void;
   noteInterstitialShown: (at: number) => void;
   recordDaily: (day: string, score: number) => void;
+  markPlayed: (day: string) => void;
   reset: () => void;
 }
 
@@ -75,6 +78,7 @@ const initial: WalletData = {
   ownedAppIcons: [],
   pendingIconReveals: [],
   freeCoins: { day: null, count: 0 },
+  playedDay: null,
 };
 
 export const useWallet = create<WalletState>()(
@@ -143,13 +147,14 @@ export const useWallet = create<WalletState>()(
               ? { day, played: true, bestScore: Math.max(s.daily.bestScore, score) }
               : { day, played: true, bestScore: score },
         })),
+      markPlayed: (day) => set((s) => (s.playedDay === day ? s : { playedDay: day })),
       reset: () => set(initial),
     }),
     {
       name: "faceup-pairs.wallet",
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (s) => {
-        const { addCoins, spendCoins, addBoosters, consumeBooster, claimDaily, unlockPack, setActivePack, setEntitlements, noteGameFinished, noteInterstitialShown, recordDaily, reset, ...data } = s;
+        const { addCoins, spendCoins, addBoosters, consumeBooster, claimDaily, unlockPack, setActivePack, setEntitlements, noteGameFinished, noteInterstitialShown, recordDaily, markPlayed, reset, ...data } = s;
         return data;
       },
     },

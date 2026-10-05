@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
-import { DAILY_CHALLENGE_COINS, endlessCoins, REVIVE_PRICE } from "@/game/economy";
+import { DAILY_CHALLENGE_COINS, endlessCoins, localDay, REVIVE_PRICE } from "@/game/economy";
 import type { FlipLogEntry } from "@/game/engine";
 import { endlessBoardConfig, STARTING_LIVES } from "@/game/endless";
 import { dailySeed, runBoard, scoreRun, utcDay } from "@/game/run";
@@ -298,6 +298,7 @@ function RunResults({
     if (mode === "endless") useProgress.getState().recordEndless(score);
     else useWallet.getState().recordDaily(utcDay(), score);
     useWallet.getState().addCoins(coinsEarned);
+    useWallet.getState().markPlayed(localDay());
     track(mode === "daily" ? "daily_finished" : "run_finished", { score, boards: boardsCleared, ranked: runId !== null });
     if (score > 0) hapticSuccess();
 

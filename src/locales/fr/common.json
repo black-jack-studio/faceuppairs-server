@@ -125,7 +125,8 @@
     "streak_other": "Série : {{count}} jours",
     "reward": "+{{count, number}} pièces",
     "bonusHint": "+1 indice",
-    "doubleAd": "Doubler (pub)",
+    "playToClaim": "Joue une partie pour gagner ton coffre",
+    "play": "Jouer pour gagner",
     "ready": "Récompense du jour prête"
   },
   "shop": {

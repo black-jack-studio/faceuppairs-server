@@ -125,7 +125,8 @@
     "streak_other": "Streak: {{count}} days",
     "reward": "+{{count, number}} coins",
     "bonusHint": "+1 hint",
-    "doubleAd": "Double (ad)",
+    "playToClaim": "Play a game to earn your chest",
+    "play": "Play to earn",
     "ready": "Daily reward ready"
   },
   "shop": {

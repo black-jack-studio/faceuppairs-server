@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { APP_NAME } from "@/config/app";
-import { canClaimDaily, localDay } from "@/game/economy";
+import { canOpenChest, localDay } from "@/game/economy";
 import { dealHome } from "@/game/homeDeal";
 import { SEASON_PAIRS, seasonOn } from "@/game/seasons";
 import { utcDay } from "@/game/run";
@@ -56,7 +56,7 @@ export default function Home() {
   const nickname = useProgress((s) => s.nickname);
   const nicknamePrompted = useProgress((s) => s.nicknamePrompted);
   const markNicknamePrompted = useProgress((s) => s.markNicknamePrompted);
-  const chestReady = useWallet((s) => canClaimDaily(s.streak, localDay()));
+  const chestReady = useWallet((s) => canOpenChest(s.streak, s.playedDay, localDay()));
   const { height } = useWindowDimensions();
   const compact = height < COMPACT_HEIGHT;
   const previewSize = compact ? 44 : 52;
