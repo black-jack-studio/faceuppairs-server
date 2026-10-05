@@ -18,16 +18,17 @@ import { utcDay } from "@/game/run";
 import { LEVEL_COUNT } from "@/game/levels";
 import { useAds } from "@/lib/ads";
 import { wakeServer } from "@/lib/api";
-import { formatScore } from "@/lib/format";
+import { formatCountdown, formatScore, nextLocalMidnight } from "@/lib/format";
 import { hapticImpact } from "@/lib/haptics";
 import { promptNickname } from "@/lib/promptNickname";
 import { totalStars, useProgress } from "@/store/progress";
 import { useWallet } from "@/store/wallet";
-import { AppButtonGroup, IconButton } from "@/ui/AppButton";
+import { AppButton, AppButtonGroup, IconButton } from "@/ui/AppButton";
 import { CoinsPill } from "@/ui/CoinsPill";
-import { UI_EMOJI } from "@/ui/Emoji";
+import { Emoji, UI_EMOJI } from "@/ui/Emoji";
 import { HomePreviewCard } from "@/ui/HomePreviewCard";
 import { NotificationDot } from "@/ui/NotificationDot";
+import { BottomSheetPanel, useResultWidths } from "@/ui/ResultPanel";
 import { colors, space } from "@/ui/theme";
 
 // Dealt once per launch (module scope): two face-up icons from one pack (or the occasion's,
@@ -58,6 +59,8 @@ export default function Home() {
   const markNicknamePrompted = useProgress((s) => s.markNicknamePrompted);
   const chestReady = useWallet((s) => canOpenChest(s.streak, s.playedDay, localDay()));
   const { height } = useWindowDimensions();
+  const widths = useResultWidths();
+  const [secretNotice, setSecretNotice] = useState(false);
   const compact = height < COMPACT_HEIGHT;
   const previewSize = compact ? 44 : 52;
   const dailyOpen = useWallet(
@@ -162,8 +165,12 @@ export default function Home() {
                   ]}
                   accessible={false}
                   onPress={() => {
-                    // Prize already collected today: the card does nothing until local midnight.
-                    if (useWallet.getState().secretClaimDay === localDay()) return;
+                    // Prize already collected today: say when it comes back, until local midnight.
+                    if (useWallet.getState().secretClaimDay === localDay()) {
+                      hapticImpact();
+                      setSecretNotice(true);
+                      return;
+                    }
                     hapticImpact();
                     router.push("/play/secret");
                   }}
@@ -250,11 +257,38 @@ export default function Home() {
           />
         </View>
       </View>
+
+      {secretNotice && (
+        <BottomSheetPanel
+          lead={<Emoji asset={UI_EMOJI.crystalball} size={56} />}
+          title={t("secret.title")}
+          onDismiss={() => setSecretNotice(false)}
+          footer={
+            <AppButton
+              label={t("secret.gotIt")}
+              variant="primary"
+              size="large"
+              width={widths.full}
+              onPress={() => setSecretNotice(false)}
+            />
+          }
+        >
+          <Text style={styles.noticeBody}>
+            {t("secret.cooldownBody", { time: formatCountdown(nextLocalMidnight(), i18n.language) })}
+          </Text>
+        </BottomSheetPanel>
+      )}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  noticeBody: {
+    color: colors.muted,
+    fontSize: 16,
+    fontWeight: "500",
+    textAlign: "center",
+  },
   screen: {
     flex: 1,
     backgroundColor: colors.board,

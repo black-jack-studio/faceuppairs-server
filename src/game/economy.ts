@@ -1,6 +1,8 @@
 // All coin amounts in one place, so balancing never means hunting through screens.
 // Rule (MONETISATION.md): every level can be finished without paying; boosters only go faster.
 
+import { LEVEL_COUNT } from "./levels";
+
 export type BoosterId = "peek" | "hint";
 
 export const BOOSTER_PRICES: Record<BoosterId, number> = {
@@ -14,17 +16,27 @@ export const REVIVE_PRICE = 150;
 /** How long the "peek" booster shows every card at the start of a level. */
 export const PEEK_MS = 400;
 
-export function levelCoins(stars: number, previousStars: number): number {
-  if (previousStars === 0) return 10 + stars * 10;
-  if (stars > previousStars) return (stars - previousStars) * 10;
-  return 2;
+/** Harder levels pay more: ×1 at level 1, rising in a straight line to ×4 at level 100. */
+export function levelMultiplier(level: number): number {
+  return 1 + (3 * (Math.min(Math.max(level, 1), LEVEL_COUNT) - 1)) / (LEVEL_COUNT - 1);
 }
+
+export function levelCoins(stars: number, previousStars: number, level = 1): number {
+  const multiplier = levelMultiplier(level);
+  if (previousStars === 0) return Math.round((10 + stars * 10) * multiplier);
+  if (stars > previousStars) return Math.round((stars - previousStars) * 10 * multiplier);
+  return Math.round(2 * multiplier);
+}
+
+/** Endless and Daily Challenge share one rate: 1 coin per 100 points. */
+export const POINTS_PER_COIN = 100;
 
 export function endlessCoins(score: number): number {
-  return Math.floor(score / 250);
+  return Math.floor(score / POINTS_PER_COIN);
 }
 
-export const DAILY_CHALLENGE_COINS = 50;
+/** Flat bonus for finishing the Daily Challenge, on top of the score's coins. */
+export const DAILY_CHALLENGE_COINS = 100;
 
 /** Shop: watch an ad for a few coins, a handful of times per (local) day. */
 export const FREE_COINS_REWARD = 50;

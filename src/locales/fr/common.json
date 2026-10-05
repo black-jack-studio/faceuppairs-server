@@ -43,6 +43,8 @@
   "secret": {
     "title": "Grille secrète",
     "done": "Grille secrète terminée",
+    "cooldownBody": "Reviens dans {{time}}.",
+    "gotIt": "Compris",
     "noCoins": "Tu as déjà gagné les pièces de la grille secrète aujourd'hui. Reviens demain."
   },
   "boosters": {

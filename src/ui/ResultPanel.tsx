@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn } from "react-native-reanimated";
 
@@ -141,6 +141,8 @@ const styles = StyleSheet.create({
 
 interface BottomSheetPanelProps {
   title: string;
+  /** Tapping the dimmed area outside the card. */
+  onDismiss?: () => void;
   lead?: ReactNode;
   children?: ReactNode;
   footer?: ReactNode;
@@ -151,12 +153,13 @@ interface BottomSheetPanelProps {
  * (the last-chance offer). It is not a page: the board stays visible behind it, so the only end
  * page is the results one. The card is opaque, like the result panels (DESIGN.md).
  */
-export function BottomSheetPanel({ title, lead, children, footer }: BottomSheetPanelProps) {
+export function BottomSheetPanel({ title, onDismiss, lead, children, footer }: BottomSheetPanelProps) {
   const { bottom } = useSafeAreaInsets();
   return (
     // A fade, not a slide: the native glass buttons inside don't follow a transform, so a rising
     // card would leave them behind and the icons over them out of place.
     <Animated.View entering={FadeIn.duration(220)} style={styles.backdrop} accessibilityViewIsModal>
+      {onDismiss && <Pressable style={StyleSheet.absoluteFill} onPress={onDismiss} accessibilityLabel="" />}
       <View style={[styles.sheet, { paddingBottom: bottom + 16 }]}>
         {lead}
         <Text style={styles.sheetTitle} accessibilityRole="header">

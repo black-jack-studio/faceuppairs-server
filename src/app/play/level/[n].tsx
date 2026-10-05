@@ -70,7 +70,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
     const progress = useProgress.getState();
     progress.recordLevel(level.number, stars);
     useWallet.getState().markPlayed(localDay());
-    const coins = levelCoins(stars, previousStars);
+    const coins = levelCoins(stars, previousStars, level.number);
     useWallet.getState().addCoins(coins);
     setCoinsEarned(coins);
     track("level_complete", { level: level.number, stars, moves: state.moves });

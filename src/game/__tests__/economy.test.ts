@@ -3,6 +3,7 @@ import {
   canClaimDaily,
   canOpenChest,
   claimDaily,
+  endlessCoins,
   levelCoins,
   nextStreakDay,
   shouldShowInterstitial,
@@ -15,6 +16,14 @@ describe("level coins", () => {
     expect(levelCoins(3, 0)).toBe(40);
     expect(levelCoins(3, 1)).toBe(20);
     expect(levelCoins(2, 2)).toBe(2);
+  });
+
+  it("pays more the harder the level, up to four times at level 100", () => {
+    expect(levelCoins(3, 0, 1)).toBe(40);
+    expect(levelCoins(3, 0, 50)).toBeGreaterThan(levelCoins(3, 0, 10));
+    expect(levelCoins(3, 0, 100)).toBe(160);
+    expect(levelCoins(3, 1, 100)).toBe(80);
+    expect(levelCoins(2, 2, 100)).toBe(8);
   });
 });
 
@@ -99,5 +108,14 @@ describe("daily chest needs a game played today", () => {
   it("stays shut after being claimed, even with a game played", () => {
     const claimed = { lastClaimDay: "2026-09-02", streak: 1 };
     expect(canOpenChest(claimed, "2026-09-02", "2026-09-02")).toBe(false);
+  });
+});
+
+describe("endless coins", () => {
+  it("pays 1 coin per 100 points", () => {
+    expect(endlessCoins(0)).toBe(0);
+    expect(endlessCoins(99)).toBe(0);
+    expect(endlessCoins(100)).toBe(1);
+    expect(endlessCoins(4217)).toBe(42);
   });
 });

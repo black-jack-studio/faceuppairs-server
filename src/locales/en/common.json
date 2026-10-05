@@ -43,6 +43,8 @@
   "secret": {
     "title": "Secret board",
     "done": "Secret board cleared",
+    "cooldownBody": "Come back in {{time}}.",
+    "gotIt": "Got it",
     "noCoins": "You've already earned the secret board's coins today. Come back tomorrow."
   },
   "boosters": {
