@@ -3,8 +3,8 @@
   "cancel": "Annuler",
   "confirm": "Confirmer",
   "close": "Fermer",
-  "coins": "{{count}} pièces",
-  "coinsA11y": "{{count}} pièces",
+  "coins": "{{count, number}} pièces",
+  "coinsA11y": "{{count, number}} pièces",
   "home": {
     "tagline": "Retrouve les paires. Le plus vite possible.",
     "career": "Carrière",
@@ -15,6 +15,7 @@
     "chest": "Récompense du jour",
     "settings": "Réglages",
     "bestScore": "Meilleur score",
+    "tagline": "Trouve les paires",
     "stars": "Étoiles"
   },
   "career": {
@@ -50,9 +51,9 @@
     "hint": "Indice",
     "peekA11y": "Aperçu : montre toutes les cartes un instant. {{owned}} disponible(s).",
     "hintA11y": "Indice : montre un instant où se cache la paire d'une carte déjà vue. {{owned}} disponible(s).",
-    "price": "{{price}} pièces",
+    "price": "{{price, number}} pièces",
     "notEnough": "Pas assez de pièces",
-    "notEnoughBody": "Il te faut {{price}} pièces. Tu peux en gagner en jouant ou en obtenir dans la boutique.",
+    "notEnoughBody": "Il te faut {{price, number}} pièces. Tu peux en gagner en jouant ou en obtenir dans la boutique.",
     "toShop": "Boutique",
     "adHint": "Indice gratuit (pub)",
     "adPeek": "Aperçu gratuit (pub)"
@@ -73,12 +74,12 @@
     "title": "Dernière chance",
     "body": "Continue avec une vie de plus. Une seule fois par partie.",
     "watchAd": "Continuer (pub)",
-    "payCoins": "Continuer · {{price}} pièces",
+    "payCoins": "Continuer · {{price, number}} pièces",
     "offer": "Continuer + 500 pièces · {{price}}",
     "giveUp": "Terminer"
   },
   "results": {
-    "coinsEarned": "+{{count}} pièces",
+    "coinsEarned": "+{{count, number}} pièces",
     "double": "Doubler (pub)",
     "doubled": "Pièces doublées",
     "rank": "Classé n°{{rank}}",
@@ -95,7 +96,7 @@
     "yourScore": "Ton score : {{score}}",
     "nextIn": "Nouveau défi dans {{time}}",
     "seeRanking": "Voir le classement",
-    "bonus": "+{{count}} pièces pour l'avoir terminé"
+    "bonus": "+{{count, number}} pièces pour l'avoir terminé"
   },
   "leaderboard": {
     "title": "Classement",
@@ -107,9 +108,9 @@
     "offline": "Classement indisponible hors ligne.",
     "retry": "Réessayer",
     "endsIn": "Fin dans {{time}}",
-    "players_one": "{{count}} joueur",
-    "players_other": "{{count}} joueurs",
-    "rowA11y": "{{rank}}e, {{name}}, {{score}} points",
+    "players_one": "{{count, number}} joueur",
+    "players_other": "{{count, number}} joueurs",
+    "rowA11y": "{{rank}}e, {{name}}, {{score, number}} points",
     "report": "Signaler ce pseudo",
     "hide": "Masquer ce joueur",
     "reported": "Merci, c'est signalé.",
@@ -123,7 +124,7 @@
     "claim": "Récupérer",
     "streak_one": "Série : {{count}} jour",
     "streak_other": "Série : {{count}} jours",
-    "reward": "+{{count}} pièces",
+    "reward": "+{{count, number}} pièces",
     "bonusHint": "+1 indice",
     "doubleAd": "Doubler (pub)",
     "ready": "Récompense du jour prête"
@@ -145,7 +146,7 @@
     "equipped": "Utilisé",
     "equip": "Utiliser",
     "plusOnly": "Inclus avec Pairs+",
-    "buyWithCoins": "{{price}} pièces",
+    "buyWithCoins": "{{price, number}} pièces",
     "notSold": "Indisponible",
     "purchased": "Merci pour ton achat !",
     "failed": "L'achat n'a pas pu aboutir.",
@@ -160,7 +161,7 @@
       "nature": "Nature",
       "travel": "Transports"
     },
-    "freeCoins": "+{{coins}} pièces",
+    "freeCoins": "+{{coins, number}} pièces",
     "watchAd": "Regarder",
     "freeCoinsDone": "Reviens demain",
     "freeCoinsLeft": "{{left}}/{{max}} restantes aujourd'hui"

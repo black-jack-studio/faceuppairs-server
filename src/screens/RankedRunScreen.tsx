@@ -172,13 +172,13 @@ function RunGame({ mode, session, onPlayAgain }: { mode: Mode; session: Session;
       }
     >
       <View style={styles.hud}>
-        <View>
-          <Text style={styles.score} accessibilityLabel={`${t("endless.score")} ${result.score}`}>
+        <View style={styles.scoreBlock}>
+          <Text style={styles.score} accessibilityLabel={`${t("endless.score")} ${formatScore(result.score, i18n.language)}`}>
             {formatScore(result.score, i18n.language)}
           </Text>
-          <Text style={styles.caption}>
+          <Text style={[styles.caption, styles.hudCaption]}>
             {runId
-              ? t("endless.best", { score: formatScore(bestEndless, i18n.language) })
+              ? t("endless.best", { score: formatScore(Math.max(bestEndless, result.score), i18n.language) })
               : t("results.unranked")}
           </Text>
         </View>
@@ -370,6 +370,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-end",
     paddingVertical: 8,
+  },
+  // Score and record share one left edge.
+  scoreBlock: {
+    alignItems: "flex-start",
+  },
+  hudCaption: {
+    textAlign: "left",
   },
   score: {
     color: colors.text,

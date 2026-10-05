@@ -14,7 +14,7 @@ import { AppButton } from "@/ui/AppButton";
 import { Emoji, MEDALS, UI_EMOJI } from "@/ui/Emoji";
 import { Screen } from "@/ui/Screen";
 import { Segmented } from "@/ui/Segmented";
-import { colors } from "@/ui/theme";
+import { colors, space } from "@/ui/theme";
 
 const BOARDS: BoardKind[] = ["endless", "weekly", "daily"];
 // Fixed row height, so the list can jump straight to the player's row.
@@ -172,7 +172,7 @@ export default function LeaderboardScreen() {
         {!nickname && <AppButton label={t("leaderboard.setNickname")} onPress={() => promptNickname(t)} />}
         {data?.me && (
           <AppButton
-            label={`${t("leaderboard.yourRank")} · n°${data.me.rank} · ${formatScore(data.me.score, i18n.language)}`}
+            label={`n°${data.me.rank} · ${formatScore(data.me.score, i18n.language)}`}
             variant="primary"
             onPress={scrollToMe}
           />
@@ -291,9 +291,9 @@ const styles = StyleSheet.create({
     fontVariant: ["tabular-nums"],
   },
   footer: {
-    // The screen body already has the side padding.
+    // Absolute children ignore the body's padding, so the side gutter is added here.
     position: "absolute",
-    right: 0,
+    right: space.screen,
     bottom: 12,
     alignItems: "flex-end",
     gap: 10,

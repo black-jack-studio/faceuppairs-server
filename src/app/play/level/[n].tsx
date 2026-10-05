@@ -24,6 +24,7 @@ import { useLeaveGuard } from "@/lib/useLeaveGuard";
 import { useProgress } from "@/store/progress";
 import { useWallet } from "@/store/wallet";
 import { AppButton, AppButtonGroup } from "@/ui/AppButton";
+import { Emoji, UI_EMOJI } from "@/ui/Emoji";
 import { Board } from "@/ui/Board";
 import { ResultPanel } from "@/ui/ResultPanel";
 import { Screen } from "@/ui/Screen";
@@ -33,6 +34,9 @@ import { colors } from "@/ui/theme";
 // Ask for a review only after a clearly good moment, once (same restraint as FaceUp).
 const REVIEW_MIN_LEVEL = 5;
 const RESULT_BUTTON_WIDTH = 220;
+// Retry and Levels together span exactly the width of Next level: the glass buttons add about
+// 40 of their own padding to a label width, and the two sit 14 apart.
+const RESULT_SECONDARY_WIDTH = (RESULT_BUTTON_WIDTH + 40 - 14) / 2 - 40;
 
 export default function LevelScreen() {
   const { n } = useLocalSearchParams<{ n: string }>();
@@ -188,37 +192,53 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
             { label: t("game.moves"), value: String(state.moves) },
             { label: t("game.time"), value: formatDuration(elapsed) },
           ]}
+          footer={
+            <>
+              {hasNext && (
+                <AppButton
+                  label={t("game.nextLevel")}
+                  variant="primary"
+                  size="hero"
+                  width={RESULT_BUTTON_WIDTH}
+                  onPress={() =>
+                    leaveFinishedGame(t, () =>
+                      router.replace({ pathname: "/play/level/[n]", params: { n: String(level.number + 1) } }),
+                    )
+                  }
+                />
+              )}
+              <AppButtonGroup
+                direction="horizontal"
+                buttons={[
+                  {
+                    label: t("game.retry"),
+                    width: RESULT_SECONDARY_WIDTH,
+                    onPress: () => leaveFinishedGame(t, onRetry),
+                    ...(hasNext ? {} : { variant: "primary" as const }),
+                  },
+                  {
+                    label: t("game.levels"),
+                    width: RESULT_SECONDARY_WIDTH,
+                    onPress: () => leaveFinishedGame(t, () => router.back()),
+                  },
+                ]}
+              />
+            </>
+          }
         >
           {coinsEarned > 0 && (
             <View style={styles.coinsRow}>
-              <Text style={styles.coins}>
-                {t("results.coinsEarned", { count: doubled ? coinsEarned * 2 : coinsEarned })}
-                {doubled ? ` · ${t("results.doubled")}` : ""}
-              </Text>
+              <View style={styles.coinsAmount}>
+                <Emoji asset={UI_EMOJI.coin} size={22} />
+                <Text style={styles.coins}>
+                  {t("results.coinsEarned", { count: doubled ? coinsEarned * 2 : coinsEarned })}
+                  {doubled ? ` · ${t("results.doubled")}` : ""}
+                </Text>
+              </View>
               {!doubled && rewardedReady && <AppButton label={t("results.double")} onPress={double} />}
             </View>
           )}
           {!hasNext && <Text style={styles.done}>{t("game.careerDone")}</Text>}
-          {hasNext && (
-            <AppButton
-              label={t("game.nextLevel")}
-              variant="primary"
-              size="hero"
-              width={RESULT_BUTTON_WIDTH}
-              onPress={() =>
-                leaveFinishedGame(t, () =>
-                  router.replace({ pathname: "/play/level/[n]", params: { n: String(level.number + 1) } }),
-                )
-              }
-            />
-          )}
-          <AppButtonGroup
-            direction="horizontal"
-            buttons={[
-              { label: t("game.retry"), onPress: () => leaveFinishedGame(t, onRetry), ...(hasNext ? {} : { variant: "primary" as const }) },
-              { label: t("game.levels"), onPress: () => leaveFinishedGame(t, () => router.back()) },
-            ]}
-          />
         </ResultPanel>
       )}
     </Screen>
@@ -254,6 +274,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+  },
+  coinsAmount: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   coins: {
     color: colors.text,

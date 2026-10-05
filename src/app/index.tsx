@@ -43,7 +43,8 @@ const COMPACT_HEIGHT = 740;
 const HERO_BUTTON_WIDTH = 240;
 const SECONDARY_BUTTON_WIDTH = 126;
 // Lets the home screen appear first, so the alert lands on the game rather than a blank screen.
-const FIRST_PROMPT_DELAY_MS = 600;
+// Long enough for the opening animation (about 1.4 s) to finish first.
+const FIRST_PROMPT_DELAY_MS = 1800;
 const CONSENT_WAIT_MAX_MS = 8_000;
 // Lets the home screen settle after the game closes before the sheet rises.
 const ICON_REVEAL_DELAY_MS = 500;

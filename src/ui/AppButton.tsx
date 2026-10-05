@@ -166,7 +166,7 @@ function FallbackButton({
 export function AppButton(props: AppButtonProps) {
   if (!USE_LIQUID_GLASS) return <FallbackButton {...props} />;
   return (
-    <Host matchContents>
+    <Host matchContents ignoreSafeArea="keyboard">
       <GlassButton {...props} />
     </Host>
   );
@@ -200,7 +200,7 @@ export function AppButtonGroup({
   }
   const Stack = direction === "vertical" ? VStack : HStack;
   return (
-    <Host matchContents>
+    <Host matchContents ignoreSafeArea="keyboard">
       <GlassEffectContainer spacing={14}>
         <Stack spacing={14}>
           {buttons.map((b) => (
@@ -248,7 +248,7 @@ export function IconButton({
     // draw, sits on top of its (hidden) symbol.
     return (
       <View>
-        <Host matchContents>
+        <Host matchContents ignoreSafeArea="keyboard">
           <Button
             label={label}
             systemImage={systemImage as never}

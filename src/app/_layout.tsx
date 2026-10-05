@@ -19,6 +19,7 @@ import { flushRuns } from "@/lib/runQueue";
 import { useProgress } from "@/store/progress";
 import { analyticsAllowed, useSettings } from "@/store/settings";
 import { useWallet } from "@/store/wallet";
+import { AppSplash } from "@/ui/AppSplash";
 import { colors } from "@/ui/theme";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -64,6 +65,7 @@ export default function RootLayout() {
     })),
   );
   const { t } = useTranslation();
+  const [splashDone, setSplashDone] = useState(false);
 
   useEffect(() => {
     applyLanguage(language);
@@ -119,6 +121,7 @@ export default function RootLayout() {
         <Stack.Screen name="icon-unlocked" options={{ ...sheet, sheetAllowedDetents: "fitToContents" }} />
       </Stack>
       <FxLayer />
+      {!splashDone && <AppSplash onFinished={() => setSplashDone(true)} />}
     </>
   );
 }

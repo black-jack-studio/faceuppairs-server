@@ -3,8 +3,8 @@
   "cancel": "Cancel",
   "confirm": "Confirm",
   "close": "Close",
-  "coins": "{{count}} coins",
-  "coinsA11y": "{{count}} coins",
+  "coins": "{{count, number}} coins",
+  "coinsA11y": "{{count, number}} coins",
   "home": {
     "tagline": "Find the pairs. As fast as you can.",
     "career": "Career",
@@ -15,6 +15,7 @@
     "chest": "Daily reward",
     "settings": "Settings",
     "bestScore": "Best score",
+    "tagline": "Find the pairs",
     "stars": "Stars"
   },
   "career": {
@@ -50,9 +51,9 @@
     "hint": "Hint",
     "peekA11y": "Peek: shows every card for a moment. {{owned}} left.",
     "hintA11y": "Hint: briefly shows where the partner of a card you've seen is. {{owned}} left.",
-    "price": "{{price}} coins",
+    "price": "{{price, number}} coins",
     "notEnough": "Not enough coins",
-    "notEnoughBody": "You need {{price}} coins. Earn them by playing or get some in the shop.",
+    "notEnoughBody": "You need {{price, number}} coins. Earn them by playing or get some in the shop.",
     "toShop": "Shop",
     "adHint": "Free hint (ad)",
     "adPeek": "Free peek (ad)"
@@ -73,12 +74,12 @@
     "title": "Last chance",
     "body": "Keep going with one more life. Once per game.",
     "watchAd": "Continue (ad)",
-    "payCoins": "Continue · {{price}} coins",
+    "payCoins": "Continue · {{price, number}} coins",
     "offer": "Continue + 500 coins · {{price}}",
     "giveUp": "End game"
   },
   "results": {
-    "coinsEarned": "+{{count}} coins",
+    "coinsEarned": "+{{count, number}} coins",
     "double": "Double (ad)",
     "doubled": "Coins doubled",
     "rank": "Ranked #{{rank}}",
@@ -95,7 +96,7 @@
     "yourScore": "Your score: {{score}}",
     "nextIn": "New challenge in {{time}}",
     "seeRanking": "See the leaderboard",
-    "bonus": "+{{count}} coins for finishing it"
+    "bonus": "+{{count, number}} coins for finishing it"
   },
   "leaderboard": {
     "title": "Leaderboard",
@@ -107,9 +108,9 @@
     "offline": "Leaderboard unavailable offline.",
     "retry": "Try again",
     "endsIn": "Ends in {{time}}",
-    "players_one": "{{count}} player",
-    "players_other": "{{count}} players",
-    "rowA11y": "Rank {{rank}}, {{name}}, {{score}} points",
+    "players_one": "{{count, number}} player",
+    "players_other": "{{count, number}} players",
+    "rowA11y": "Rank {{rank}}, {{name}}, {{score, number}} points",
     "report": "Report this nickname",
     "hide": "Hide this player",
     "reported": "Thanks, it's been reported.",
@@ -123,7 +124,7 @@
     "claim": "Collect",
     "streak_one": "Streak: {{count}} day",
     "streak_other": "Streak: {{count}} days",
-    "reward": "+{{count}} coins",
+    "reward": "+{{count, number}} coins",
     "bonusHint": "+1 hint",
     "doubleAd": "Double (ad)",
     "ready": "Daily reward ready"
@@ -145,7 +146,7 @@
     "equipped": "In use",
     "equip": "Use",
     "plusOnly": "Included with Pairs+",
-    "buyWithCoins": "{{price}} coins",
+    "buyWithCoins": "{{price, number}} coins",
     "notSold": "Unavailable",
     "purchased": "Thanks for your purchase!",
     "failed": "The purchase couldn't be completed.",
@@ -160,7 +161,7 @@
       "nature": "Nature",
       "travel": "Travel"
     },
-    "freeCoins": "+{{coins}} coins",
+    "freeCoins": "+{{coins, number}} coins",
     "watchAd": "Watch",
     "freeCoinsDone": "Back tomorrow",
     "freeCoinsLeft": "{{left}}/{{max}} left today"

@@ -9,13 +9,21 @@ interface ResultPanelProps {
   headline?: ReactNode;
   stats: { label: string; value: string }[];
   children: ReactNode;
+  /** Buttons, set lower than `children`. The block above them keeps its place. */
+  footer?: ReactNode;
 }
+
+// How far `footer` sits below `children`. The same amount of top padding cancels the upward
+// shift that vertical centring would otherwise give everything above it.
+const FOOTER_DROP = 36;
 
 // Covers the finished board. Opaque board-gray rather than a translucent glass sheet: glass is
 // for controls only, never for content (DESIGN.md).
-export function ResultPanel({ title, headline, stats, children }: ResultPanelProps) {
+export function ResultPanel({ title, headline, stats, children, footer }: ResultPanelProps) {
   return (
-    <Animated.View entering={FadeIn.duration(220)} style={styles.overlay} accessibilityViewIsModal>
+    <Animated.View entering={FadeIn.duration(220)} style={[styles.overlay, footer ? { paddingTop: FOOTER_DROP } : null]}
+      accessibilityViewIsModal
+    >
       <Text style={styles.title} accessibilityRole="header">
         {title}
       </Text>
@@ -29,6 +37,7 @@ export function ResultPanel({ title, headline, stats, children }: ResultPanelPro
         ))}
       </View>
       <View style={styles.actions}>{children}</View>
+      {footer && <View style={[styles.actions, { marginTop: FOOTER_DROP - 12 }]}>{footer}</View>}
     </Animated.View>
   );
 }
