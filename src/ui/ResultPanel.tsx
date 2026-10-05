@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 import { colors, space } from "./theme";
 
@@ -38,7 +38,12 @@ export function useResultWidths() {
 // for controls only, never for content (DESIGN.md).
 export function ResultPanel({ title, lead, headline, stats, children, footer }: ResultPanelProps) {
   return (
-    <Animated.View entering={FadeIn.duration(220)} style={styles.overlay} accessibilityViewIsModal>
+    <Animated.View
+      entering={FadeIn.duration(220)}
+      exiting={FadeOut.duration(160)}
+      style={styles.overlay}
+      accessibilityViewIsModal
+    >
       <View style={styles.body}>
         {lead}
         <Text style={styles.title} accessibilityRole="header">
@@ -158,7 +163,12 @@ export function BottomSheetPanel({ title, onDismiss, lead, children, footer }: B
   return (
     // A fade, not a slide: the native glass buttons inside don't follow a transform, so a rising
     // card would leave them behind and the icons over them out of place.
-    <Animated.View entering={FadeIn.duration(220)} style={styles.backdrop} accessibilityViewIsModal>
+    <Animated.View
+      entering={FadeIn.duration(220)}
+      exiting={FadeOut.duration(160)}
+      style={styles.backdrop}
+      accessibilityViewIsModal
+    >
       {onDismiss && <Pressable style={StyleSheet.absoluteFill} onPress={onDismiss} accessibilityLabel="" />}
       <View style={[styles.sheet, { paddingBottom: bottom + 16 }]}>
         {lead}

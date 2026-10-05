@@ -16,11 +16,23 @@ describe("levels", () => {
     }
   });
 
-  it("gets harder: never fewer pairs, never a longer reveal", () => {
+  it("gets harder: never fewer pairs; inside a grid size, a shorter reveal and tighter stars every level", () => {
     for (let i = 1; i < LEVELS.length; i++) {
-      expect(LEVELS[i].board.pairs).toBeGreaterThanOrEqual(LEVELS[i - 1].board.pairs);
-      expect(LEVELS[i].board.revealMs).toBeLessThanOrEqual(LEVELS[i - 1].board.revealMs);
+      const [prev, level] = [LEVELS[i - 1], LEVELS[i]];
+      expect(level.board.pairs).toBeGreaterThanOrEqual(prev.board.pairs);
+      if (level.board.pairs !== prev.board.pairs) continue;
+      expect(level.board.revealMs).toBeLessThan(prev.board.revealMs);
+      expect(level.moves3).toBeLessThanOrEqual(prev.moves3);
+      expect(level.moves2).toBeLessThanOrEqual(prev.moves2);
+      expect(level.seconds3).toBeLessThanOrEqual(prev.seconds3);
     }
+  });
+
+  it("feels the difference across a grid size: level 12 is clearly harder than level 1", () => {
+    const [first, last] = [getLevel(1)!, getLevel(12)!];
+    expect(first.board.revealMs - last.board.revealMs).toBeGreaterThanOrEqual(400);
+    expect(last.moves3).toBeLessThan(first.moves3);
+    expect(last.seconds3).toBeLessThan(first.seconds3);
   });
 
   it("keeps 3 rows for the first 12 levels, then grows a row every 18 levels", () => {
@@ -34,14 +46,17 @@ describe("levels", () => {
     expect(cards(100)).toBe(32);
   });
 
-  it("uses the same star rules for every level with the same grid size", () => {
-    const rulesBySize = new Map<number, string>();
-    for (const level of LEVELS) {
-      const rules = `${level.moves3}/${level.moves2}/${level.seconds3}`;
-      const size = level.board.pairs;
-      expect(rulesBySize.get(size) ?? rules).toBe(rules);
-      rulesBySize.set(size, rules);
-    }
+  it("never ends: levels past 100 exist, on the biggest grid, still tightening within each run of 18", () => {
+    const l101 = getLevel(101)!;
+    const l118 = getLevel(118)!;
+    const l500 = getLevel(500)!;
+    expect(l101.board.pairs).toBe(16);
+    expect(l500.board.pairs).toBe(16);
+    expect(l118.board.revealMs).toBeLessThan(l101.board.revealMs);
+    expect(l118.moves3).toBeLessThanOrEqual(l101.moves3);
+    expect(l500.board.revealMs).toBeGreaterThanOrEqual(300);
+    expect(getLevel(0)).toBeUndefined();
+    expect(getLevel(1.5)).toBeUndefined();
   });
 
   it("awards stars on moves and time", () => {

@@ -12,8 +12,13 @@ export interface PackIcon {
 export interface IconPack {
   id: string;
   icons: readonly PackIcon[];
-  /** How the pack is unlocked: free, bought with coins, a store product, or Pairs+. */
-  price: { kind: "free" } | { kind: "coins"; amount: number } | { kind: "iap"; productId: string } | { kind: "plus" };
+  /** How the pack is unlocked: free, bought with coins, a store product, Pairs+, or earned in the Career. */
+  price:
+    | { kind: "free" }
+    | { kind: "coins"; amount: number }
+    | { kind: "iap"; productId: string }
+    | { kind: "plus" }
+    | { kind: "level"; level: number };
 }
 
 export const ICON_PACKS: readonly IconPack[] = [
@@ -255,6 +260,37 @@ export const ICON_PACKS: readonly IconPack[] = [
       { glyph: "🤓", asset: "nerd_face" },
       { glyph: "🥳", asset: "partying_face" },
       { glyph: "🤠", asset: "cowboy_hat_face" },
+    ],
+  },
+  {
+    // Earned by finishing Career level 100: the one pack that can't be bought.
+    id: "legends",
+    price: { kind: "level", level: 100 },
+    icons: [
+      { glyph: "🧙", asset: "person_mage" },
+      { glyph: "🧝", asset: "person_elf" },
+      { glyph: "🧚", asset: "person_fairy" },
+      { glyph: "🧞", asset: "person_genie" },
+      { glyph: "🧛", asset: "person_vampire" },
+      { glyph: "🐉", asset: "dragon" },
+      { glyph: "🐲", asset: "dragon_face" },
+      { glyph: "🦕", asset: "sauropod" },
+      { glyph: "💎", asset: "gem_stone" },
+      { glyph: "💍", asset: "ring" },
+      { glyph: "👑", asset: "crown" },
+      { glyph: "🔮", asset: "crystal_ball" },
+      { glyph: "⚔️", asset: "crossed_swords" },
+      { glyph: "🗡️", asset: "dagger" },
+      { glyph: "🏹", asset: "bow_and_arrow" },
+      { glyph: "🧪", asset: "test_tube" },
+      { glyph: "⚗️", asset: "alembic" },
+      { glyph: "🦄", asset: "unicorn" },
+      { glyph: "🐦‍🔥", asset: "phoenix_bird" },
+      { glyph: "🦅", asset: "eagle" },
+      { glyph: "🏰", asset: "castle" },
+      { glyph: "🗝️", asset: "old_key" },
+      { glyph: "🔱", asset: "trident_emblem" },
+      { glyph: "🛡️", asset: "shield" },
     ],
   },
 ];

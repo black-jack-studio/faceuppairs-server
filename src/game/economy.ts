@@ -38,6 +38,9 @@ export function endlessCoins(score: number): number {
 /** Flat bonus for finishing the Daily Challenge, on top of the score's coins. */
 export const DAILY_CHALLENGE_COINS = 100;
 
+/** Bonus for clearing a milestone level (100, 200…) for the first time. */
+export const MILESTONE_COINS = 1000;
+
 /** Shop: watch an ad for a few coins, a handful of times per (local) day. */
 export const FREE_COINS_REWARD = 50;
 export const FREE_COINS_PER_DAY = 5;

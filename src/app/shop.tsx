@@ -335,6 +335,8 @@ function PackTile({
   } else if (pack.price.kind === "iap") {
     const productId = pack.price.productId;
     action = <BuyButton price={price} onPress={() => onBuyIap(productId)} />;
+  } else if (pack.price.kind === "level") {
+    action = <Text style={styles.packState}>{t("shop.levelReward", { n: pack.price.level })}</Text>;
   } else action = <Text style={styles.packState}>{t("shop.plusOnly")}</Text>;
 
   return (

@@ -22,7 +22,9 @@
     "level": "Niveau {{n}}",
     "locked": "Niveau {{n}}, verrouillé",
     "starsA11y_one": "{{count}} étoile",
-    "starsA11y_other": "{{count}} étoiles"
+    "starsA11y_other": "{{count}} étoiles",
+    "milestoneTitle": "{{n}} niveaux !",
+    "milestoneBonus": "Bonus de palier : +{{count, number}} pièces"
   },
   "game": {
     "moves": "Coups",
@@ -37,8 +39,7 @@
     "time": "Temps",
     "nextLevel": "Niveau suivant",
     "retry": "Rejouer",
-    "levels": "Niveaux",
-    "careerDone": "Tu as terminé tous les niveaux."
+    "levels": "Niveaux"
   },
   "secret": {
     "title": "Grille secrète",
@@ -147,6 +148,7 @@
     "equipped": "Utilisé",
     "equip": "Utiliser",
     "plusOnly": "Inclus avec Pairs+",
+    "levelReward": "Termine le niveau {{n}}",
     "buyWithCoins": "{{price, number}} pièces",
     "notSold": "Indisponible",
     "purchased": "Merci pour ton achat !",
@@ -177,8 +179,8 @@
     "body": "On te prévient quand ta récompense du jour et le défi du jour sont prêts, et avant que ta série ne se perde. Rien d'autre.",
     "allow": "Activer",
     "later": "Plus tard",
-    "chestTitle": "Ta récompense du jour est prête",
-    "chestBody": "Viens récupérer tes pièces et garder ta série.",
+    "chestTitle": "Ta récompense du jour t'attend",
+    "chestBody": "Joue une partie pour récupérer tes pièces et garder ta série.",
     "streakTitle": "Ta série t'attend",
     "streakBody": "Ouvre le jeu aujourd'hui pour ne pas la perdre.",
     "dailyTitle": "Le défi du jour est disponible",

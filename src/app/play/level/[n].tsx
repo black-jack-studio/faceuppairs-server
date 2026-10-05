@@ -5,11 +5,11 @@ import { useTranslation } from "react-i18next";
 import { Alert, StyleSheet, Text, View } from "react-native";
 
 import { setupBoard } from "@/game/board";
-import { BOOSTER_PRICES, levelCoins, localDay, PEEK_MS, type BoosterId } from "@/game/economy";
+import { BOOSTER_PRICES, levelCoins, localDay, MILESTONE_COINS, PEEK_MS, type BoosterId } from "@/game/economy";
 import { hintTarget } from "@/game/engine";
-import { getPack } from "@/game/iconPacks";
+import { getPack, ICON_PACKS } from "@/game/iconPacks";
 import { playFx } from "@/fx/store";
-import { getLevel, LEVEL_COUNT, starsFor, type Level } from "@/game/levels";
+import { getLevel, MILESTONE_EVERY, starsFor, type Level } from "@/game/levels";
 import { randomSeed } from "@/game/rng";
 import { useBoardGame, useElapsed } from "@/game/useBoardGame";
 import { showRewarded, useAds } from "@/lib/ads";
@@ -34,6 +34,7 @@ import { colors } from "@/ui/theme";
 
 // Ask for a review only after a clearly good moment, once (same restraint as FaceUp).
 const REVIEW_MIN_LEVEL = 5;
+const MILESTONE_FX = ["trophy", "party_popper", "sparkles", "crown", "coin", "1st_place_medal"];
 
 export default function LevelScreen() {
   const { n } = useLocalSearchParams<{ n: string }>();
@@ -62,6 +63,9 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
   const complete = state.phase === "complete";
   const showResults = useDelayedTrue(complete, END_OF_GAME_DELAY_MS);
   const stars = complete ? starsFor(level, state.moves, elapsed) : 0;
+  // Clearing level 100, 200… for the first time: a coin bonus (not doubled by the ad) and a party.
+  const isMilestone = stars > 0 && !previousStars && level.number % MILESTONE_EVERY === 0;
+  const milestoneBonus = isMilestone ? MILESTONE_COINS : 0;
   const leave = useLeaveGuard(state.moves > 0 && !complete);
 
   useEffect(() => {
@@ -73,11 +77,18 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
     const coins = levelCoins(stars, previousStars, level.number);
     useWallet.getState().addCoins(coins);
     setCoinsEarned(coins);
+    if (isMilestone) useWallet.getState().addCoins(MILESTONE_COINS);
+    // Career rewards: packs earned at a given level (the Legends pack at 100).
+    for (const pack of ICON_PACKS) {
+      if (pack.price.kind === "level" && pack.price.level === level.number) useWallet.getState().unlockPack(pack.id);
+    }
     track("level_complete", { level: level.number, stars, moves: state.moves });
     // Finishing level 25 or the last 3-star level can unlock an app icon (celebrated back home).
     queueEarnedAppIcons();
-    // Not a single memory slip: the full-screen celebration.
-    if (state.memoryErrors === 0) {
+    if (isMilestone) {
+      playFx({ kind: "perfect", emojis: MILESTONE_FX });
+    } else if (state.memoryErrors === 0) {
+      // Not a single memory slip: the full-screen celebration.
       playFx({ kind: "perfect", emojis: getPack(useWallet.getState().activePack).icons.map((i) => i.asset) });
     }
     if (stars === 3 && level.number >= REVIEW_MIN_LEVEL && !progress.reviewRequested) {
@@ -86,7 +97,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
         .then((available) => (available ? StoreReview.requestReview() : undefined))
         .catch(() => {});
     }
-  }, [complete, stars, level.number, previousStars, state.moves, state.memoryErrors]);
+  }, [complete, stars, level.number, previousStars, state.moves, state.memoryErrors, isMilestone]);
 
   // Uses an owned booster, or buys one with coins; offers the shop (or an ad, for hints) otherwise.
   const spendBooster = async (id: BoosterId, apply: () => void) => {
@@ -135,7 +146,6 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
   const flashing = peeking || flashIndex !== null;
   const canPeek = state.startedAt === null && !flashing;
   const canHint = hintTarget(state) !== null && !flashing;
-  const hasNext = level.number < LEVEL_COUNT;
   const widths = useResultWidths();
 
   const double = async () => {
@@ -185,16 +195,20 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
 
       {showResults && (
         <ResultPanel
-          title={levelQuip(t, stars, quipSeed) || t("game.levelComplete")}
+          title={
+            milestoneBonus > 0
+              ? t("career.milestoneTitle", { n: level.number })
+              : levelQuip(t, stars, quipSeed) || t("game.levelComplete")
+          }
           headline={<StarRow earned={stars} size={40} />}
           stats={[
             { label: t("game.moves"), value: String(state.moves) },
             { label: t("game.time"), value: formatDuration(elapsed) },
-            ...(coinsEarned > 0
+            ...(coinsEarned + milestoneBonus > 0
               ? [
                   {
                     label: t("shop.coins"),
-                    value: `+${formatScore(doubled ? coinsEarned * 2 : coinsEarned, i18n.language)}`,
+                    value: `+${formatScore((doubled ? coinsEarned * 2 : coinsEarned) + milestoneBonus, i18n.language)}`,
                     icon: <CoinIcon />,
                   },
                 ]
@@ -202,19 +216,17 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
           ]}
           footer={
             <>
-              {hasNext && (
-                <AppButton
-                  label={t("game.nextLevel")}
-                  variant="primary"
-                  size="large"
-                  width={widths.full}
-                  onPress={() =>
-                    leaveFinishedGame(t, () =>
-                      router.replace({ pathname: "/play/level/[n]", params: { n: String(level.number + 1) } }),
-                    )
-                  }
-                />
-              )}
+              <AppButton
+                label={t("game.nextLevel")}
+                variant="primary"
+                size="large"
+                width={widths.full}
+                onPress={() =>
+                  leaveFinishedGame(t, () =>
+                    router.replace({ pathname: "/play/level/[n]", params: { n: String(level.number + 1) } }),
+                  )
+                }
+              />
               <AppButtonGroup
                 direction="horizontal"
                 buttons={[
@@ -223,7 +235,6 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
                     size: "large" as const,
                     width: widths.half,
                     onPress: () => leaveFinishedGame(t, onRetry),
-                    ...(hasNext ? {} : { variant: "primary" as const }),
                   },
                   {
                     label: t("game.levels"),
@@ -237,7 +248,9 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
           }
         >
           <DoubleCoinsButton doubled={doubled} canDouble={rewardedReady && coinsEarned > 0} onDouble={double} />
-          {!hasNext && <Text style={styles.done}>{t("game.careerDone")}</Text>}
+          {milestoneBonus > 0 && (
+            <Text style={styles.done}>{t("career.milestoneBonus", { count: milestoneBonus })}</Text>
+          )}
         </ResultPanel>
       )}
     </Screen>

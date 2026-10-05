@@ -21,7 +21,7 @@ import { wakeServer } from "@/lib/api";
 import { formatCountdown, formatScore, nextLocalMidnight } from "@/lib/format";
 import { hapticImpact } from "@/lib/haptics";
 import { promptNickname } from "@/lib/promptNickname";
-import { totalStars, useProgress } from "@/store/progress";
+import { highestUnlockedLevel, totalStars, useProgress } from "@/store/progress";
 import { useWallet } from "@/store/wallet";
 import { AppButton, AppButtonGroup, IconButton } from "@/ui/AppButton";
 import { CoinsPill } from "@/ui/CoinsPill";
@@ -49,6 +49,11 @@ const FIRST_PROMPT_DELAY_MS = 1500;
 const CONSENT_WAIT_MAX_MS = 8_000;
 // Lets the home screen settle after the game closes before the sheet rises.
 const ICON_REVEAL_DELAY_MS = 500;
+
+/** Stars are counted against the current block of 100 levels: 0/300, then /600 past level 100… */
+function chapterEnd(highestUnlocked: number): number {
+  return Math.max(LEVEL_COUNT, Math.ceil(highestUnlocked / LEVEL_COUNT) * LEVEL_COUNT);
+}
 
 export default function Home() {
   const { t, i18n } = useTranslation();
@@ -204,7 +209,7 @@ export default function Home() {
             </View>
             <View style={styles.stat}>
               <Text style={styles.statValue}>
-                {totalStars(stars)}/{LEVEL_COUNT * 3}
+                {totalStars(stars)}/{chapterEnd(highestUnlockedLevel(stars)) * 3}
               </Text>
               <Text style={styles.statLabel}>{t("home.stars")}</Text>
             </View>

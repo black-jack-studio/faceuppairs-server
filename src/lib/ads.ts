@@ -19,8 +19,12 @@ import { track } from "./analytics";
 // MONETISATION.md §2: rewarded ads are the backbone and always the player's choice;
 // interstitials are capped by shouldShowInterstitial. No banners.
 
-const rewardedUnit = __DEV__ ? TestIds.REWARDED : ADMOB_UNITS.rewarded;
-const interstitialUnit = __DEV__ ? TestIds.INTERSTITIAL : ADMOB_UNITS.interstitial;
+// Google's test units, never the real ones, in development and in TestFlight builds (codemagic.yaml
+// sets EXPO_PUBLIC_ADS_TEST there): testers tapping real ads would count as invalid traffic on the
+// AdMob account. The store release workflow leaves it unset.
+const useTestAds = __DEV__ || process.env.EXPO_PUBLIC_ADS_TEST === "true";
+const rewardedUnit = useTestAds ? TestIds.REWARDED : ADMOB_UNITS.rewarded;
+const interstitialUnit = useTestAds ? TestIds.INTERSTITIAL : ADMOB_UNITS.interstitial;
 
 export type RewardPlacement = "revive" | "double_coins" | "hint" | "peek" | "daily_chest" | "free_coins";
 

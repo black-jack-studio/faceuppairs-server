@@ -22,7 +22,9 @@
     "level": "Level {{n}}",
     "locked": "Level {{n}}, locked",
     "starsA11y_one": "{{count}} star",
-    "starsA11y_other": "{{count}} stars"
+    "starsA11y_other": "{{count}} stars",
+    "milestoneTitle": "{{n}} levels!",
+    "milestoneBonus": "Milestone bonus: +{{count, number}} coins"
   },
   "game": {
     "moves": "Moves",
@@ -37,8 +39,7 @@
     "time": "Time",
     "nextLevel": "Next level",
     "retry": "Play again",
-    "levels": "Levels",
-    "careerDone": "You've finished every level."
+    "levels": "Levels"
   },
   "secret": {
     "title": "Secret board",
@@ -147,6 +148,7 @@
     "equipped": "In use",
     "equip": "Use",
     "plusOnly": "Included with Pairs+",
+    "levelReward": "Finish level {{n}}",
     "buyWithCoins": "{{price, number}} coins",
     "notSold": "Unavailable",
     "purchased": "Thanks for your purchase!",
@@ -177,8 +179,8 @@
     "body": "We'll let you know when your daily reward and daily challenge are ready, and before your streak runs out. Nothing else.",
     "allow": "Turn on",
     "later": "Later",
-    "chestTitle": "Your daily reward is ready",
-    "chestBody": "Come collect your coins and keep your streak.",
+    "chestTitle": "Your daily reward is waiting",
+    "chestBody": "Play a game to collect your coins and keep your streak.",
     "streakTitle": "Your streak is waiting",
     "streakBody": "Open the game today so you don't lose it.",
     "dailyTitle": "Today's daily challenge is live",

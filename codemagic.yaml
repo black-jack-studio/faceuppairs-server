@@ -15,6 +15,8 @@ workflows:
         BUNDLE_ID: "com.beaudoin.faceuppairs"
         XCODE_WORKSPACE: "ios/FaceUpPairs.xcworkspace"
         XCODE_SCHEME: "FaceUpPairs"
+        # TestFlight builds show Google's test ads, not the real ones (see src/lib/ads.ts).
+        EXPO_PUBLIC_ADS_TEST: "true"
       node: 22
       xcode: latest
       cocoapods: default

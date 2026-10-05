@@ -2,7 +2,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { LEVEL_COUNT } from "@/game/levels";
 
 export type Stars = 1 | 2 | 3;
 
@@ -107,7 +106,7 @@ export const useProgress = create<ProgressState>()(
 
 export function highestUnlockedLevel(stars: Record<number, Stars>): number {
   let level = 1;
-  while (level < LEVEL_COUNT && stars[level]) level++;
+  while (stars[level]) level++;
   return level;
 }
 
