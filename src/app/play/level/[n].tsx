@@ -34,7 +34,6 @@ import { colors } from "@/ui/theme";
 
 // Ask for a review only after a clearly good moment, once (same restraint as FaceUp).
 const REVIEW_MIN_LEVEL = 5;
-const MILESTONE_FX = ["trophy", "party_popper", "sparkles", "crown", "coin", "1st_place_medal"];
 
 export default function LevelScreen() {
   const { n } = useLocalSearchParams<{ n: string }>();
@@ -65,7 +64,6 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
   const stars = complete ? starsFor(level, state.moves, elapsed) : 0;
   // Clearing level 100, 200… for the first time: a coin bonus (not doubled by the ad) and a party.
   const isMilestone = stars > 0 && !previousStars && level.number % MILESTONE_EVERY === 0;
-  const milestoneBonus = isMilestone ? MILESTONE_COINS : 0;
   const leave = useLeaveGuard(state.moves > 0 && !complete);
 
   useEffect(() => {
@@ -77,7 +75,11 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
     const coins = levelCoins(stars, previousStars, level.number);
     useWallet.getState().addCoins(coins);
     setCoinsEarned(coins);
-    if (isMilestone) useWallet.getState().addCoins(MILESTONE_COINS);
+    // Level 100, 200…: the bonus and the rewards are given now, announced back on the home screen.
+    if (isMilestone) {
+      useWallet.getState().addCoins(MILESTONE_COINS);
+      useWallet.getState().queueMilestone(level.number);
+    }
     // Career rewards: packs earned at a given level (the Legends pack at 100).
     for (const pack of ICON_PACKS) {
       if (pack.price.kind === "level" && pack.price.level === level.number) useWallet.getState().unlockPack(pack.id);
@@ -85,10 +87,8 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
     track("level_complete", { level: level.number, stars, moves: state.moves });
     // Finishing level 25 or the last 3-star level can unlock an app icon (celebrated back home).
     queueEarnedAppIcons();
-    if (isMilestone) {
-      playFx({ kind: "perfect", emojis: MILESTONE_FX });
-    } else if (state.memoryErrors === 0) {
-      // Not a single memory slip: the full-screen celebration.
+    // Not a single memory slip: the full-screen celebration.
+    if (state.memoryErrors === 0) {
       playFx({ kind: "perfect", emojis: getPack(useWallet.getState().activePack).icons.map((i) => i.asset) });
     }
     if (stars === 3 && level.number >= REVIEW_MIN_LEVEL && !progress.reviewRequested) {
@@ -195,20 +195,16 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
 
       {showResults && (
         <ResultPanel
-          title={
-            milestoneBonus > 0
-              ? t("career.milestoneTitle", { n: level.number })
-              : levelQuip(t, stars, quipSeed) || t("game.levelComplete")
-          }
+          title={levelQuip(t, stars, quipSeed) || t("game.levelComplete")}
           headline={<StarRow earned={stars} size={40} />}
           stats={[
             { label: t("game.moves"), value: String(state.moves) },
             { label: t("game.time"), value: formatDuration(elapsed) },
-            ...(coinsEarned + milestoneBonus > 0
+            ...(coinsEarned > 0
               ? [
                   {
                     label: t("shop.coins"),
-                    value: `+${formatScore((doubled ? coinsEarned * 2 : coinsEarned) + milestoneBonus, i18n.language)}`,
+                    value: `+${formatScore(doubled ? coinsEarned * 2 : coinsEarned, i18n.language)}`,
                     icon: <CoinIcon />,
                   },
                 ]
@@ -248,9 +244,6 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
           }
         >
           <DoubleCoinsButton doubled={doubled} canDouble={rewardedReady && coinsEarned > 0} onDouble={double} />
-          {milestoneBonus > 0 && (
-            <Text style={styles.done}>{t("career.milestoneBonus", { count: milestoneBonus })}</Text>
-          )}
         </ResultPanel>
       )}
     </Screen>

@@ -23,8 +23,13 @@
     "locked": "Level {{n}}, locked",
     "starsA11y_one": "{{count}} star",
     "starsA11y_other": "{{count}} stars",
-    "milestoneTitle": "{{n}} levels!",
-    "milestoneBonus": "Milestone bonus: +{{count, number}} coins"
+    "milestoneTitle": "Level {{n}} complete!",
+    "milestoneCoins": "+{{count, number}} coins",
+    "milestonePack": "New icon pack: {{name}}",
+    "milestoneLevels": "{{count, number}} new levels unlocked",
+    "milestoneUsePack": "Use the pack",
+    "milestoneLater": "Later",
+    "milestoneOk": "Continue"
   },
   "game": {
     "moves": "Moves",

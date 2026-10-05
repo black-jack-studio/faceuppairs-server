@@ -9,16 +9,15 @@ import { StarRow } from "@/ui/StarRow";
 import { colors, space } from "@/ui/theme";
 
 const COLUMNS = 4;
-// Locked levels shown past the current one, once beyond the first chapter.
-const LOCKED_AHEAD = COLUMNS * 2;
 
 export default function Career() {
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
   const stars = useProgress((s) => s.stars);
   const unlocked = highestUnlockedLevel(stars);
-  // The first chapter in full; past it, every level reached plus a couple of rows still locked.
-  const shown = Math.max(LEVEL_COUNT, Math.ceil((unlocked + LOCKED_AHEAD) / COLUMNS) * COLUMNS);
+  // Whole blocks of 100: levels 1–100 at first, then up to 200 once level 100 is cleared, and so
+  // on — the "100 new levels" the milestone announces are all there, locked until reached.
+  const shown = Math.max(LEVEL_COUNT, Math.ceil(unlocked / LEVEL_COUNT) * LEVEL_COUNT);
   const levels = Array.from({ length: shown }, (_, i) => getLevel(i + 1) as Level);
   const cell = Math.floor((width - space.screen * 2 - space.gridGap * (COLUMNS - 1)) / COLUMNS);
 

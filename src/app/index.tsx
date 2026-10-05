@@ -11,19 +11,21 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { APP_NAME } from "@/config/app";
-import { canOpenChest, localDay } from "@/game/economy";
+import { canOpenChest, localDay, MILESTONE_COINS } from "@/game/economy";
 import { dealHome } from "@/game/homeDeal";
 import { SEASON_PAIRS, seasonOn } from "@/game/seasons";
 import { utcDay } from "@/game/run";
-import { LEVEL_COUNT } from "@/game/levels";
+import { ICON_PACKS } from "@/game/iconPacks";
+import { LEVEL_COUNT, MILESTONE_EVERY } from "@/game/levels";
 import { useAds } from "@/lib/ads";
 import { wakeServer } from "@/lib/api";
 import { formatCountdown, formatScore, nextLocalMidnight } from "@/lib/format";
-import { hapticImpact } from "@/lib/haptics";
+import { hapticImpact, hapticSuccess } from "@/lib/haptics";
 import { promptNickname } from "@/lib/promptNickname";
 import { highestUnlockedLevel, totalStars, useProgress } from "@/store/progress";
 import { useWallet } from "@/store/wallet";
 import { AppButton, AppButtonGroup, IconButton } from "@/ui/AppButton";
+import { CoinIcon } from "@/ui/ButtonIcons";
 import { CoinsPill } from "@/ui/CoinsPill";
 import { Emoji, UI_EMOJI } from "@/ui/Emoji";
 import { HomePreviewCard } from "@/ui/HomePreviewCard";
@@ -66,6 +68,9 @@ export default function Home() {
   const { height } = useWindowDimensions();
   const widths = useResultWidths();
   const [secretNotice, setSecretNotice] = useState(false);
+  // Level 100, 200… just cleared: its rewards are announced here, on the way back home.
+  const [milestone, setMilestone] = useState<number | null>(null);
+  const milestonePack = ICON_PACKS.find((p) => p.price.kind === "level" && p.price.level === milestone);
   const compact = height < COMPACT_HEIGHT;
   const previewSize = compact ? 44 : 52;
   const dailyOpen = useWallet(
@@ -89,11 +94,18 @@ export default function Home() {
   }, []);
   const takenNotice = useProgress((s) => s.nicknameTakenNotice);
 
-  // Back home after earning an app icon (level 25, all 3 stars, a 7-day streak): celebrate it.
+  // Back home after a milestone level, then after earning an app icon (level 25, all 3 stars,
+  // a 7-day streak): celebrate it. One at a time; the icon waits for the next visit home.
   useFocusEffect(
     useCallback(() => {
       wakeServer();
       const timer = setTimeout(() => {
+        const level = useWallet.getState().takeMilestone();
+        if (level !== null) {
+          hapticSuccess();
+          setMilestone(level);
+          return;
+        }
         const id = useWallet.getState().takeIconReveal();
         if (id) router.push({ pathname: "/icon-unlocked", params: { id } });
       }, ICON_REVEAL_DELAY_MS);
@@ -263,6 +275,67 @@ export default function Home() {
         </View>
       </View>
 
+      {milestone !== null && (
+        <BottomSheetPanel
+          lead={<Emoji asset={UI_EMOJI.trophy} size={64} />}
+          title={t("career.milestoneTitle", { n: milestone })}
+          onDismiss={() => setMilestone(null)}
+          footer={
+            milestonePack ? (
+              <AppButtonGroup
+                buttons={[
+                  {
+                    label: t("career.milestoneUsePack"),
+                    variant: "primary",
+                    size: "large",
+                    width: widths.full,
+                    onPress: () => {
+                      useWallet.getState().setActivePack(milestonePack.id);
+                      hapticSuccess();
+                      setMilestone(null);
+                    },
+                  },
+                  { label: t("career.milestoneLater"), size: "large", width: widths.full, onPress: () => setMilestone(null) },
+                ]}
+              />
+            ) : (
+              <AppButton
+                label={t("career.milestoneOk")}
+                variant="primary"
+                size="large"
+                width={widths.full}
+                onPress={() => setMilestone(null)}
+              />
+            )
+          }
+        >
+          <View style={styles.rewards}>
+            <View style={styles.reward}>
+              <View style={styles.rewardIcon}>
+                <CoinIcon />
+              </View>
+              <Text style={styles.rewardText}>{t("career.milestoneCoins", { count: MILESTONE_COINS })}</Text>
+            </View>
+            {milestonePack && (
+              <View style={styles.reward}>
+                <View style={styles.rewardIcon}>
+                  <Emoji asset={milestonePack.icons[5].asset} size={24} />
+                </View>
+                <Text style={styles.rewardText}>
+                  {t("career.milestonePack", { name: t(`shop.packNames.${milestonePack.id}`) })}
+                </Text>
+              </View>
+            )}
+            <View style={styles.reward}>
+              <View style={styles.rewardIcon}>
+                <Emoji asset={UI_EMOJI.sparkles} size={24} />
+              </View>
+              <Text style={styles.rewardText}>{t("career.milestoneLevels", { count: MILESTONE_EVERY })}</Text>
+            </View>
+          </View>
+        </BottomSheetPanel>
+      )}
+
       {secretNotice && (
         <BottomSheetPanel
           lead={<Emoji asset={UI_EMOJI.crystalball} size={56} />}
@@ -288,6 +361,26 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  // Milestone rewards: one icon column, texts aligned on it.
+  rewards: {
+    alignItems: "flex-start",
+    gap: 14,
+    marginVertical: 8,
+  },
+  reward: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  rewardIcon: {
+    width: 28,
+    alignItems: "center",
+  },
+  rewardText: {
+    color: colors.text,
+    fontSize: 17,
+    fontWeight: "600",
+  },
   noticeBody: {
     color: colors.muted,
     fontSize: 16,

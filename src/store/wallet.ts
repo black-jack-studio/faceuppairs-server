@@ -33,6 +33,8 @@ interface WalletData {
   ownedAppIcons: string[];
   /** Icons earned but not yet celebrated: shown one by one when the player is back home. */
   pendingIconReveals: string[];
+  /** Milestone level (100, 200…) cleared but not yet announced on the home screen. */
+  pendingMilestone: number | null;
   /** Local day of the last finished game: the daily chest needs one played today. */
   playedDay: string | null;
   /** Local day the secret board's prize was last collected. */
@@ -56,6 +58,9 @@ interface WalletState extends WalletData {
   claimFreeCoins: (today: string) => boolean;
   /** Takes the next icon to celebrate off the queue. */
   takeIconReveal: () => string | null;
+  queueMilestone: (level: number) => void;
+  /** Takes the milestone to announce, if any. */
+  takeMilestone: () => number | null;
   setActivePack: (id: string) => void;
   setEntitlements: (e: { adsRemoved?: boolean; isPlus?: boolean; hasPurchased?: boolean; starterPackBought?: boolean }) => void;
   noteGameFinished: () => void;
@@ -82,6 +87,7 @@ const initial: WalletData = {
   daily: { day: null, played: false, bestScore: 0 },
   ownedAppIcons: [],
   pendingIconReveals: [],
+  pendingMilestone: null,
   freeCoins: { day: null, count: 0 },
   playedDay: null,
   secretClaimDay: null,
@@ -126,6 +132,12 @@ export const useWallet = create<WalletState>()(
       },
       queueIconReveals: (ids) =>
         set((s) => ({ pendingIconReveals: [...s.pendingIconReveals, ...ids.filter((id) => !s.pendingIconReveals.includes(id))] })),
+      queueMilestone: (level) => set({ pendingMilestone: level }),
+      takeMilestone: () => {
+        const level = get().pendingMilestone;
+        if (level !== null) set({ pendingMilestone: null });
+        return level;
+      },
       takeIconReveal: () => {
         const [next, ...rest] = get().pendingIconReveals;
         if (!next) return null;
@@ -165,7 +177,7 @@ export const useWallet = create<WalletState>()(
       name: "faceup-pairs.wallet",
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (s) => {
-        const { addCoins, spendCoins, addBoosters, consumeBooster, claimDaily, unlockPack, setActivePack, setEntitlements, noteGameFinished, noteInterstitialShown, recordDaily, markPlayed, claimSecret, reset, ...data } = s;
+        const { addCoins, spendCoins, addBoosters, consumeBooster, claimDaily, unlockPack, setActivePack, setEntitlements, noteGameFinished, noteInterstitialShown, recordDaily, markPlayed, claimSecret, queueMilestone, takeMilestone, reset, ...data } = s;
         return data;
       },
     },

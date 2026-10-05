@@ -23,8 +23,13 @@
     "locked": "Niveau {{n}}, verrouillé",
     "starsA11y_one": "{{count}} étoile",
     "starsA11y_other": "{{count}} étoiles",
-    "milestoneTitle": "{{n}} niveaux !",
-    "milestoneBonus": "Bonus de palier : +{{count, number}} pièces"
+    "milestoneTitle": "Niveau {{n}} terminé !",
+    "milestoneCoins": "+{{count, number}} pièces",
+    "milestonePack": "Nouveau pack d'icônes : {{name}}",
+    "milestoneLevels": "{{count, number}} nouveaux niveaux débloqués",
+    "milestoneUsePack": "Utiliser le pack",
+    "milestoneLater": "Plus tard",
+    "milestoneOk": "Continuer"
   },
   "game": {
     "moves": "Coups",
