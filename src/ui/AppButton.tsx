@@ -24,6 +24,7 @@ import {
 } from "expo-glass-effect";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
+import type { ReactNode } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Emoji } from "./Emoji";
@@ -48,7 +49,20 @@ export interface AppButtonProps {
   /** Fixed label width, so buttons stacked together line up at the same size. */
   width?: number;
   disabled?: boolean;
+  /**
+   * Icon at the button's left edge (the label stays centred). Meant for buttons given a fixed
+   * `width`, so the label never runs under it.
+   */
+  leading?: ReactNode;
+  /**
+   * Replaces the label: content drawn centred over the button, for what a native label can't
+   * hold (an emoji after the text). `label` is still the accessible name.
+   */
+  content?: ReactNode;
 }
+
+// Distance from the button's left edge to its leading icon.
+const LEADING_INSET = 18;
 
 const FONT_SIZE: Record<Size, number> = { regular: 15, large: 17, hero: 20 };
 // Extra label height on top of the system button padding; only the hero size grows.
@@ -73,6 +87,7 @@ function GlassButton({
   size = "regular",
   width,
   disabled = false,
+  content,
 }: AppButtonProps) {
   const sizing =
     width !== undefined || LABEL_MIN_HEIGHT[size] > 0
@@ -103,7 +118,7 @@ function GlassButton({
           ...sizing,
         ]}
       >
-        {label}
+        {content ? " " : label}
       </SwiftText>
     </Button>
   );
@@ -124,6 +139,8 @@ function FallbackButton({
   size = "regular",
   width,
   disabled = false,
+  leading,
+  content,
 }: AppButtonProps) {
   const height = FALLBACK_HEIGHT[size];
   return (
@@ -141,34 +158,54 @@ function FallbackButton({
         disabled && styles.disabled,
       ]}
     >
-      <Text
-        numberOfLines={1}
-        adjustsFontSizeToFit
-        minimumFontScale={0.8}
-        style={[
-          styles.label,
-          {
-            fontSize: FONT_SIZE[size],
-            color:
-              disabled && variant !== "primary"
-                ? colors.muted
-                : labelColor(variant),
-          },
-          size === "hero" && styles.labelBold,
-        ]}
-      >
-        {label}
-      </Text>
+      {content ?? (
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.8}
+          style={[
+            styles.label,
+            {
+              fontSize: FONT_SIZE[size],
+              color:
+                disabled && variant !== "primary"
+                  ? colors.muted
+                  : labelColor(variant),
+            },
+            size === "hero" && styles.labelBold,
+          ]}
+        >
+          {label}
+        </Text>
+      )}
+      {leading && (
+        <View style={styles.leading} pointerEvents="none">
+          {leading}
+        </View>
+      )}
     </Pressable>
   );
 }
 
 export function AppButton(props: AppButtonProps) {
   if (!USE_LIQUID_GLASS) return <FallbackButton {...props} />;
-  return (
+  const button = (
     <Host matchContents ignoreSafeArea="keyboard">
       <GlassButton {...props} />
     </Host>
+  );
+  if (!props.leading && !props.content) return button;
+  // SwiftUI can't draw an RN view, so the icon sits on top of the native button.
+  return (
+    <View>
+      {button}
+      <View
+        style={props.content ? styles.contentRow : styles.leading}
+        pointerEvents="none"
+      >
+        {props.content ?? props.leading}
+      </View>
+    </View>
   );
 }
 
@@ -199,7 +236,7 @@ export function AppButtonGroup({
     );
   }
   const Stack = direction === "vertical" ? VStack : HStack;
-  return (
+  const group = (
     <Host matchContents ignoreSafeArea="keyboard">
       <GlassEffectContainer spacing={14}>
         <Stack spacing={14}>
@@ -209,6 +246,31 @@ export function AppButtonGroup({
         </Stack>
       </GlassEffectContainer>
     </Host>
+  );
+  if (direction !== "vertical" || !buttons.some((b) => b.leading || b.content))
+    return group;
+  // Leading icons over a stacked group: each button's row is known from the measured heights.
+  // Buttons that carry an icon are expected to share one `width`.
+  const heights = buttons.map((b) => FALLBACK_HEIGHT[b.size ?? "regular"]);
+  return (
+    <View>
+      {group}
+      {buttons.map((b, i) => {
+        const y = heights.slice(0, i).reduce((sum, h) => sum + h + 14, 0);
+        return b.leading || b.content ? (
+          <View
+            key={b.label}
+            pointerEvents="none"
+            style={[
+              b.content ? styles.contentRowAt : styles.leadingRow,
+              { top: y, height: heights[i] },
+            ]}
+          >
+            {b.content ?? b.leading}
+          </View>
+        ) : null;
+      })}
+    </View>
   );
 }
 
@@ -363,6 +425,32 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: 14,
+  },
+  leading: {
+    ...StyleSheet.absoluteFill,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingLeft: LEADING_INSET,
+  },
+  contentRow: {
+    ...StyleSheet.absoluteFill,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  contentRowAt: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  leadingRow: {
+    position: "absolute",
+    left: 0,
+    justifyContent: "center",
+    paddingLeft: LEADING_INSET,
   },
   icon: {
     width: ICON_BUTTON_SIZE,

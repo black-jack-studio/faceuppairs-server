@@ -9,12 +9,12 @@ import { getAppIcon } from "@/game/appIcons";
 import { applyAppIcon } from "@/lib/appIcons";
 import { hapticSuccess } from "@/lib/haptics";
 import { AppButtonGroup, CloseButton } from "@/ui/AppButton";
+import { useResultWidths } from "@/ui/ResultPanel";
 import { APP_ICON_PREVIEWS } from "@/ui/appIconPreviews";
 import { colors, space } from "@/ui/theme";
 import { SHEET_EDGES } from "@/ui/sheet";
 
 const ICON_SIZE = 150;
-const BUTTON_WIDTH = 220;
 // Leave the sheet's dismissal animation time before opening the gallery.
 const SHEET_CLOSE_MS = 350;
 
@@ -22,6 +22,7 @@ const SHEET_CLOSE_MS = 350;
 export default function IconUnlocked() {
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const widths = useResultWidths();
   const icon = getAppIcon(id ?? "");
 
   useEffect(() => {
@@ -57,8 +58,8 @@ export default function IconUnlocked() {
       </Text>
       <AppButtonGroup
         buttons={[
-          { label: t("appIcons.equip"), variant: "primary", size: "large", width: BUTTON_WIDTH, onPress: equip },
-          { label: t("appIcons.gallery"), size: "large", width: BUTTON_WIDTH, onPress: openGallery },
+          { label: t("appIcons.equip"), variant: "primary", size: "large", width: widths.full, onPress: equip },
+          { label: t("appIcons.gallery"), size: "large", width: widths.full, onPress: openGallery },
         ]}
       />
     </SafeAreaView>

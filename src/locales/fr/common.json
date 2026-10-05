@@ -71,15 +71,15 @@
   },
   "revive": {
     "title": "Dernière chance",
-    "body": "Continue avec une vie de plus. Une seule fois par partie.",
-    "watchAd": "Continuer (pub)",
-    "payCoins": "Continuer · {{price, number}} pièces",
+    "body": "Une vie de plus pour continuer",
+    "watchAd": "Continuer",
+    "payCoins": "Continuer · {{price, number}}",
     "offer": "Continuer + 500 pièces · {{price}}",
     "giveUp": "Terminer"
   },
   "results": {
     "coinsEarned": "+{{count, number}} pièces",
-    "double": "Doubler (pub)",
+    "double": "×2",
     "doubled": "Pièces doublées",
     "rank": "Classé n°{{rank}}",
     "unranked": "Hors ligne : ce score n'est pas classé",

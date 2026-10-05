@@ -70,6 +70,18 @@ export async function ensureAccount(timeoutMs?: number): Promise<Credentials | n
 }
 
 /**
+ * The server answered 401: this device holds an account it doesn't know (wiped database, an old
+ * account from another server). Forgets it locally so `ensureAccount` registers a new one.
+ */
+export async function forgetUnknownAccount(): Promise<void> {
+  cached = null;
+  await Promise.all([
+    SecureStore.deleteItemAsync(KEY, SECURE_OPTIONS).catch(() => {}),
+    AsyncStorage.removeItem(KEY).catch(() => {}),
+  ]);
+}
+
+/**
  * "Delete my data": forgets the account on this device right away, and deletes it on the
  * server now or — when offline — on the next launch that has a connection.
  */

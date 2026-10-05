@@ -14,7 +14,7 @@ import { randomSeed } from "@/game/rng";
 import { useBoardGame, useElapsed } from "@/game/useBoardGame";
 import { showRewarded, useAds } from "@/lib/ads";
 import { track } from "@/lib/analytics";
-import { formatDuration } from "@/lib/format";
+import { formatDuration, formatScore } from "@/lib/format";
 import { hapticImpact } from "@/lib/haptics";
 import { leaveFinishedGame } from "@/lib/postGame";
 import { levelQuip } from "@/lib/quips";
@@ -24,19 +24,16 @@ import { useLeaveGuard } from "@/lib/useLeaveGuard";
 import { useProgress } from "@/store/progress";
 import { useWallet } from "@/store/wallet";
 import { AppButton, AppButtonGroup } from "@/ui/AppButton";
-import { Emoji, UI_EMOJI } from "@/ui/Emoji";
+import { CoinIcon } from "@/ui/ButtonIcons";
+import { DoubleCoinsButton } from "@/ui/DoubleCoinsButton";
 import { Board } from "@/ui/Board";
-import { ResultPanel } from "@/ui/ResultPanel";
+import { ResultPanel, useResultWidths } from "@/ui/ResultPanel";
 import { Screen } from "@/ui/Screen";
 import { StarRow } from "@/ui/StarRow";
 import { colors } from "@/ui/theme";
 
 // Ask for a review only after a clearly good moment, once (same restraint as FaceUp).
 const REVIEW_MIN_LEVEL = 5;
-const RESULT_BUTTON_WIDTH = 220;
-// Retry and Levels together span exactly the width of Next level: the glass buttons add about
-// 40 of their own padding to a label width, and the two sit 14 apart.
-const RESULT_SECONDARY_WIDTH = (RESULT_BUTTON_WIDTH + 40 - 14) / 2 - 40;
 
 export default function LevelScreen() {
   const { n } = useLocalSearchParams<{ n: string }>();
@@ -48,7 +45,7 @@ export default function LevelScreen() {
 }
 
 function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [initial] = useState(() => setupBoard(randomSeed(), level.board));
   const { state, press } = useBoardGame(initial, { revealMs: level.board.revealMs });
   const elapsed = useElapsed(state);
@@ -138,6 +135,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
   const canPeek = state.startedAt === null && !flashing;
   const canHint = hintTarget(state) !== null && !flashing;
   const hasNext = level.number < LEVEL_COUNT;
+  const widths = useResultWidths();
 
   const double = async () => {
     if (!doubled && (await showRewarded("double_coins"))) {
@@ -191,6 +189,15 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
           stats={[
             { label: t("game.moves"), value: String(state.moves) },
             { label: t("game.time"), value: formatDuration(elapsed) },
+            ...(coinsEarned > 0
+              ? [
+                  {
+                    label: t("shop.coins"),
+                    value: `+${formatScore(doubled ? coinsEarned * 2 : coinsEarned, i18n.language)}`,
+                    icon: <CoinIcon />,
+                  },
+                ]
+              : []),
           ]}
           footer={
             <>
@@ -198,8 +205,8 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
                 <AppButton
                   label={t("game.nextLevel")}
                   variant="primary"
-                  size="hero"
-                  width={RESULT_BUTTON_WIDTH}
+                  size="large"
+                  width={widths.full}
                   onPress={() =>
                     leaveFinishedGame(t, () =>
                       router.replace({ pathname: "/play/level/[n]", params: { n: String(level.number + 1) } }),
@@ -212,13 +219,15 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
                 buttons={[
                   {
                     label: t("game.retry"),
-                    width: RESULT_SECONDARY_WIDTH,
+                    size: "large" as const,
+                    width: widths.half,
                     onPress: () => leaveFinishedGame(t, onRetry),
                     ...(hasNext ? {} : { variant: "primary" as const }),
                   },
                   {
                     label: t("game.levels"),
-                    width: RESULT_SECONDARY_WIDTH,
+                    size: "large" as const,
+                    width: widths.half,
                     onPress: () => leaveFinishedGame(t, () => router.back()),
                   },
                 ]}
@@ -226,18 +235,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
             </>
           }
         >
-          {coinsEarned > 0 && (
-            <View style={styles.coinsRow}>
-              <View style={styles.coinsAmount}>
-                <Emoji asset={UI_EMOJI.coin} size={22} />
-                <Text style={styles.coins}>
-                  {t("results.coinsEarned", { count: doubled ? coinsEarned * 2 : coinsEarned })}
-                  {doubled ? ` · ${t("results.doubled")}` : ""}
-                </Text>
-              </View>
-              {!doubled && rewardedReady && <AppButton label={t("results.double")} onPress={double} />}
-            </View>
-          )}
+          <DoubleCoinsButton doubled={doubled} canDouble={rewardedReady && coinsEarned > 0} onDouble={double} />
           {!hasNext && <Text style={styles.done}>{t("game.careerDone")}</Text>}
         </ResultPanel>
       )}
@@ -269,21 +267,6 @@ const styles = StyleSheet.create({
   boosters: {
     alignItems: "center",
     paddingVertical: 12,
-  },
-  coinsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  coinsAmount: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  coins: {
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: "700",
   },
   done: {
     color: colors.muted,

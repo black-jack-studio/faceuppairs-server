@@ -71,15 +71,15 @@
   },
   "revive": {
     "title": "Last chance",
-    "body": "Keep going with one more life. Once per game.",
-    "watchAd": "Continue (ad)",
-    "payCoins": "Continue · {{price, number}} coins",
+    "body": "One more life to keep going",
+    "watchAd": "Continue",
+    "payCoins": "Continue · {{price, number}}",
     "offer": "Continue + 500 coins · {{price}}",
     "giveUp": "End game"
   },
   "results": {
     "coinsEarned": "+{{count, number}} coins",
-    "double": "Double (ad)",
+    "double": "×2",
     "doubled": "Coins doubled",
     "rank": "Ranked #{{rank}}",
     "unranked": "Offline: this score isn't ranked",

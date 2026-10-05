@@ -12,8 +12,11 @@ import { hapticSuccess } from "@/lib/haptics";
 import { requestNotifications, scheduleReminders } from "@/lib/reminders";
 import { useSettings } from "@/store/settings";
 import { useWallet } from "@/store/wallet";
-import { AppButtonGroup, CloseButton } from "@/ui/AppButton";
+import { AppButton, CloseButton } from "@/ui/AppButton";
+import { CoinIcon } from "@/ui/ButtonIcons";
+import { DoubleCoinsButton } from "@/ui/DoubleCoinsButton";
 import { Emoji, UI_EMOJI } from "@/ui/Emoji";
+import { useResultWidths } from "@/ui/ResultPanel";
 import { colors, space } from "@/ui/theme";
 import { SHEET_EDGES } from "@/ui/sheet";
 
@@ -24,6 +27,7 @@ export default function Chest() {
   const today = localDay();
   const streak = useWallet((s) => s.streak);
   const rewardedReady = useAds((s) => s.rewardedReady);
+  const widths = useResultWidths();
   const [claimed, setClaimed] = useState<{ coins: number; bonusHint: boolean } | null>(null);
   const [doubled, setDoubled] = useState(false);
   const claimable = canClaimDaily(streak, today);
@@ -113,16 +117,18 @@ export default function Chest() {
 
       {claimed && (
         <View style={styles.reward}>
-          <Text style={styles.rewardCoins}>{t("chest.reward", { count: doubled ? claimed.coins * 2 : claimed.coins })}</Text>
+          <View style={styles.rewardRow}>
+            <CoinIcon />
+            <Text style={styles.rewardCoins}>{t("chest.reward", { count: doubled ? claimed.coins * 2 : claimed.coins })}</Text>
+          </View>
           {claimed.bonusHint && <Text style={styles.rewardBonus}>{t("chest.bonusHint")}</Text>}
+          <DoubleCoinsButton doubled={doubled} canDouble={rewardedReady} onDouble={double} />
         </View>
       )}
 
       <View style={styles.actions}>
         {claimable ? (
-          <AppButtonGroup buttons={[{ label: t("chest.claim"), variant: "primary", size: "large", onPress: claim }]} />
-        ) : claimed && !doubled && rewardedReady ? (
-          <AppButtonGroup buttons={[{ label: t("chest.doubleAd"), size: "large", onPress: double }]} />
+          <AppButton label={t("chest.claim")} variant="primary" size="large" width={widths.full} onPress={claim} />
         ) : (
           <Text style={styles.subtitle}>
             {formatCountdown(nextLocalMidnight(), i18n.language)}
@@ -204,7 +210,12 @@ const styles = StyleSheet.create({
   },
   reward: {
     alignItems: "center",
-    gap: 4,
+    gap: 10,
+  },
+  rewardRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   rewardCoins: {
     color: colors.text,

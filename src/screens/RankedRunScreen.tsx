@@ -9,7 +9,7 @@ import { endlessBoardConfig, STARTING_LIVES } from "@/game/endless";
 import { dailySeed, runBoard, scoreRun, utcDay } from "@/game/run";
 import { randomSeed } from "@/game/rng";
 import { useBoardGame } from "@/game/useBoardGame";
-import { ensureAccount, getCredentials } from "@/lib/account";
+import { ensureAccount, forgetUnknownAccount, getCredentials } from "@/lib/account";
 import { showRewarded, useAds } from "@/lib/ads";
 import { track } from "@/lib/analytics";
 import { api, START_TIMEOUT_MS } from "@/lib/api";
@@ -24,9 +24,11 @@ import { useLeaveGuard } from "@/lib/useLeaveGuard";
 import { useProgress } from "@/store/progress";
 import { useWallet } from "@/store/wallet";
 import { AppButton, AppButtonGroup } from "@/ui/AppButton";
+import { CoinIcon, CoinLabel, PlayBadge } from "@/ui/ButtonIcons";
+import { DoubleCoinsButton } from "@/ui/DoubleCoinsButton";
 import { Emoji, UI_EMOJI } from "@/ui/Emoji";
 import { Board } from "@/ui/Board";
-import { ResultPanel } from "@/ui/ResultPanel";
+import { ResultPanel, useResultWidths } from "@/ui/ResultPanel";
 import { Screen } from "@/ui/Screen";
 import { colors } from "@/ui/theme";
 
@@ -34,7 +36,6 @@ type Mode = "endless" | "daily";
 const NEXT_BOARD_DELAY_MS = 700;
 // Five hearts must fit the header's 88 pt side slot.
 const LIFE_SIZE = 16;
-const RESULT_BUTTON_WIDTH = 220;
 
 interface Session {
   seed: number;
@@ -59,8 +60,15 @@ function RunLoader({ mode, onPlayAgain }: { mode: Mode; onPlayAgain: () => void 
     (async () => {
       const today = utcDay();
       const localSeed = mode === "daily" ? dailySeed(today) : randomSeed();
-      const credentials = await ensureAccount(START_TIMEOUT_MS);
-      const res = credentials ? await api.startRun(credentials, mode) : null;
+      let credentials = await ensureAccount(START_TIMEOUT_MS);
+      let res = credentials ? await api.startRun(credentials, mode) : null;
+      // An account the server doesn't know would leave every game "offline" for good: start over
+      // with a fresh one, once.
+      if (res && !res.ok && res.status === 401) {
+        await forgetUnknownAccount();
+        credentials = await ensureAccount(START_TIMEOUT_MS);
+        res = credentials ? await api.startRun(credentials, mode) : null;
+      }
       if (cancelled) return;
       if (res?.ok) {
         setSession({ seed: res.data.seed, runId: res.data.runId });
@@ -108,6 +116,7 @@ function RunGame({ mode, session, onPlayAgain }: { mode: Mode; session: Session;
   const rewardedReady = useAds((s) => s.rewardedReady);
   const reviveOfferPrice = useStore((s) => s.products[PRODUCT_IDS.reviveOffer]?.priceString);
   const coins = useWallet((s) => s.coins);
+  const widths = useResultWidths();
 
   // The score shown is computed by the very function the server uses to check it.
   const result = useMemo(
@@ -192,22 +201,52 @@ function RunGame({ mode, session, onPlayAgain }: { mode: Mode; session: Session;
       </View>
 
       {showOverlay && phase === "reviveOffer" && (
-        <ResultPanel title={t("revive.title")} stats={[]}>
-          <Text style={styles.caption}>{t("revive.body")}</Text>
-          <AppButtonGroup
-            buttons={[
-              ...(rewardedReady
-                ? [{ label: t("revive.watchAd"), variant: "primary" as const, size: "large" as const, onPress: reviveWithAd }]
-                : []),
-              ...(coins >= REVIVE_PRICE
-                ? [{ label: t("revive.payCoins", { price: REVIVE_PRICE }), onPress: reviveWithCoins }]
-                : []),
-              ...(reviveOfferPrice
-                ? [{ label: t("revive.offer", { price: reviveOfferPrice }), onPress: reviveWithOffer }]
-                : []),
-              { label: t("revive.giveUp"), onPress: () => setGaveUp(true) },
-            ]}
-          />
+        <ResultPanel
+          lead={<Emoji asset={UI_EMOJI.heart} size={64} />}
+          title={t("revive.title")}
+          stats={[]}
+          footer={
+            <AppButtonGroup
+              buttons={[
+                ...(rewardedReady
+                  ? [
+                      {
+                        label: t("revive.watchAd"),
+                        variant: "primary" as const,
+                        size: "large" as const,
+                        width: widths.full,
+                        leading: <PlayBadge onAccent />,
+                        onPress: reviveWithAd,
+                      },
+                    ]
+                  : []),
+                ...(coins >= REVIVE_PRICE
+                  ? [
+                      {
+                        label: t("revive.payCoins", { price: REVIVE_PRICE }),
+                        size: "large" as const,
+                        width: widths.full,
+                        content: <CoinLabel text={t("revive.payCoins", { price: REVIVE_PRICE })} />,
+                        onPress: reviveWithCoins,
+                      },
+                    ]
+                  : []),
+                ...(reviveOfferPrice
+                  ? [
+                      {
+                        label: t("revive.offer", { price: reviveOfferPrice }),
+                        size: "large" as const,
+                        width: widths.full,
+                        onPress: reviveWithOffer,
+                      },
+                    ]
+                  : []),
+                { label: t("revive.giveUp"), size: "large" as const, width: widths.full, onPress: () => setGaveUp(true) },
+              ]}
+            />
+          }
+        >
+          <Text style={styles.reviveBody}>{t("revive.body")}</Text>
         </ResultPanel>
       )}
 
@@ -294,57 +333,72 @@ function RunResults({
               : "";
 
   const go = (action: () => void) => leaveFinishedGame(t, action);
+  const widths = useResultWidths();
+  const openLeaderboard = () =>
+    go(() => router.replace({ pathname: "/leaderboard", params: { board: mode === "daily" ? "daily" : "endless" } }));
 
   return (
     <ResultPanel
       title={runQuip(t, score, quipSeed) || t("endless.gameOver")}
       headline={<Text style={styles.finalScore}>{formatScore(score, i18n.language)}</Text>}
-      stats={[]}
+      stats={
+        coinsEarned > 0
+          ? [
+              {
+                label: t("shop.coins"),
+                value: `+${formatScore(doubled ? coinsEarned * 2 : coinsEarned, i18n.language)}`,
+                icon: <CoinIcon />,
+              },
+            ]
+          : []
+      }
+      footer={
+        <>
+          <AppButton
+            label={mode === "daily" ? t("home.leaderboard") : t("endless.playAgain")}
+            variant="primary"
+            size="large"
+            width={widths.full}
+            onPress={mode === "daily" ? openLeaderboard : () => go(onPlayAgain)}
+          />
+          {mode === "daily" ? (
+            <AppButton label={t("endless.menu")} size="large" width={widths.full} onPress={() => go(() => router.back())} />
+          ) : (
+            <AppButtonGroup
+              direction="horizontal"
+              buttons={[
+                { label: t("home.leaderboard"), size: "large" as const, width: widths.half, onPress: openLeaderboard },
+                { label: t("endless.menu"), size: "large" as const, width: widths.half, onPress: () => go(() => router.back()) },
+              ]}
+            />
+          )}
+        </>
+      }
     >
       {isBest && <Text style={styles.best}>{t("endless.newBest")}</Text>}
       {status ? <Text style={styles.caption}>{status}</Text> : null}
-      <View style={styles.coinsRow}>
-        <Text style={styles.coins}>
-          {t("results.coinsEarned", { count: doubled ? coinsEarned * 2 : coinsEarned })}
-          {doubled ? ` · ${t("results.doubled")}` : ""}
-        </Text>
-        {!doubled && rewardedReady && coinsEarned > 0 && <AppButton label={t("results.double")} onPress={double} />}
-      </View>
-      {mode === "endless" && (
-        <AppButton label={t("endless.playAgain")} variant="primary" size="hero" width={RESULT_BUTTON_WIDTH} onPress={() => go(onPlayAgain)} />
-      )}
-      <AppButtonGroup
-        direction="horizontal"
-        buttons={[
-          {
-            label: t("home.leaderboard"),
-            ...(mode === "daily" ? { variant: "primary" as const } : {}),
-            onPress: () => go(() => router.replace({ pathname: "/leaderboard", params: { board: mode === "daily" ? "daily" : "endless" } })),
-          },
-          { label: t("endless.menu"), onPress: () => go(() => router.back()) },
-        ]}
-      />
+      <DoubleCoinsButton doubled={doubled} canDouble={rewardedReady && coinsEarned > 0} onDouble={double} />
     </ResultPanel>
   );
 }
 
 function DailyDone({ score }: { score: number }) {
   const { t, i18n } = useTranslation();
+  const widths = useResultWidths();
   return (
     <Screen title={t("daily.title")}>
       <View style={styles.center}>
         <Text style={styles.doneTitle}>{t("daily.alreadyPlayed")}</Text>
         <Text style={styles.finalScore}>{formatScore(score, i18n.language)}</Text>
         <Text style={styles.caption}>{t("daily.nextIn", { time: formatCountdown(nextUtcMidnight(), i18n.language) })}</Text>
-        <AppButtonGroup
-          buttons={[
-            {
-              label: t("daily.seeRanking"),
-              variant: "primary",
-              size: "large",
-              onPress: () => router.replace({ pathname: "/leaderboard", params: { board: "daily" } }),
-            },
-          ]}
+      </View>
+      <View style={styles.pinnedFooter}>
+        <AppButton
+          label={t("daily.seeRanking")}
+          variant="primary"
+          size="large"
+          width={widths.full}
+          onPress={() => router.replace({ pathname: "/leaderboard", params: { board: "daily" } })}
         />
       </View>
     </Screen>
@@ -357,6 +411,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
+  },
+  pinnedFooter: {
+    alignItems: "center",
+    paddingBottom: 16,
+  },
+  reviveBody: {
+    color: colors.muted,
+    fontSize: 16,
+    fontWeight: "500",
+    textAlign: "center",
   },
   lives: {
     flexDirection: "row",
@@ -416,7 +480,7 @@ const styles = StyleSheet.create({
   coinsRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 8,
   },
   coins: {
     color: colors.text,

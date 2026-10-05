@@ -11,7 +11,7 @@ import { playFx } from "@/fx/store";
 import { randomSeed } from "@/game/rng";
 import { useBoardGame, useElapsed } from "@/game/useBoardGame";
 import { track } from "@/lib/analytics";
-import { formatDuration } from "@/lib/format";
+import { formatDuration, formatScore } from "@/lib/format";
 import { hapticSuccess } from "@/lib/haptics";
 import { leaveFinishedGame } from "@/lib/postGame";
 import { END_OF_GAME_DELAY_MS, useDelayedTrue } from "@/lib/useDelayedTrue";
@@ -19,19 +19,20 @@ import { useLeaveGuard } from "@/lib/useLeaveGuard";
 import { useWallet } from "@/store/wallet";
 import { AppButton } from "@/ui/AppButton";
 import { Board } from "@/ui/Board";
-import { ResultPanel } from "@/ui/ResultPanel";
+import { CoinIcon } from "@/ui/ButtonIcons";
+import { ResultPanel, useResultWidths } from "@/ui/ResultPanel";
 import { Screen } from "@/ui/Screen";
 import { colors } from "@/ui/theme";
 
-const RESULT_BUTTON_WIDTH = 220;
 // The secret card stays the same until the app is relaunched; coins only for the first clear.
 let rewardClaimedThisLaunch = false;
 
 export default function SecretBoardScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [initial] = useState(() => setupBoard(randomSeed(), SECRET_BOARD));
   const { state, press } = useBoardGame(initial, { revealMs: SECRET_BOARD.revealMs });
   const elapsed = useElapsed(state);
+  const widths = useResultWidths();
   const [rewarded] = useState(() => !rewardClaimedThisLaunch);
   const recorded = useRef(false);
 
@@ -80,18 +81,21 @@ export default function SecretBoardScreen() {
           stats={[
             { label: t("game.moves"), value: String(state.moves) },
             { label: t("game.time"), value: formatDuration(elapsed) },
+            ...(rewarded
+              ? [{ label: t("shop.coins"), value: `+${formatScore(SECRET_BOARD_COINS, i18n.language)}`, icon: <CoinIcon /> }]
+              : []),
           ]}
+          footer={
+            <AppButton
+              label={t("endless.menu")}
+              variant="primary"
+              size="large"
+              width={widths.full}
+              onPress={() => leaveFinishedGame(t, () => router.back())}
+            />
+          }
         >
-          <Text style={rewarded ? styles.coins : styles.caption}>
-            {rewarded ? t("results.coinsEarned", { count: SECRET_BOARD_COINS }) : t("secret.noCoins")}
-          </Text>
-          <AppButton
-            label={t("endless.menu")}
-            variant="primary"
-            size="hero"
-            width={RESULT_BUTTON_WIDTH}
-            onPress={() => leaveFinishedGame(t, () => router.back())}
-          />
+          {!rewarded && <Text style={styles.caption}>{t("secret.noCoins")}</Text>}
         </ResultPanel>
       )}
     </Screen>
@@ -119,11 +123,6 @@ const styles = StyleSheet.create({
   boardArea: {
     flex: 1,
     paddingBottom: 12,
-  },
-  coins: {
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: "700",
   },
   caption: {
     color: colors.muted,
