@@ -16,7 +16,7 @@ import { Screen } from "@/ui/Screen";
 import { Segmented } from "@/ui/Segmented";
 import { colors, space } from "@/ui/theme";
 
-const BOARDS: BoardKind[] = ["endless", "weekly", "daily"];
+const BOARDS: BoardKind[] = ["endless", "daily"];
 // Fixed row height, so the list can jump straight to the player's row.
 const ROW_HEIGHT = 56;
 
