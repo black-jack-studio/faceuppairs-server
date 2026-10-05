@@ -19,7 +19,11 @@ export function Segmented<T extends string>({ options, value, onChange, accessib
   // iOS 26+: Apple's own segmented control, which draws the Liquid Glass selection itself.
   if (USE_LIQUID_GLASS) {
     return (
-      <Host matchContents={stretch ? { vertical: true } : true} style={stretch ? styles.stretch : undefined}>
+      <Host
+        matchContents={stretch ? { vertical: true } : true}
+        style={stretch ? styles.stretch : undefined}
+        ignoreSafeArea="all"
+      >
         <Picker
           label={accessibilityLabel}
           selection={value}

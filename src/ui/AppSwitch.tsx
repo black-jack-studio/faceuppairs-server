@@ -20,7 +20,7 @@ const SWITCH_BOX = { width: 80, height: 32, marginRight: 4 };
 export function AppSwitch({ value, onValueChange, label }: AppSwitchProps) {
   if (USE_LIQUID_GLASS) {
     return (
-      <Host style={SWITCH_BOX}>
+      <Host style={SWITCH_BOX} ignoreSafeArea="all">
         <Toggle isOn={value} label={label} onIsOnChange={onValueChange} modifiers={[toggleStyle("switch"), labelsHidden(), frame({ maxWidth: Infinity, maxHeight: Infinity, alignment: "trailing" })]} />
       </Host>
     );

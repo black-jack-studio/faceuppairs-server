@@ -31,7 +31,7 @@ export function CoinsPill() {
   if (USE_LIQUID_GLASS) {
     return (
       <View accessible accessibilityRole="button" accessibilityLabel={a11y} onAccessibilityTap={open}>
-        <Host matchContents>
+        <Host matchContents ignoreSafeArea="all">
           <Button onPress={open} modifiers={[buttonStyle("glass"), controlSize("large")]}>
             <HStack spacing={6}>
               <Image systemName="circle.fill" size={COIN_SIZE} color="#00000000" />
