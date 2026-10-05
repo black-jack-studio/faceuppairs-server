@@ -19,10 +19,17 @@ import { flushRuns } from "@/lib/runQueue";
 import { useProgress } from "@/store/progress";
 import { analyticsAllowed, useSettings } from "@/store/settings";
 import { useWallet } from "@/store/wallet";
-import { AppSplash } from "@/ui/AppSplash";
 import { colors } from "@/ui/theme";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+// The logo splash stays up for the same time on every launch, however fast the stores load, so
+// the wait never feels different from one opening to the next. The home screen is mounted
+// underneath for SPLASH_SETTLE_MS before the splash lifts, so everything is already in place
+// (images drawn, badges decided) when it appears.
+const APP_START = Date.now();
+const SPLASH_MIN_MS = 1100;
+const SPLASH_SETTLE_MS = 350;
 
 const STORES = [useProgress, useSettings, useWallet];
 
@@ -65,7 +72,6 @@ export default function RootLayout() {
     })),
   );
   const { t } = useTranslation();
-  const [splashDone, setSplashDone] = useState(false);
 
   useEffect(() => {
     applyLanguage(language);
@@ -79,7 +85,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!hydrated) return;
-    SplashScreen.hideAsync().catch(() => {});
+    const wait = Math.max(SPLASH_MIN_MS - (Date.now() - APP_START), SPLASH_SETTLE_MS);
+    const lift = setTimeout(() => SplashScreen.hideAsync().catch(() => {}), wait);
     // Order matters for ads: consent (inside initAds) comes before any ad request.
     initAds();
     initPurchases();
@@ -89,7 +96,10 @@ export default function RootLayout() {
     const sub = AppState.addEventListener("change", (state) => {
       if (state === "active") syncWithServer();
     });
-    return () => sub.remove();
+    return () => {
+      clearTimeout(lift);
+      sub.remove();
+    };
   }, [hydrated, t]);
 
   if (!hydrated) return null;
@@ -121,7 +131,6 @@ export default function RootLayout() {
         <Stack.Screen name="icon-unlocked" options={{ ...sheet, sheetAllowedDetents: "fitToContents" }} />
       </Stack>
       <FxLayer />
-      {!splashDone && <AppSplash onFinished={() => setSplashDone(true)} />}
     </>
   );
 }
