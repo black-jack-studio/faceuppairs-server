@@ -102,26 +102,6 @@ export default function Shop() {
           />
         </View>
 
-        {store.available && (
-          <Section title={t("shop.coins")}>
-            {COIN_PACK_IDS.map((id, i) => (
-              <Item
-                key={id}
-                icon={
-                  i < 2
-                    ? UI_EMOJI.coin
-                    : i === 2
-                      ? UI_EMOJI.moneybag
-                      : UI_EMOJI.gem
-                }
-                title={formatScore(CONTENTS[id].coins, i18n.language)}
-              >
-                <BuyButton price={price(id)} onPress={() => purchase(id)} />
-              </Item>
-            ))}
-          </Section>
-        )}
-
         <Section title={t("shop.boosters")}>
           <Item
             icon={UI_EMOJI.coin}
@@ -143,7 +123,7 @@ export default function Shop() {
               <AppButton
                 label={t("shop.buyWithCoins", { price: BOOSTER_PRICES[id] })}
                 width={BOOSTER_BUTTON_WIDTH}
-                        onPress={() => buyBooster(id)}
+                onPress={() => buyBooster(id)}
               />
             </Item>
           ))}
@@ -165,6 +145,20 @@ export default function Shop() {
             ))}
           </View>
         </Section>
+
+        {store.available && (
+          <Section title={t("shop.coins")}>
+            {COIN_PACK_IDS.map((id, i) => (
+              <Item
+                key={id}
+                iconNode={<Emoji asset={COIN_PACK_ART[i]} size={COIN_PACK_ART_SIZE} />}
+                title={formatScore(CONTENTS[id].coins, i18n.language)}
+              >
+                <BuyButton price={price(id)} onPress={() => purchase(id)} />
+              </Item>
+            ))}
+          </Section>
+        )}
 
         {appIconsSupported && (
           <Section title={t("appIcons.title")}>
@@ -197,14 +191,22 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
+// Coin pack illustrations, smallest to biggest: a few coins, a pile, a bag, a chest.
+const COIN_PACK_ART = ["coin_pile_small", "coin_pile_large", "coin_bag", "coin_chest"] as const;
+// Also the width of every shop row's icon column, so all texts line up.
+const COIN_PACK_ART_SIZE = 56;
+
 function Item({
   icon,
+  iconNode,
   title,
   description,
   last,
   children,
 }: {
   icon?: string;
+  /** Drawn instead of `icon` (the coin piles). */
+  iconNode?: ReactNode;
   title: string;
   description?: string;
   last?: boolean;
@@ -212,7 +214,10 @@ function Item({
 }) {
   return (
     <View style={[styles.item, last && styles.itemLast]}>
-      {icon ? <Emoji asset={icon} size={36} /> : null}
+      {(iconNode || icon) && (
+        // One icon column for every row (as wide as the biggest coin pile), so all texts line up.
+        <View style={styles.itemIcon}>{iconNode ?? <Emoji asset={icon as string} size={36} />}</View>
+      )}
       <View style={styles.itemText}>
         <Text style={styles.itemTitle}>{title}</Text>
         {description ? (
@@ -370,6 +375,10 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.6,
     marginBottom: 6,
+  },
+  itemIcon: {
+    width: COIN_PACK_ART_SIZE,
+    alignItems: "flex-start",
   },
   item: {
     minHeight: 64,
