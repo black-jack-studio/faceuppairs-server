@@ -15,7 +15,7 @@ import { flushNickname } from "@/lib/nickname";
 import { FxLayer } from "@/fx/FxLayer";
 import { wakeServer } from "@/lib/api";
 import { initPurchases } from "@/lib/purchases";
-import { scheduleReminders } from "@/lib/reminders";
+import { onAppOpened } from "@/lib/reminders";
 import { flushRuns } from "@/lib/runQueue";
 import { useProgress } from "@/store/progress";
 import { analyticsAllowed, useSettings } from "@/store/settings";
@@ -94,10 +94,13 @@ export default function RootLayout() {
     initPurchases();
     const stopCloudSave = startCloudSave();
     syncWithServer();
-    if (useSettings.getState().reminders) scheduleReminders(t);
+    onAppOpened(t);
 
     const sub = AppState.addEventListener("change", (state) => {
-      if (state === "active") syncWithServer();
+      if (state === "active") {
+        syncWithServer();
+        onAppOpened(t);
+      }
       // Leaving the app: send the latest save now rather than in a few seconds.
       else if (state === "background") void flushCloudSave();
     });

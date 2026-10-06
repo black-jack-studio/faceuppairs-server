@@ -183,7 +183,7 @@
   },
   "notifications": {
     "title": "Don't miss your daily reward",
-    "body": "We'll let you know when your daily reward and daily challenge are ready, and before your streak runs out. Nothing else.",
+    "body": "We'll let you know when your daily reward and daily challenge are ready, before your streak runs out, and if you haven't played for a few days. Nothing else.",
     "allow": "Turn on",
     "later": "Later",
     "chestTitle": "Your daily reward is waiting",
@@ -191,7 +191,13 @@
     "streakTitle": "Your streak is waiting",
     "streakBody": "Open the game today so you don't lose it.",
     "dailyTitle": "Today's daily challenge is live",
-    "dailyBody": "One ranked run, the same for everyone. Your move."
+    "dailyBody": "One ranked run, the same for everyone. Your move.",
+    "morningTitle": "Your daily reward and challenge are ready",
+    "morningBody": "Collect your coins, then take on today's ranked game.",
+    "comeback3Title": "Up for a quick game?",
+    "comeback3Body": "Your cards are waiting, and there's a new daily challenge.",
+    "comeback7Title": "It's been a week",
+    "comeback7Body": "Your daily reward is waiting. One game and you're back."
   },
   "quips": {
     "level": {

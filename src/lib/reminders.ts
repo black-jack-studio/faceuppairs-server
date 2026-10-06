@@ -1,14 +1,19 @@
 import * as Notifications from "expo-notifications";
 import type { TFunction } from "i18next";
 
+import { useSettings } from "@/store/settings";
+
 import { nextUtcMidnight } from "./format";
 
-// Local notifications only (no server push): "your chest is ready" the next morning, "the daily
-// challenge is live" once the new UTC day starts, and "your streak is waiting" the next evening. Rescheduled every time the chest is claimed, so a
-// player who comes back early never gets a stale reminder.
+// Local notifications only (no server push), all counted from the last time the app was opened:
+// tomorrow morning "your reward (and the daily challenge) is ready", tomorrow evening "your streak
+// is waiting", then one nudge after 3 days away and a last one after a week. Rescheduled on every
+// open, so a player who comes back never gets a stale reminder and one who left gets 4 at most.
 
-const CHEST_HOUR = 10;
+const MORNING_HOUR = 10;
 const STREAK_HOUR = 20;
+const COMEBACK_HOUR = 19;
+const COMEBACK_DAYS = [3, 7] as const;
 const DAILY_EARLIEST_HOUR = 9;
 const DAILY_LATEST_HOUR = 22;
 
@@ -42,9 +47,9 @@ export async function requestNotifications(): Promise<boolean> {
   return status === "granted";
 }
 
-function tomorrowAt(hour: number): Date {
+function inDaysAt(days: number, hour: number): Date {
   const date = new Date();
-  date.setDate(date.getDate() + 1);
+  date.setDate(date.getDate() + days);
   date.setHours(hour, 0, 0, 0);
   return date;
 }
@@ -52,20 +57,46 @@ function tomorrowAt(hour: number): Date {
 export async function scheduleReminders(t: TFunction): Promise<void> {
   if ((await notificationStatus()) !== "granted") return;
   await Notifications.cancelAllScheduledNotificationsAsync();
-  await Notifications.scheduleNotificationAsync({
-    content: { title: t("notifications.chestTitle"), body: t("notifications.chestBody") },
-    trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: tomorrowAt(CHEST_HOUR) },
-  });
-  await Notifications.scheduleNotificationAsync({
-    content: { title: t("notifications.streakTitle"), body: t("notifications.streakBody") },
-    trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: tomorrowAt(STREAK_HOUR) },
-  });
-  await Notifications.scheduleNotificationAsync({
-    content: { title: t("notifications.dailyTitle"), body: t("notifications.dailyBody") },
-    trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: nextDailyReminder() },
-  });
+
+  const morning = inDaysAt(1, MORNING_HOUR);
+  const daily = nextDailyReminder();
+  // In Europe the challenge is already live by morning: one notification for both instead of two
+  // an hour apart. Further west it opens later in the day, so it keeps its own.
+  const reminders: { date: Date; title: string; body: string }[] =
+    daily <= morning
+      ? [{ date: morning, title: t("notifications.morningTitle"), body: t("notifications.morningBody") }]
+      : [
+          { date: morning, title: t("notifications.chestTitle"), body: t("notifications.chestBody") },
+          { date: daily, title: t("notifications.dailyTitle"), body: t("notifications.dailyBody") },
+        ];
+  reminders.push({ date: inDaysAt(1, STREAK_HOUR), title: t("notifications.streakTitle"), body: t("notifications.streakBody") });
+  for (const days of COMEBACK_DAYS) {
+    reminders.push({
+      date: inDaysAt(days, COMEBACK_HOUR),
+      title: t(`notifications.comeback${days}Title`),
+      body: t(`notifications.comeback${days}Body`),
+    });
+  }
+
+  // Each one puts the icon's red badge at the number of reminders delivered so far (1, 2, 3...),
+  // which is exact because opening the app clears the badge and reschedules everything.
+  reminders.sort((a, b) => a.date.getTime() - b.date.getTime());
+  for (const [i, { date, title, body }] of reminders.entries()) {
+    await Notifications.scheduleNotificationAsync({
+      content: { title, body, badge: i + 1 },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date },
+    });
+  }
+}
+
+/** The player is back: clear the badge and the reminders already shown, and count again from now. */
+export async function onAppOpened(t: TFunction): Promise<void> {
+  await Notifications.setBadgeCountAsync(0).catch(() => false);
+  await Notifications.dismissAllNotificationsAsync().catch(() => {});
+  if (useSettings.getState().reminders) await scheduleReminders(t);
 }
 
 export async function cancelReminders(): Promise<void> {
   await Notifications.cancelAllScheduledNotificationsAsync();
+  await Notifications.setBadgeCountAsync(0).catch(() => false);
 }

@@ -183,7 +183,7 @@
   },
   "notifications": {
     "title": "Ne rate pas ta récompense",
-    "body": "On te prévient quand ta récompense du jour et le défi du jour sont prêts, et avant que ta série ne se perde. Rien d'autre.",
+    "body": "On te prévient quand ta récompense du jour et le défi du jour sont prêts, avant que ta série ne se perde, et si tu ne joues plus depuis quelques jours. Rien d'autre.",
     "allow": "Activer",
     "later": "Plus tard",
     "chestTitle": "Ta récompense du jour t'attend",
@@ -191,7 +191,13 @@
     "streakTitle": "Ta série t'attend",
     "streakBody": "Ouvre le jeu aujourd'hui pour ne pas la perdre.",
     "dailyTitle": "Le défi du jour est disponible",
-    "dailyBody": "Une seule partie classée, la même pour tout le monde. À toi de jouer."
+    "dailyBody": "Une seule partie classée, la même pour tout le monde. À toi de jouer.",
+    "morningTitle": "Ta récompense et le défi du jour t'attendent",
+    "morningBody": "Récupère tes pièces, puis tente la partie classée du jour.",
+    "comeback3Title": "Une petite partie ?",
+    "comeback3Body": "Tes cartes t'attendent, et un nouveau défi du jour est en ligne.",
+    "comeback7Title": "Ça fait une semaine",
+    "comeback7Body": "Ta récompense du jour t'attend. Une partie et c'est reparti."
   },
   "quips": {
     "level": {
