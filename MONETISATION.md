@@ -26,7 +26,7 @@ Objectif : gagner de l'argent sans casser ce qui fait revenir les joueurs (la r�
 ### B. Pub interstitielle (encadrée)
 - Jamais avant le niveau 5 (le joueur doit d'abord aimer le jeu).
 - Seulement entre deux parties, jamais pendant.
-- Plafond : 1 toutes les 3 parties **et** au moins 2 minutes d'écart.
+- Plafond : 1 toutes les 2 parties **et** au moins 1 minute d'écart (resserré le 6 octobre 2026 pour rendre Pairs+ plus attractif ; avant : 1 toutes les 3 parties, 2 minutes).
 - Jamais pour quelqu'un qui a payé quoi que ce soit (règle "on protège les payeurs").
 
 ### C. Pas de bannière en jeu

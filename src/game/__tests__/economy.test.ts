@@ -61,13 +61,13 @@ describe("daily streak", () => {
 });
 
 describe("interstitials", () => {
-  const base = { adsRemoved: false, highestLevel: 10, gamesSinceLast: 3, lastShownAt: null, now: 1_000_000 };
+  const base = { adsRemoved: false, highestLevel: 10, gamesSinceLast: 2, lastShownAt: null, now: 1_000_000 };
   it("shows only when every rule allows it", () => {
     expect(shouldShowInterstitial(base)).toBe(true);
     expect(shouldShowInterstitial({ ...base, adsRemoved: true })).toBe(false);
     expect(shouldShowInterstitial({ ...base, highestLevel: 4 })).toBe(false);
-    expect(shouldShowInterstitial({ ...base, gamesSinceLast: 2 })).toBe(false);
-    expect(shouldShowInterstitial({ ...base, lastShownAt: base.now - 60_000 })).toBe(false);
+    expect(shouldShowInterstitial({ ...base, gamesSinceLast: 1 })).toBe(false);
+    expect(shouldShowInterstitial({ ...base, lastShownAt: base.now - 30_000 })).toBe(false);
   });
 });
 

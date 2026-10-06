@@ -114,11 +114,11 @@ export function nextStreakDay(state: StreakState, today: string): number {
 }
 
 // Interstitials (MONETISATION.md §2B): never before level 5 is reached, at most one every
-// three finished games, at least two minutes apart, never for anyone who paid.
+// two finished games, at least one minute apart, never for anyone who paid.
 export const INTERSTITIAL_RULES = {
   minLevelReached: 5,
-  gamesBetween: 3,
-  minIntervalMs: 120_000,
+  gamesBetween: 2,
+  minIntervalMs: 60_000,
 } as const;
 
 export function shouldShowInterstitial(input: {
