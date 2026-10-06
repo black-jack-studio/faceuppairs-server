@@ -78,10 +78,15 @@ workflows:
               NEXT_BUILD_NUMBER=$((LATEST + 1))
             fi
           fi
+          echo "App Store Connect app: ${APP_ID:-not found}, latest TestFlight build: ${LATEST:-unknown}"
           echo "Build number: $NEXT_BUILD_NUMBER"
           PBXPROJ="$CM_BUILD_DIR/ios/FaceUpPairs.xcodeproj/project.pbxproj"
           sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = $NEXT_BUILD_NUMBER;/g" "$PBXPROJ"
-          grep "CURRENT_PROJECT_VERSION" "$PBXPROJ"
+          # Expo prebuild writes CFBundleVersion as a literal in Info.plist, so the pbxproj value
+          # alone never reaches the archive.
+          INFO_PLIST="$CM_BUILD_DIR/ios/FaceUpPairs/Info.plist"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $NEXT_BUILD_NUMBER" "$INFO_PLIST"
+          /usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$INFO_PLIST"
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
