@@ -26,7 +26,6 @@ import { formatCountdown, formatScore, nextUtcMidnight } from "@/lib/format";
 import { hapticSuccess } from "@/lib/haptics";
 import { leaveFinishedGame } from "@/lib/postGame";
 import { runQuip } from "@/lib/quips";
-import { buy, PRODUCT_IDS, useStore } from "@/lib/purchases";
 import { submitRun } from "@/lib/runQueue";
 import { END_OF_GAME_DELAY_MS, useDelayedTrue } from "@/lib/useDelayedTrue";
 import { useLeaveGuard } from "@/lib/useLeaveGuard";
@@ -156,9 +155,6 @@ function RunGame({
   });
   const bestEndless = useProgress((s) => s.bestEndless);
   const rewardedReady = useAds((s) => s.rewardedReady);
-  const reviveOfferPrice = useStore(
-    (s) => s.products[PRODUCT_IDS.reviveOffer]?.priceString,
-  );
   const coins = useWallet((s) => s.coins);
   const widths = useResultWidths();
 
@@ -197,7 +193,7 @@ function RunGame({
 
   const totalFlips =
     completed.reduce((n, b) => n + b.length, 0) + state.log.length;
-  const revive = (via: "ad" | "coins" | "offer") => {
+  const revive = (via: "ad" | "coins") => {
     setReviveAt(totalFlips);
     track("revive", { mode, via });
   };
@@ -207,9 +203,6 @@ function RunGame({
   };
   const reviveWithCoins = () => {
     if (useWallet.getState().spendCoins(REVIVE_PRICE)) revive("coins");
-  };
-  const reviveWithOffer = async () => {
-    if ((await buy(PRODUCT_IDS.reviveOffer)) === "purchased") revive("offer");
   };
 
   const leave = useLeaveGuard(
@@ -314,16 +307,6 @@ function RunGame({
                           />
                         ),
                         onPress: reviveWithCoins,
-                      },
-                    ]
-                  : []),
-                ...(reviveOfferPrice
-                  ? [
-                      {
-                        label: t("revive.offer", { price: reviveOfferPrice }),
-                        size: "large" as const,
-                        width: widths.full,
-                        onPress: reviveWithOffer,
                       },
                     ]
                   : []),

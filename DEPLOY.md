@@ -52,9 +52,7 @@ Un **nouveau projet**, jamais celui de FaceUp (la base de FaceUp est sa prod, sa
    | ID produit | Type | Prix suggéré |
    |---|---|---|
    | `faceup_pairs.plus` | Non consommable | 3,99 € |
-   | `faceup_pairs.starter_pack` | Non consommable | 2,99 € |
    | `faceup_pairs.pack_sports` | Non consommable | 1,99 € |
-   | `faceup_pairs.revive_offer` | Consommable | 0,99 € |
    | `faceup_pairs.coins_1000` | Consommable | 0,99 € |
    | `faceup_pairs.coins_3000` | Consommable | 2,99 € |
    | `faceup_pairs.coins_8000` | Consommable | 6,99 € |
@@ -69,7 +67,7 @@ Un **nouveau projet**, jamais celui de FaceUp (la base de FaceUp est sa prod, sa
 1. app.revenuecat.com → nouveau projet `FaceUp Pairs`.
 2. Ajoute l'app iOS (bundle ID ci-dessus) et suis leur assistant pour la clé App Store Connect (comme pour FaceUp).
 3. Products → importe les 9 produits. Entitlements → crée :
-   - `no_ads` ← plus, starter_pack
+   - `no_ads` ← plus
    - `plus` ← plus
    - `pack_sports` ← pack_sports
 4. **Envoie-moi la clé SDK publique iOS** (`appl_…`) — et plus tard l'Android (`goog_…`). Elles sont faites pour être dans l'app.

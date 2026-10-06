@@ -82,7 +82,6 @@
     "body": "Une vie de plus pour continuer",
     "watchAd": "Continuer",
     "payCoins": "Continuer · {{price, number}}",
-    "offer": "Continuer + 500 pièces · {{price}}",
     "giveUp": "Terminer"
   },
   "results": {
@@ -138,8 +137,6 @@
   },
   "shop": {
     "title": "Boutique",
-    "starter": "Pack de démarrage",
-    "starterDesc": "1 000 pièces, 3 aperçus, 3 indices, et plus de pubs entre les parties.",
     "plus": "Pairs+",
     "plusTagline": "Un seul achat, à vie",
     "plusNoAds": "Zéro pub",

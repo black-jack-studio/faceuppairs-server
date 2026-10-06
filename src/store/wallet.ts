@@ -24,7 +24,6 @@ interface WalletData {
   /** "Remove ads" bought, or covered by an active Pairs+ subscription. */
   adsRemoved: boolean;
   isPlus: boolean;
-  starterPackBought: boolean;
   gamesSinceInterstitial: number;
   lastInterstitialAt: number | null;
   /** Daily Challenge: one ranked attempt per UTC day. */
@@ -62,7 +61,7 @@ interface WalletState extends WalletData {
   /** Takes the milestone to announce, if any. */
   takeMilestone: () => number | null;
   setActivePack: (id: string) => void;
-  setEntitlements: (e: { adsRemoved?: boolean; isPlus?: boolean; hasPurchased?: boolean; starterPackBought?: boolean }) => void;
+  setEntitlements: (e: { adsRemoved?: boolean; isPlus?: boolean; hasPurchased?: boolean }) => void;
   noteGameFinished: () => void;
   noteInterstitialShown: (at: number) => void;
   recordDaily: (day: string, score: number) => void;
@@ -81,7 +80,6 @@ const initial: WalletData = {
   hasPurchased: false,
   adsRemoved: false,
   isPlus: false,
-  starterPackBought: false,
   gamesSinceInterstitial: 0,
   lastInterstitialAt: null,
   daily: { day: null, played: false, bestScore: 0 },
@@ -154,7 +152,6 @@ export const useWallet = create<WalletState>()(
           adsRemoved: e.adsRemoved ?? s.adsRemoved,
           isPlus: e.isPlus ?? s.isPlus,
           hasPurchased: e.hasPurchased ?? s.hasPurchased,
-          starterPackBought: e.starterPackBought ?? s.starterPackBought,
         })),
       noteGameFinished: () => set((s) => ({ gamesSinceInterstitial: s.gamesSinceInterstitial + 1 })),
       noteInterstitialShown: (at) => set({ gamesSinceInterstitial: 0, lastInterstitialAt: at }),

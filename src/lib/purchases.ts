@@ -14,8 +14,6 @@ import { api } from "./api";
 // FaceUp's shop.
 export const PRODUCT_IDS = {
   plus: "faceup_pairs.plus",
-  starterPack: "faceup_pairs.starter_pack",
-  reviveOffer: "faceup_pairs.revive_offer",
   coins1: "faceup_pairs.coins_1000",
   coins2: "faceup_pairs.coins_3000",
   coins3: "faceup_pairs.coins_8000",
@@ -27,14 +25,12 @@ export const PRODUCT_IDS = {
 // one-time purchase — no ads, the Faces pack and a crown on the leaderboards).
 const ENTITLEMENTS = { noAds: "no_ads", plus: "plus", packSports: "pack_sports" } as const;
 
-/** What each consumable (or the one-time starter pack) puts in the wallet. */
+/** What each coin pack puts in the wallet. */
 export const CONTENTS: Record<string, { coins: number; peek?: number; hint?: number }> = {
   [PRODUCT_IDS.coins1]: { coins: 1_000 },
   [PRODUCT_IDS.coins2]: { coins: 3_000 },
   [PRODUCT_IDS.coins3]: { coins: 8_000 },
   [PRODUCT_IDS.coins4]: { coins: 20_000 },
-  [PRODUCT_IDS.starterPack]: { coins: 1_000, peek: 3, hint: 3 },
-  [PRODUCT_IDS.reviveOffer]: { coins: 500 },
 };
 
 export const COIN_PACK_IDS = [PRODUCT_IDS.coins1, PRODUCT_IDS.coins2, PRODUCT_IDS.coins3, PRODUCT_IDS.coins4];
@@ -110,13 +106,12 @@ export async function buy(productId: string): Promise<PurchaseOutcome> {
     applyCustomerInfo(customerInfo);
     const wallet = useWallet.getState();
     const contents = CONTENTS[productId];
-    const oneTime = productId === PRODUCT_IDS.starterPack;
-    if (contents && !(oneTime && wallet.starterPackBought)) {
+    if (contents) {
       wallet.addCoins(contents.coins);
       if (contents.peek) wallet.addBoosters("peek", contents.peek);
       if (contents.hint) wallet.addBoosters("hint", contents.hint);
     }
-    wallet.setEntitlements({ hasPurchased: true, ...(oneTime ? { starterPackBought: true } : {}) });
+    wallet.setEntitlements({ hasPurchased: true });
     track("purchase", { product: productId, price: product.price, currency: product.currencyCode });
     return "purchased";
   } catch (e) {
@@ -131,9 +126,6 @@ export async function restore(): Promise<"restored" | "none" | "failed"> {
     const info = await Purchases.restorePurchases();
     applyCustomerInfo(info);
     const active = Object.keys(info.entitlements.active).length > 0;
-    if (active && info.nonSubscriptionTransactions.some((t) => t.productIdentifier === PRODUCT_IDS.starterPack)) {
-      useWallet.getState().setEntitlements({ starterPackBought: true });
-    }
     return active ? "restored" : "none";
   } catch {
     return "failed";

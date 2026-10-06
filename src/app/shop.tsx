@@ -102,14 +102,6 @@ export default function Shop() {
           />
         </View>
 
-        {store.available && !wallet.starterPackBought && (
-          <View style={styles.section}>
-            <Item icon={UI_EMOJI.gift} title={t("shop.starter")} description={t("shop.starterDesc")}>
-              <BuyButton price={price(PRODUCT_IDS.starterPack)} onPress={() => purchase(PRODUCT_IDS.starterPack)} />
-            </Item>
-          </View>
-        )}
-
         {store.available && (
           <Section title={t("shop.coins")}>
             {COIN_PACK_IDS.map((id, i) => (

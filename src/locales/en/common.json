@@ -82,7 +82,6 @@
     "body": "One more life to keep going",
     "watchAd": "Continue",
     "payCoins": "Continue · {{price, number}}",
-    "offer": "Continue + 500 coins · {{price}}",
     "giveUp": "End game"
   },
   "results": {
@@ -138,8 +137,6 @@
   },
   "shop": {
     "title": "Shop",
-    "starter": "Starter pack",
-    "starterDesc": "1,000 coins, 3 peeks, 3 hints, and no more ads between games.",
     "plus": "Pairs+",
     "plusTagline": "One purchase, yours for good",
     "plusNoAds": "No ads",
