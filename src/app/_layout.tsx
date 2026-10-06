@@ -10,12 +10,14 @@ import { applyLanguage } from "@/i18n";
 import { ensureAccount, flushPendingDeletion } from "@/lib/account";
 import { initAds, useAds } from "@/lib/ads";
 import { identify, setAnalyticsEnabled } from "@/lib/analytics";
+import { flushCloudSave, startCloudSave, syncCloudSave } from "@/lib/cloudSave";
 import { flushNickname } from "@/lib/nickname";
 import { FxLayer } from "@/fx/FxLayer";
 import { wakeServer } from "@/lib/api";
 import { initPurchases } from "@/lib/purchases";
 import { scheduleReminders } from "@/lib/reminders";
 import { flushRuns } from "@/lib/runQueue";
+import { seedScreenshotData } from "@/lib/screenshotMode"; // TEMP
 import { useProgress } from "@/store/progress";
 import { analyticsAllowed, useSettings } from "@/store/settings";
 import { useWallet } from "@/store/wallet";
@@ -56,6 +58,7 @@ async function syncWithServer() {
   const account = await ensureAccount();
   if (!account) return;
   identify(account.id);
+  await syncCloudSave(account);
   await flushNickname();
   await flushRuns();
 }
@@ -85,20 +88,25 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!hydrated) return;
+    seedScreenshotData(); // TEMP
     const wait = Math.max(SPLASH_MIN_MS - (Date.now() - APP_START), SPLASH_SETTLE_MS);
     const lift = setTimeout(() => SplashScreen.hideAsync().catch(() => {}), wait);
     // Order matters for ads: consent (inside initAds) comes before any ad request.
     initAds();
     initPurchases();
+    const stopCloudSave = startCloudSave();
     syncWithServer();
     if (useSettings.getState().reminders) scheduleReminders(t);
 
     const sub = AppState.addEventListener("change", (state) => {
       if (state === "active") syncWithServer();
+      // Leaving the app: send the latest save now rather than in a few seconds.
+      else if (state === "background") void flushCloudSave();
     });
     return () => {
       clearTimeout(lift);
       sub.remove();
+      stopCloudSave();
     };
   }, [hydrated, t]);
 

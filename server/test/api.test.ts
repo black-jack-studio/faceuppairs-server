@@ -118,6 +118,43 @@ describe("players and nicknames", () => {
   });
 });
 
+describe("cloud save", () => {
+  it("stores the latest save per player and gives it back", async () => {
+    const a = await newPlayer();
+    assert.deepEqual((await call("GET", "/v1/players/me/save", { auth: a })).body, { save: null, updatedAt: null });
+
+    const first = { version: 1, progress: { stars: { 1: 3 } }, wallet: { coins: 500 } };
+    assert.equal((await call("PUT", "/v1/players/me/save", { auth: a, body: { save: first } })).status, 200);
+    clock = new Date(clock.getTime() + 60_000);
+    const second = { version: 1, progress: { stars: { 1: 3, 2: 2 } }, wallet: { coins: 420 } };
+    assert.equal((await call("PUT", "/v1/players/me/save", { auth: a, body: { save: second } })).status, 200);
+
+    const got = await call("GET", "/v1/players/me/save", { auth: a });
+    assert.deepEqual(got.body, { save: second, updatedAt: clock.toISOString() });
+
+    // Each player only ever sees their own save.
+    const b = await newPlayer();
+    assert.equal((await call("GET", "/v1/players/me/save", { auth: b })).body.save, null);
+  });
+
+  it("rejects anything but an object, oversized saves, and anonymous calls", async () => {
+    const a = await newPlayer();
+    assert.equal((await call("PUT", "/v1/players/me/save", { auth: a, body: { save: [1, 2] } })).status, 400);
+    assert.equal((await call("PUT", "/v1/players/me/save", { auth: a, body: {} })).status, 400);
+    const huge = { blob: "x".repeat(70_000) };
+    assert.equal((await call("PUT", "/v1/players/me/save", { auth: a, body: { save: huge } })).status, 413);
+    assert.equal((await call("GET", "/v1/players/me/save")).status, 401);
+  });
+
+  it("is deleted with the account", async () => {
+    const a = await newPlayer();
+    await call("PUT", "/v1/players/me/save", { auth: a, body: { save: { version: 1 } } });
+    await call("DELETE", "/v1/players/me", { auth: a });
+    const [row] = await db.query("select count(*)::int as n from player_saves");
+    assert.equal((row as { n: number }).n, 0);
+  });
+});
+
 describe("runs and leaderboards", () => {
   it("accepts an honest run, recomputes its score, and ranks it", async () => {
     const a = await newPlayer("Alice");

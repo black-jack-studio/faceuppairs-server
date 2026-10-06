@@ -13,11 +13,11 @@
       },
       {
         "title": "Données stockées sur ton appareil",
-        "body": "Ta progression (niveaux, étoiles, records), tes pièces et boosters, tes packs d'icônes, tes réglages et ton pseudo sont enregistrés sur ton appareil."
+        "body": "Ta progression (niveaux, étoiles, records), tes pièces et boosters, tes packs d'icônes, tes réglages et ton pseudo sont enregistrés sur ton appareil. Une copie de ta progression, de tes pièces, boosters et packs est aussi sauvegardée sur nos serveurs (voir ci-dessous)."
       },
       {
         "title": "Données envoyées à nos serveurs",
-        "body": "Pour le classement général : ton identifiant de joueur anonyme, le pseudo que tu choisis, tes scores et le détail des coups des parties classées. Le détail des coups sert uniquement à vérifier qu'un score est authentique. Les signalements de pseudos que tu envoies sont aussi enregistrés."
+        "body": "Pour le classement général : ton identifiant de joueur anonyme, le pseudo que tu choisis, tes scores et le détail des coups des parties classées. Le détail des coups sert uniquement à vérifier qu'un score est authentique. Les signalements de pseudos que tu envoies sont aussi enregistrés. Pour la sauvegarde de partie : une copie de ta progression (niveaux, étoiles, records), de tes pièces, boosters et packs d'icônes, liée à ton identifiant de joueur, pour que tu la retrouves après une réinstallation ou sur un nouveau téléphone."
       },
       {
         "title": "Publicité",
@@ -41,7 +41,7 @@
       },
       {
         "title": "Conservation",
-        "body": "Les données du classement sont conservées tant que ton identifiant de joueur existe, et supprimées dès que tu effaces tes données depuis l'application ou que tu nous le demandes."
+        "body": "Les données du classement et la sauvegarde de partie sont conservées tant que ton identifiant de joueur existe, et supprimées dès que tu effaces tes données depuis l'application ou que tu nous le demandes."
       },
       {
         "title": "Vos droits",
@@ -74,7 +74,7 @@
       },
       {
         "title": "3. Monnaie virtuelle et objets",
-        "body": "Les pièces, boosters, packs d'icônes et autres objets du jeu s'obtiennent en jouant ou par achat intégré. Ils n'ont aucune valeur réelle, ne sont ni remboursables en argent, ni échangeables, ni transférables en dehors de l'application. Les pièces et boosters sont stockés sur ton appareil : ils ne peuvent pas être restaurés après une suppression de l'application ou de tes données, contrairement aux achats non consommables (Pairs+, packs), restaurables via « Restaurer les achats »."
+        "body": "Les pièces, boosters, packs d'icônes et autres objets du jeu s'obtiennent en jouant ou par achat intégré. Ils n'ont aucune valeur réelle, ne sont ni remboursables en argent, ni échangeables, ni transférables en dehors de l'application. Les pièces et boosters sont stockés sur ton appareil, avec une copie sur nos serveurs qui les rend après une réinstallation de l'application. Ils ne peuvent pas être restaurés après une suppression de tes données depuis l'application, contrairement aux achats non consommables (Pairs+, packs), restaurables via « Restaurer les achats »."
       },
       {
         "title": "4. Pairs+",

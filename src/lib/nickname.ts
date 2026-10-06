@@ -22,7 +22,9 @@ export async function saveNickname(raw: string): Promise<NicknameResult> {
   const credentials = await ensureAccount();
   if (credentials) {
     const res = await api.setNickname(credentials, name);
-    if (res.ok) {
+    // "sameAsCurrent" from the server while the device had another name (or none, after a
+    // reinstall): the account already has this nickname, so the device just takes it back.
+    if (res.ok || res.error === "sameAsCurrent") {
       setNickname(name);
       setNicknamePendingSync(false);
       return { ok: true };

@@ -13,11 +13,11 @@
       },
       {
         "title": "Data stored on your device",
-        "body": "Your progress (levels, stars, best scores), coins and boosters, icon packs, settings and nickname are stored on your device."
+        "body": "Your progress (levels, stars, best scores), coins and boosters, icon packs, settings and nickname are stored on your device. A copy of your progress, coins, boosters and packs is also saved on our servers (see below)."
       },
       {
         "title": "Data sent to our servers",
-        "body": "For the global leaderboard: your anonymous player ID, the nickname you choose, your scores and the moves of your ranked games. The moves are used only to check that a score is genuine. Nickname reports you send are also stored."
+        "body": "For the global leaderboard: your anonymous player ID, the nickname you choose, your scores and the moves of your ranked games. The moves are used only to check that a score is genuine. Nickname reports you send are also stored. For the game save: a copy of your progress (levels, stars, best scores), coins, boosters and icon packs, tied to your player ID, so you get it back after reinstalling or on a new phone."
       },
       {
         "title": "Advertising",
@@ -41,7 +41,7 @@
       },
       {
         "title": "Retention",
-        "body": "Leaderboard data is kept for as long as your player ID exists, and deleted as soon as you erase your data from the app or ask us to."
+        "body": "Leaderboard data and the game save are kept for as long as your player ID exists, and deleted as soon as you erase your data from the app or ask us to."
       },
       {
         "title": "Your rights",
@@ -74,7 +74,7 @@
       },
       {
         "title": "3. Virtual currency and items",
-        "body": "Coins, boosters, icon packs and other in-game items are earned by playing or bought in-app. They have no real-world value and cannot be refunded for money, exchanged or transferred outside the app. Coins and boosters are stored on your device: they can't be recovered after deleting the app or your data, unlike non-consumable purchases (Pairs+, packs), which can be recovered with \"Restore purchases\"."
+        "body": "Coins, boosters, icon packs and other in-game items are earned by playing or bought in-app. They have no real-world value and cannot be refunded for money, exchanged or transferred outside the app. Coins and boosters are stored on your device, with a copy on our servers that brings them back after reinstalling the app. They can't be recovered after deleting your data from the app, unlike non-consumable purchases (Pairs+, packs), which can be recovered with \"Restore purchases\"."
       },
       {
         "title": "4. Pairs+",

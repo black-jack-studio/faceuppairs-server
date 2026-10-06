@@ -35,6 +35,8 @@ const MAX_UNACCOUNTED_MS = 3 * 60 * 1000;
 const RUN_TTL_MS = 6 * 60 * 60 * 1000;
 const MAX_FLIPS_PER_RUN = 20_000;
 const LEADERBOARD_LIMIT = 100;
+/** A full save is a few kilobytes (a star count per level, wallet, packs); far above that is abuse. */
+const MAX_SAVE_CHARS = 64 * 1024;
 
 interface Player {
   id: string;
@@ -168,6 +170,30 @@ export function createApp({ db, now = () => new Date(), trustProxy = false, regi
     // A new nickname starts clean: old reports were about the old name.
     await db.query("delete from reports where target_id = $1", [p.id]);
     return c.json({ nickname });
+  });
+
+  // Cloud save. The app sends its whole save after changes and reads it back on a fresh install.
+  app.get("/v1/players/me/save", auth, async (c) => {
+    const [row] = await db.query<{ data: unknown; updated_at: string | Date }>(
+      "select data, updated_at from player_saves where player_id = $1",
+      [c.get("player").id],
+    );
+    return c.json(row ? { save: row.data, updatedAt: new Date(row.updated_at).toISOString() } : { save: null, updatedAt: null });
+  });
+
+  app.put("/v1/players/me/save", auth, async (c) => {
+    const body = await c.req.json<{ save?: unknown }>().catch(() => ({}) as { save?: unknown });
+    const save = body.save;
+    if (!save || typeof save !== "object" || Array.isArray(save)) return c.json({ error: "invalid_save" }, 400);
+    const data = JSON.stringify(save);
+    if (data.length > MAX_SAVE_CHARS) return c.json({ error: "too_large" }, 413);
+    const at = now().toISOString();
+    await db.query(
+      `insert into player_saves (player_id, data, updated_at) values ($1, $2::jsonb, $3)
+       on conflict (player_id) do update set data = excluded.data, updated_at = excluded.updated_at`,
+      [c.get("player").id, data, at],
+    );
+    return c.json({ updatedAt: at });
   });
 
   // Apple 5.1.1(v) / Google Play: deleting from the app deletes everything server-side.

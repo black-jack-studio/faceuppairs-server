@@ -52,8 +52,8 @@ const initial: ProgressData = {
   reviewRequested: false,
 };
 
-// Progress lives on the device only (no account). AsyncStorage is part of Android Auto Backup,
-// so it also follows a player to a new Android phone.
+// Progress lives on the device, with a copy on the server tied to the account (cloudSave.ts) so
+// a reinstall or a new phone gets it back. AsyncStorage is also part of Android Auto Backup.
 export const useProgress = create<ProgressState>()(
   persist(
     (set, get) => ({

@@ -88,6 +88,9 @@ export const api = {
     request<{ nickname: string }>("PUT", "/v1/players/me/nickname", { auth, body: { nickname } }),
   syncPlus: (auth: Credentials) => request<{ plus: boolean }>("POST", "/v1/players/me/plus", { auth }),
   deleteMe: (auth: Credentials) => request<null>("DELETE", "/v1/players/me", { auth }),
+  getSave: (auth: Credentials) => request<{ save: unknown; updatedAt: string | null }>("GET", "/v1/players/me/save", { auth }),
+  putSave: (auth: Credentials, save: object) =>
+    request<{ updatedAt: string }>("PUT", "/v1/players/me/save", { auth, body: { save } }),
   startRun: (auth: Credentials, mode: "endless" | "daily", timeoutMs = START_TIMEOUT_MS) =>
     request<{ runId: string; seed: number; day: string | null }>("POST", "/v1/runs", { auth, body: { mode }, timeoutMs }),
   /** `queued`: sent late from the offline queue, so the server skips its wall-clock check. */
