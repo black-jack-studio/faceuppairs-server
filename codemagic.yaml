@@ -67,8 +67,20 @@ workflows:
             echo "BUILD_NUMBER is empty."
             exit 1
           fi
+          # Codemagic's counter restarts when the app is re-added, so go one past the highest
+          # build App Store Connect already has (it rejects a reused number).
+          NEXT_BUILD_NUMBER="$BUILD_NUMBER"
+          APP_ID=$(app-store-connect apps list --bundle-id-identifier "$BUNDLE_ID" --strict-match-identifier --json \
+            | python3 -c 'import json, sys; print(json.load(sys.stdin)[0]["id"])') || APP_ID=""
+          if [ -n "$APP_ID" ]; then
+            LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_ID") || LATEST=0
+            if [ "$LATEST" -ge "$NEXT_BUILD_NUMBER" ] 2>/dev/null; then
+              NEXT_BUILD_NUMBER=$((LATEST + 1))
+            fi
+          fi
+          echo "Build number: $NEXT_BUILD_NUMBER"
           PBXPROJ="$CM_BUILD_DIR/ios/FaceUpPairs.xcodeproj/project.pbxproj"
-          sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = $BUILD_NUMBER;/g" "$PBXPROJ"
+          sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = $NEXT_BUILD_NUMBER;/g" "$PBXPROJ"
           grep "CURRENT_PROJECT_VERSION" "$PBXPROJ"
       - name: Build ipa for distribution
         script: |
