@@ -178,7 +178,10 @@ export function createApp({ db, now = () => new Date(), trustProxy = false, regi
       "select data, updated_at from player_saves where player_id = $1",
       [c.get("player").id],
     );
-    return c.json(row ? { save: row.data, updatedAt: new Date(row.updated_at).toISOString() } : { save: null, updatedAt: null });
+    if (!row) return c.json({ save: null, updatedAt: null });
+    // Rows written before the ::text fix below hold the save as a JSON string.
+    const save = typeof row.data === "string" ? JSON.parse(row.data) : row.data;
+    return c.json({ save, updatedAt: new Date(row.updated_at).toISOString() });
   });
 
   app.put("/v1/players/me/save", auth, async (c) => {
@@ -189,7 +192,9 @@ export function createApp({ db, now = () => new Date(), trustProxy = false, regi
     if (data.length > MAX_SAVE_CHARS) return c.json({ error: "too_large" }, 413);
     const at = now().toISOString();
     await db.query(
-      `insert into player_saves (player_id, data, updated_at) values ($1, $2::jsonb, $3)
+      // $2::text first: postgres.js would JSON-encode a string bound straight to jsonb a second
+      // time and store a JSON string; as text, Postgres parses it into the object.
+      `insert into player_saves (player_id, data, updated_at) values ($1, $2::text::jsonb, $3)
        on conflict (player_id) do update set data = excluded.data, updated_at = excluded.updated_at`,
       [c.get("player").id, data, at],
     );
