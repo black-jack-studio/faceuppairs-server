@@ -19,11 +19,12 @@ export const PRODUCT_IDS = {
   coins3: "faceup_pairs.coins_8000",
   coins4: "faceup_pairs.coins_20000",
   packSports: "faceup_pairs.pack_sports",
+  packOcean: "faceup_pairs.pack_ocean",
 } as const;
 
 // RevenueCat entitlements granted by the non-consumables above (no subscription: Pairs+ is a
 // one-time purchase — no ads, the Faces pack and a crown on the leaderboards).
-const ENTITLEMENTS = { noAds: "no_ads", plus: "plus", packSports: "pack_sports" } as const;
+const ENTITLEMENTS = { noAds: "no_ads", plus: "plus", packSports: "pack_sports", packOcean: "pack_ocean" } as const;
 
 /** What each coin pack puts in the wallet. */
 export const CONTENTS: Record<string, { coins: number; peek?: number; hint?: number }> = {
@@ -56,6 +57,7 @@ function applyCustomerInfo(info: CustomerInfo) {
     hasPurchased: wallet.hasPurchased || info.nonSubscriptionTransactions.length > 0,
   });
   if (active[ENTITLEMENTS.packSports]) wallet.unlockPack("sports");
+  if (active[ENTITLEMENTS.packOcean]) wallet.unlockPack("ocean");
   if (isPlus) syncPlusBadge();
   // A refunded Pairs+ takes its pack back.
   if (!isPlus) {

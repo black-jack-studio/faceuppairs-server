@@ -53,6 +53,7 @@ Un **nouveau projet**, jamais celui de FaceUp (la base de FaceUp est sa prod, sa
    |---|---|---|
    | `faceup_pairs.plus` | Non consommable | 3,99 € |
    | `faceup_pairs.pack_sports` | Non consommable | 1,99 € |
+   | `faceup_pairs.pack_ocean` | Non consommable | 1,99 € |
    | `faceup_pairs.coins_1000` | Consommable | 0,99 € |
    | `faceup_pairs.coins_3000` | Consommable | 2,99 € |
    | `faceup_pairs.coins_8000` | Consommable | 6,99 € |
@@ -70,6 +71,7 @@ Un **nouveau projet**, jamais celui de FaceUp (la base de FaceUp est sa prod, sa
    - `no_ads` ← plus
    - `plus` ← plus
    - `pack_sports` ← pack_sports
+   - `pack_ocean` ← pack_ocean
 4. **Envoie-moi la clé SDK publique iOS** (`appl_…`) — et plus tard l'Android (`goog_…`). Elles sont faites pour être dans l'app.
 5. **Couronne Pairs+ au classement** : RevenueCat → Project settings → API keys → crée une clé secrète (`sk_…`) et ajoute-la sur Render en `REVENUECAT_SECRET_API_KEY`. Le serveur s'en sert pour vérifier l'achat avant d'afficher la couronne. Sans elle, l'achat marche mais la couronne n'apparaît pas.
 6. Bonus pour tester tout de suite : RevenueCat fournit un **Test Store** (clé `test_…`) qui simule les achats sans App Store. Envoie-la aussi si tu veux que je teste la boutique avant que les produits Apple soient validés.
