@@ -17,7 +17,6 @@ import { wakeServer } from "@/lib/api";
 import { initPurchases } from "@/lib/purchases";
 import { scheduleReminders } from "@/lib/reminders";
 import { flushRuns } from "@/lib/runQueue";
-import { seedScreenshotData } from "@/lib/screenshotMode"; // TEMP
 import { useProgress } from "@/store/progress";
 import { analyticsAllowed, useSettings } from "@/store/settings";
 import { useWallet } from "@/store/wallet";
@@ -88,7 +87,6 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!hydrated) return;
-    seedScreenshotData(); // TEMP
     const wait = Math.max(SPLASH_MIN_MS - (Date.now() - APP_START), SPLASH_SETTLE_MS);
     const lift = setTimeout(() => SplashScreen.hideAsync().catch(() => {}), wait);
     // Order matters for ads: consent (inside initAds) comes before any ad request.

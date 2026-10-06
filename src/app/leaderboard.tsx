@@ -13,7 +13,6 @@ import { useWallet } from "@/store/wallet";
 import { AppButton } from "@/ui/AppButton";
 import { Emoji, MEDALS, UI_EMOJI } from "@/ui/Emoji";
 import { Screen } from "@/ui/Screen";
-import { fakeLeaderboard, SCREENSHOT_MODE } from "@/lib/screenshotMode"; // TEMP
 import { Segmented } from "@/ui/Segmented";
 import { colors, space } from "@/ui/theme";
 
@@ -35,11 +34,6 @@ export default function LeaderboardScreen() {
 
   const load = useCallback(
     async (board: BoardKind) => {
-      if (SCREENSHOT_MODE) {
-        setData(fakeLeaderboard(board));
-        setStatus("ready");
-        return;
-      }
       const credentials = (await getCredentials()) ?? (await ensureAccount());
       const res = await api.leaderboard(board, credentials);
       if (res.ok) {
