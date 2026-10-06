@@ -292,15 +292,25 @@ function PackTile({
     pack.price.kind === "free" ||
     (pack.price.kind === "plus" && isPlus);
 
+  const notEnough = (amount: number) =>
+    Alert.alert(t("boosters.notEnough"), t("boosters.notEnoughBody", { price: amount }));
+
+  // Coins leave the wallet on a single tap, so ask first (store purchases have Apple's own sheet).
+  const confirmUnlock = (amount: number) => {
+    if (useWallet.getState().coins < amount) return notEnough(amount);
+    Alert.alert(
+      t("shop.confirmBuyTitle", { name: t(`shop.packNames.${pack.id}`) }),
+      t("shop.confirmBuyBody", { price: amount }),
+      [
+        { text: t("cancel"), style: "cancel" },
+        { text: t("shop.confirmBuyYes"), style: "default", isPreferred: true, onPress: () => unlockWithCoins(amount) },
+      ],
+    );
+  };
+
   const unlockWithCoins = (amount: number) => {
     const wallet = useWallet.getState();
-    if (!wallet.spendCoins(amount)) {
-      Alert.alert(
-        t("boosters.notEnough"),
-        t("boosters.notEnoughBody", { price: amount }),
-      );
-      return;
-    }
+    if (!wallet.spendCoins(amount)) return notEnough(amount);
     wallet.unlockPack(pack.id);
     wallet.setActivePack(pack.id);
     track("pack_unlocked", { pack: pack.id, via: "coins" });
@@ -326,7 +336,7 @@ function PackTile({
     action = (
       <AppButton
         label={t("shop.buyWithCoins", { price: amount })}
-        onPress={() => unlockWithCoins(amount)}
+        onPress={() => confirmUnlock(amount)}
       />
     );
   } else if (pack.price.kind === "iap") {
