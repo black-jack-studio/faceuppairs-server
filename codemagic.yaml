@@ -1,5 +1,6 @@
 workflows:
-  ios-testflight:
+  # For testers: Google's test ads. Never submit one of these builds to App Store review.
+  ios-testflight: &ios_workflow
     name: FaceUp Pairs iOS - TestFlight
     max_build_duration: 60
     instance_type: mac_mini_m2
@@ -99,3 +100,20 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
+
+  # The build to pick for the App Store version: same recipe, real ads (no EXPO_PUBLIC_ADS_TEST).
+  # It also lands in TestFlight; installed from there, its ads are real, so don't tap them.
+  ios-release:
+    <<: *ios_workflow
+    name: FaceUp Pairs iOS - App Store
+    environment:
+      groups:
+        - ios_signing
+        - pairs_env
+      vars:
+        BUNDLE_ID: "com.beaudoin.faceuppairs"
+        XCODE_WORKSPACE: "ios/FaceUpPairs.xcworkspace"
+        XCODE_SCHEME: "FaceUpPairs"
+      node: 22
+      xcode: latest
+      cocoapods: default
