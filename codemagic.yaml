@@ -117,3 +117,85 @@ workflows:
       node: 22
       xcode: latest
       cocoapods: default
+
+  # Android, same recipe as FaceUp Blackjack's android-play adapted to Expo (android/ is generated
+  # by prebuild, never committed). Real ads, like ios-release.
+  android-play:
+    name: FaceUp Pairs Android - Play Store (AAB)
+    max_build_duration: 45
+    # linux_x2 is not on this account's billing plan, so the same Mac as iOS.
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        # Same EXPO_PUBLIC_* values as iOS; EXPO_PUBLIC_REVENUECAT_ANDROID_KEY lives here too.
+        - pairs_env
+        # ANDROID_KEYSTORE_B64 / ANDROID_KEYSTORE_PASSWORD / ANDROID_KEY_ALIAS / ANDROID_KEY_PASSWORD,
+        # all secure. The keystore is credentials/faceuppairs-upload.jks (PKCS12: one password).
+        - android_signing
+      vars:
+        PACKAGE_NAME: "com.beaudoin.faceuppairs"
+      node: 22
+      java: 17
+    cache:
+      cache_paths:
+        - $HOME/.gradle/caches
+    scripts:
+      - name: Install npm dependencies
+        script: npm ci
+      - name: Generate the native Android project
+        script: npx expo prebuild --platform android --no-install
+      - name: Write the upload keystore
+        # Play binds the listing to the key of its first upload: refuse to build rather than ship
+        # an AAB signed with the debug key that expo prebuild configures for release.
+        script: |
+          if [ -z "$ANDROID_KEYSTORE_B64" ]; then
+            echo "ANDROID_KEYSTORE_B64 is not set (group android_signing)."
+            exit 1
+          fi
+          echo "$ANDROID_KEYSTORE_B64" | openssl base64 -A -d > "$CM_BUILD_DIR/android/upload.jks"
+      - name: Set versionCode from the build counter
+        # Play rejects a versionCode it has already seen; prebuild writes `versionCode 1`.
+        script: |
+          set -e
+          if [ -z "$BUILD_NUMBER" ]; then
+            echo "BUILD_NUMBER is empty."
+            exit 1
+          fi
+          GRADLE="$CM_BUILD_DIR/android/app/build.gradle"
+          # BSD sed on macOS: -i '' (the Linux spelling silently does nothing, see Blackjack).
+          sed -i '' "s/versionCode [0-9]*/versionCode $BUILD_NUMBER/" "$GRADLE"
+          if ! grep -q "versionCode $BUILD_NUMBER" "$GRADLE"; then
+            echo "versionCode was not rewritten to $BUILD_NUMBER:"
+            grep -n "versionCode" "$GRADLE"
+            exit 1
+          fi
+          grep -n "versionCode\|versionName" "$GRADLE"
+      - name: Build signed AAB
+        # The injected signing properties override the debug signingConfig of the generated
+        # build.gradle, so nothing in it needs patching.
+        script: |
+          cd android
+          ./gradlew bundleRelease \
+            -Pandroid.injected.signing.store.file="$CM_BUILD_DIR/android/upload.jks" \
+            -Pandroid.injected.signing.store.password="$ANDROID_KEYSTORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$ANDROID_KEY_PASSWORD"
+      - name: Verify the AAB is signed with the upload key
+        script: |
+          set -e
+          AAB=$(find "$CM_BUILD_DIR/android/app/build/outputs/bundle/release" -name "*.aab" | head -1)
+          if [ -z "$AAB" ]; then
+            echo "No .aab was produced."
+            exit 1
+          fi
+          CERT=$(unzip -p "$AAB" 'META-INF/*.RSA' | keytool -printcert)
+          echo "$CERT"
+          if echo "$CERT" | grep -qi "CN=Android Debug"; then
+            echo "This AAB is signed with the Android debug key, refusing to publish it."
+            exit 1
+          fi
+    artifacts:
+      - android/app/build/outputs/bundle/release/*.aab
+      - android/app/build/outputs/**/mapping.txt
+    # No `publishing: google_play`: Google's API can't create the first release of an app, that
+    # upload is done by hand in the Play Console.
