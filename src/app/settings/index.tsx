@@ -60,11 +60,13 @@ export default function Settings() {
   };
 
   // Same as FaceUp: the mail app opens pre-filled with version + platform, no backend needed.
-  const sendFeedback = () => {
-    const subject = encodeURIComponent(t("feedbackSubject", { app: APP_NAME }));
-    const body = encodeURIComponent(`\n\n—\nVersion: ${version} (${Platform.OS} ${Platform.Version})`);
-    Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`).catch(() => {});
+  const mailSupport = (subject: string, intro = "") => {
+    const body = encodeURIComponent(`${intro}\n\n—\nVersion: ${version} (${Platform.OS} ${Platform.Version})`);
+    Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${body}`).catch(() => {});
   };
+  const sendFeedback = () => mailSupport(t("feedbackSubject", { app: APP_NAME }));
+  // App Review 2.5.18: players must be able to report an inappropriate ad.
+  const reportAd = () => mailSupport(t("reportAdSubject", { app: APP_NAME }), t("reportAdBody"));
 
   const toggleReminders = async (enabled: boolean) => {
     if (!enabled) {
@@ -126,6 +128,7 @@ export default function Settings() {
         <ListRow label={t("privacy")} onPress={() => router.push("/settings/privacy")} />
         {/* Google UMP: where consent applies (EEA/UK), a player must be able to change it later. */}
         {adPrivacyRequired && <ListRow label={t("adPrivacy")} onPress={showAdPrivacyOptions} />}
+        <ListRow label={t("reportAd")} onPress={reportAd} />
         {analyticsAvailable && (
           <ListRow
             label={t("analytics")}
