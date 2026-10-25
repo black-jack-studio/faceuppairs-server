@@ -218,7 +218,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
                 size="large"
                 width={widths.full}
                 onPress={() =>
-                  leaveFinishedGame(t, () =>
+                  leaveFinishedGame(() =>
                     router.replace({ pathname: "/play/level/[n]", params: { n: String(level.number + 1) } }),
                   )
                 }
@@ -230,13 +230,13 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
                     label: t("game.retry"),
                     size: "large" as const,
                     width: widths.half,
-                    onPress: () => leaveFinishedGame(t, onRetry),
+                    onPress: () => leaveFinishedGame(onRetry),
                   },
                   {
                     label: t("game.levels"),
                     size: "large" as const,
                     width: widths.half,
-                    onPress: () => leaveFinishedGame(t, () => router.back()),
+                    onPress: () => leaveFinishedGame(() => router.back()),
                   },
                 ]}
               />

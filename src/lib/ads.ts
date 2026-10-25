@@ -15,6 +15,7 @@ import { highestUnlockedLevel, useProgress } from "@/store/progress";
 import { useWallet } from "@/store/wallet";
 
 import { track } from "./analytics";
+import { askTrackingOnce } from "./tracking";
 
 // MONETISATION.md §2: rewarded ads are the backbone and always the player's choice;
 // interstitials are capped by shouldShowInterstitial. No banners.
@@ -58,8 +59,8 @@ let interstitial: InterstitialAd | null = null;
 let interstitialLoaded = false;
 
 /**
- * Consent first (Google's UMP form, shown only where the law requires it), then the SDK.
- * Nothing is requested before consent allows it — same order as FaceUp.
+ * Consent first (Google's UMP form, shown only where the law requires it), then Apple's tracking
+ * prompt (iOS, first launch), then the SDK. Nothing is requested before both are answered.
  */
 export async function initAds(): Promise<void> {
   if (initialized) return;
@@ -67,22 +68,30 @@ export async function initAds(): Promise<void> {
     useAds.setState({ consentSettled: true });
     return;
   }
+  let canRequestAds = false;
   try {
     const consent = await AdsConsent.gatherConsent();
     useAds.setState({
       privacyOptionsRequired: consent.privacyOptionsRequirementStatus === AdsConsentPrivacyOptionsRequirementStatus.REQUIRED,
-      consentSettled: true,
       consentRegionKnown: true,
     });
-    if (!consent.canRequestAds) return;
+    canRequestAds = consent.canRequestAds;
+  } catch {
+    // Consent service unreachable: no ads this session, but the tracking question still gets asked.
+  }
+  try {
+    await askTrackingOnce();
+  } finally {
+    useAds.setState({ consentSettled: true });
+  }
+  if (!canRequestAds) return;
+  try {
     await mobileAds().initialize();
     initialized = true;
     loadRewarded();
     loadInterstitial();
   } catch {
-    // No ads this session (offline at launch, consent service down). The game is unaffected.
-  } finally {
-    useAds.setState({ consentSettled: true });
+    // No ads this session (SDK failed to start). The game is unaffected.
   }
 }
 

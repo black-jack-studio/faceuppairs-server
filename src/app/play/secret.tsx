@@ -88,7 +88,7 @@ export default function SecretBoardScreen() {
               variant="primary"
               size="large"
               width={widths.full}
-              onPress={() => leaveFinishedGame(t, () => router.back())}
+              onPress={() => leaveFinishedGame(() => router.back())}
             />
           }
         >

@@ -414,7 +414,7 @@ function RunResults({
               ? t("results.rank", { rank: submit.rank })
               : "";
 
-  const go = (action: () => void) => leaveFinishedGame(t, action);
+  const go = (action: () => void) => leaveFinishedGame(action);
   const widths = useResultWidths();
   const openLeaderboard = () =>
     go(() =>

@@ -48,7 +48,8 @@ const SECONDARY_BUTTON_WIDTH = 126;
 // Lets the home screen appear first, so the alert lands on the game rather than a blank screen.
 // After the splash has lifted (about 1.1 s), so the alert lands on a settled home screen.
 const FIRST_PROMPT_DELAY_MS = 1500;
-const CONSENT_WAIT_MAX_MS = 8_000;
+// Long enough to read Google's form and then the tracking question, which come first.
+const CONSENT_WAIT_MAX_MS = 30_000;
 // Lets the home screen settle after the game closes before the sheet rises.
 const ICON_REVEAL_DELAY_MS = 500;
 
