@@ -133,7 +133,10 @@ workflows:
         # all secure. The keystore is credentials/faceuppairs-upload.jks (PKCS12: one password).
         - android_signing
       vars:
-        PACKAGE_NAME: "com.beaudoin.faceuppairs"
+        # Android only: the first Play app (com.beaudoin.faceuppairs) came from a personal account
+        # and kept the 12-tester closed-test requirement after its transfer, so Pairs was recreated
+        # under this id in the organisation account. iOS keeps com.beaudoin.faceuppairs.
+        PACKAGE_NAME: "com.beaudoin.faceup.pairs"
       node: 22
       java: 17
     cache:

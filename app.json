@@ -108,7 +108,7 @@
       }
     },
     "android": {
-      "package": "com.beaudoin.faceuppairs",
+      "package": "com.beaudoin.faceup.pairs",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
