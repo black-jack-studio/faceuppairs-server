@@ -44,7 +44,10 @@
     "time": "Time",
     "nextLevel": "Next level",
     "retry": "Play again",
-    "levels": "Levels"
+    "levels": "Levels",
+    "nearMoves_one": "{{count}} move off {{stars}} ★",
+    "nearMoves_other": "{{count}} moves off {{stars}} ★",
+    "nearSeconds": "{{count}} s off {{stars}} ★"
   },
   "secret": {
     "title": "Secret board",
@@ -75,7 +78,10 @@
     "newBest": "New best",
     "best": "Best: {{score}}",
     "playAgain": "Play again",
-    "menu": "Menu"
+    "menu": "Menu",
+    "streakMax": "Streak ×{{n}} MAX",
+    "boardCleared": "Board {{n}} cleared",
+    "perfectBoard": "Flawless board"
   },
   "revive": {
     "title": "Last chance",

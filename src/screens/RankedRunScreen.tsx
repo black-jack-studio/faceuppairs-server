@@ -9,8 +9,9 @@ import {
   localDay,
   REVIVE_PRICE,
 } from "@/game/economy";
-import type { FlipLogEntry } from "@/game/engine";
-import { endlessBoardConfig, STARTING_LIVES } from "@/game/endless";
+import { elapsedMs, totalPairs, type FlipLogEntry } from "@/game/engine";
+import { boardClearPoints, endlessBoardConfig, pairPoints, SCORING, STARTING_LIVES } from "@/game/endless";
+import { playFx } from "@/fx/store";
 import { dailySeed, runBoard, scoreRun, utcDay } from "@/game/run";
 import { randomSeed } from "@/game/rng";
 import { useBoardGame } from "@/game/useBoardGame";
@@ -35,7 +36,9 @@ import { AppButton, AppButtonGroup } from "@/ui/AppButton";
 import { CoinIcon, CoinLabel, PlayBadge } from "@/ui/ButtonIcons";
 import { DoubleCoinsButton } from "@/ui/DoubleCoinsButton";
 import { Emoji, UI_EMOJI } from "@/ui/Emoji";
-import { Board } from "@/ui/Board";
+import { AnimatedNumber } from "@/ui/AnimatedNumber";
+import { Board, CLEAR_FINALE_MS } from "@/ui/Board";
+import { LifeHeart, Stamp, StreakCounter } from "@/ui/RunHud";
 import {
   BottomSheetPanel,
   ResultPanel,
@@ -45,7 +48,8 @@ import { Screen } from "@/ui/Screen";
 import { colors } from "@/ui/theme";
 
 type Mode = "endless" | "daily";
-const NEXT_BOARD_DELAY_MS = 700;
+// The cleared board's finale (cards flying out, bonus in the middle), then the next deal.
+const NEXT_BOARD_DELAY_MS = CLEAR_FINALE_MS + 150;
 // Five hearts must fit the header's 88 pt side slot.
 const LIFE_SIZE = 16;
 
@@ -149,11 +153,13 @@ function RunGame({
   const [reviveAt, setReviveAt] = useState<number | null>(null);
   const [gaveUp, setGaveUp] = useState(false);
   const [initial] = useState(() => runBoard(seed, 0));
-  const { state, press, reset } = useBoardGame(initial, {
+  const { state, press, reset, lastFlip } = useBoardGame(initial, {
     revealMs: endlessBoardConfig(boardIndex).revealMs,
     memoryErrorsCost: true,
   });
   const bestEndless = useProgress((s) => s.bestEndless);
+  // The record as it stood when the run began: passing it mid-run is a moment of its own.
+  const [bestAtStart] = useState(() => useProgress.getState().bestEndless);
   const rewardedReady = useAds((s) => s.rewardedReady);
   const coins = useWallet((s) => s.coins);
   const widths = useResultWidths();
@@ -186,10 +192,11 @@ function RunGame({
       const next = boardIndex + 1;
       setCompleted((c) => [...c, state.log]);
       setBoardIndex(next);
-      reset(runBoard(seed, next));
+      // The streak goes on into the next board: only a miss breaks it.
+      reset(runBoard(seed, next, state.streak));
     }, NEXT_BOARD_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [state.phase, state.log, boardIndex, phase, reset, seed]);
+  }, [state.phase, state.log, state.streak, boardIndex, phase, reset, seed]);
 
   const totalFlips =
     completed.reduce((n, b) => n + b.length, 0) + state.log.length;
@@ -204,6 +211,22 @@ function RunGame({
   const reviveWithCoins = () => {
     if (useWallet.getState().spendCoins(REVIVE_PRICE)) revive("coins");
   };
+
+  // Beating the record mid-run: celebrated the moment it happens, not only on the results page.
+  const beatingBest = mode === "endless" && runId !== null && bestAtStart > 0 && result.score > bestAtStart;
+  useEffect(() => {
+    if (!beatingBest) return;
+    hapticSuccess();
+    playFx({ kind: "fountain", sprites: [UI_EMOJI.trophy, UI_EMOJI.sparkles, UI_EMOJI.crown, UI_EMOJI.fire] });
+  }, [beatingBest]);
+
+  const boardDone = state.phase === "complete" && phase === "playing";
+  const clearBanner = boardDone
+    ? {
+        title: `+${formatScore(boardClearPoints(totalPairs(state), elapsedMs(state, state.finishedAt ?? 0)), i18n.language)}`,
+        caption: state.mismatches === 0 ? t("endless.perfectBoard") : t("endless.boardCleared", { n: boardIndex + 1 }),
+      }
+    : null;
 
   const leave = useLeaveGuard(
     phase === "playing" && (boardIndex > 0 || state.moves > 0),
@@ -227,42 +250,58 @@ function RunGame({
             accessibilityLabel={t("endless.lives", { n: lives })}
           >
             {Array.from({ length: STARTING_LIVES }, (_, i) => (
-              <View key={i} style={i >= lives && styles.lifeLost}>
-                <Emoji asset={UI_EMOJI.heart} size={LIFE_SIZE} />
-              </View>
+              <LifeHeart key={i} lost={i >= lives} last={lives === 1 && i === 0} size={LIFE_SIZE} />
             ))}
           </View>
         }
       >
         <View style={styles.hud}>
           <View style={styles.scoreBlock}>
-            <Text
+            <AnimatedNumber
+              value={result.score}
+              language={i18n.language}
               style={styles.score}
+              bump
               accessibilityLabel={`${t("endless.score")} ${formatScore(result.score, i18n.language)}`}
-            >
-              {formatScore(result.score, i18n.language)}
-            </Text>
-            <Text style={[styles.caption, styles.hudCaption]}>
-              {runId
-                ? t("endless.best", {
-                    score: formatScore(
-                      Math.max(bestEndless, result.score),
-                      i18n.language,
-                    ),
-                  })
-                : t("results.unranked")}
-            </Text>
+            />
+            {beatingBest ? (
+              <Stamp>
+                <Text style={[styles.caption, styles.hudCaption, styles.newBestLive]}>{t("endless.newBest")}</Text>
+              </Stamp>
+            ) : (
+              <Text style={[styles.caption, styles.hudCaption]}>
+                {runId
+                  ? t("endless.best", {
+                      score: formatScore(
+                        Math.max(bestEndless, result.score),
+                        i18n.language,
+                      ),
+                    })
+                  : t("results.unranked")}
+              </Text>
+            )}
           </View>
-          <Text style={[styles.streak, state.streak < 2 && styles.streakIdle]}>
-            {t("endless.streak", { n: Math.max(state.streak, 1) })}
-          </Text>
+          <StreakCounter
+            streak={state.streak}
+            text={(n) => (n >= SCORING.maxMultiplier ? t("endless.streakMax", { n: SCORING.maxMultiplier }) : t("endless.streak", { n }))}
+            style={styles.streak}
+            idleStyle={styles.streakIdle}
+          />
         </View>
 
         <View
           style={styles.boardArea}
           pointerEvents={phase === "playing" ? "auto" : "none"}
         >
-          <Board state={state} boardKey={boardIndex} onCardPress={press} />
+          <Board
+            state={state}
+            boardKey={boardIndex}
+            onCardPress={press}
+            lastFlip={lastFlip}
+            matchLabel={(flip) => `+${formatScore(pairPoints(flip.streak), i18n.language)}`}
+            finale={boardDone ? "clear" : null}
+            banner={clearBanner}
+          />
         </View>
 
         {showOverlay && phase === "over" && (
@@ -428,9 +467,14 @@ function RunResults({
     <ResultPanel
       title={runQuip(t, score, quipSeed) || t("endless.gameOver")}
       headline={
-        <Text style={styles.finalScore}>
-          {formatScore(score, i18n.language)}
-        </Text>
+        <AnimatedNumber
+          value={score}
+          language={i18n.language}
+          style={styles.finalScore}
+          textAlign="center"
+          fromZero
+          delay={350}
+        />
       }
       stats={
         coinsEarned > 0
@@ -483,7 +527,11 @@ function RunResults({
         </>
       }
     >
-      {isBest && <Text style={styles.best}>{t("endless.newBest")}</Text>}
+      {isBest && (
+        <Stamp delay={250}>
+          <Text style={styles.best}>{t("endless.newBest")}</Text>
+        </Stamp>
+      )}
       {status ? <Text style={styles.caption}>{status}</Text> : null}
       <DoubleCoinsButton
         doubled={doubled}
@@ -549,9 +597,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 1,
   },
-  lifeLost: {
-    opacity: 0.2,
-  },
   hud: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -585,6 +630,10 @@ const styles = StyleSheet.create({
   },
   streakIdle: {
     color: colors.faint,
+  },
+  newBestLive: {
+    color: colors.text,
+    fontWeight: "700",
   },
   boardArea: {
     flex: 1,

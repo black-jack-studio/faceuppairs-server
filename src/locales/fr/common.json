@@ -44,7 +44,10 @@
     "time": "Temps",
     "nextLevel": "Niveau suivant",
     "retry": "Rejouer",
-    "levels": "Niveaux"
+    "levels": "Niveaux",
+    "nearMoves_one": "À {{count}} coup des {{stars}} ★",
+    "nearMoves_other": "À {{count}} coups des {{stars}} ★",
+    "nearSeconds": "À {{count}} s des {{stars}} ★"
   },
   "secret": {
     "title": "Grille secrète",
@@ -75,7 +78,10 @@
     "newBest": "Nouveau record",
     "best": "Record : {{score}}",
     "playAgain": "Rejouer",
-    "menu": "Menu"
+    "menu": "Menu",
+    "streakMax": "Série ×{{n}} MAX",
+    "boardCleared": "Grille {{n}} terminée",
+    "perfectBoard": "Grille sans faute"
   },
   "revive": {
     "title": "Dernière chance",

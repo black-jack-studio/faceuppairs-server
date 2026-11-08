@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
+import { AnimatedNumber } from "./AnimatedNumber";
 import { colors, space } from "./theme";
 
 interface ResultPanelProps {
@@ -10,7 +12,8 @@ interface ResultPanelProps {
   /** Above the title (an icon, say). */
   lead?: ReactNode;
   headline?: ReactNode;
-  stats: { label: string; value: string; icon?: ReactNode }[];
+  /** `count` rolls the value up from zero (after `delay` ms) instead of showing `value` as is. */
+  stats: { label: string; value: string; icon?: ReactNode; count?: { to: number; prefix?: string; delay?: number } }[];
   /** Under the stats: coins earned, a status line. */
   children?: ReactNode;
   /** Buttons, pinned to the bottom edge where the thumb rests. */
@@ -37,6 +40,7 @@ export function useResultWidths() {
 // Covers the finished board. Opaque board-gray rather than a translucent glass sheet: glass is
 // for controls only, never for content (DESIGN.md).
 export function ResultPanel({ title, lead, headline, stats, children, footer }: ResultPanelProps) {
+  const { i18n } = useTranslation();
   return (
     <Animated.View
       entering={FadeIn.duration(220)}
@@ -56,7 +60,20 @@ export function ResultPanel({ title, lead, headline, stats, children, footer }: 
               <View key={stat.label} style={styles.stat}>
                 <View style={styles.statValueRow}>
                   {stat.icon}
-                  <Text style={styles.statValue}>{stat.value}</Text>
+                  {stat.count ? (
+                    <AnimatedNumber
+                      value={stat.count.to}
+                      prefix={stat.count.prefix}
+                      delay={stat.count.delay}
+                      fromZero
+                      duration={1000}
+                      language={i18n.language}
+                      style={styles.statValue}
+                      accessibilityLabel={stat.value}
+                    />
+                  ) : (
+                    <Text style={styles.statValue}>{stat.value}</Text>
+                  )}
                 </View>
                 <Text style={styles.statLabel}>{stat.label}</Text>
               </View>

@@ -48,6 +48,18 @@ describe("scoreRun", () => {
     expect(result.boardsCleared).toBe(1);
   });
 
+  it("carries the streak into the next board", () => {
+    const first = perfectBoard(runBoard(7, 0), 1000);
+    const second = perfectBoard(runBoard(7, 1), first[first.length - 1].t + 2000);
+    const result = scoreRun({ seed: 7, boards: [first, second], reviveAt: null });
+    let expected = 0;
+    for (let streak = 1; streak <= 16; streak++) expected += pairPoints(streak);
+    expected += boardClearPoints(8, first[first.length - 1].t - first[0].t);
+    expected += boardClearPoints(8, second[second.length - 1].t - second[0].t);
+    expect(result.valid).toBe(true);
+    expect(result.score).toBe(expected);
+  });
+
   it("rejects flips on matched cards and out-of-order times", () => {
     const board = runBoard(3, 0);
     const flips = perfectBoard(board, 0);

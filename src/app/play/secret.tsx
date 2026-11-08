@@ -27,7 +27,7 @@ import { colors } from "@/ui/theme";
 export default function SecretBoardScreen() {
   const { t, i18n } = useTranslation();
   const [initial] = useState(() => setupBoard(randomSeed(), SECRET_BOARD));
-  const { state, press } = useBoardGame(initial, { revealMs: SECRET_BOARD.revealMs });
+  const { state, press, lastFlip } = useBoardGame(initial, { revealMs: SECRET_BOARD.revealMs });
   const elapsed = useElapsed(state);
   const widths = useResultWidths();
   // The prize is collected once per local day (saved on the phone), however often the app restarts.
@@ -69,7 +69,14 @@ export default function SecretBoardScreen() {
       </View>
 
       <View style={styles.boardArea}>
-        <Board state={state} boardKey="secret" onCardPress={press} />
+        <Board
+          state={state}
+          boardKey="secret"
+          onCardPress={press}
+          lastFlip={lastFlip}
+          matchLabel={(flip) => (flip.streak >= 2 ? `×${flip.streak}` : null)}
+          finale={complete ? "wave" : null}
+        />
       </View>
 
       {showResults && (

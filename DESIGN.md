@@ -60,6 +60,9 @@ En React Native / Expo : ne rien préciser en `fontFamily` (laisser le système 
 - **Aucune bordure, à aucun moment** — ni au repos, ni pendant l'animation de retournement. Le flip est une pure transition (rotation 3D / scale / opacity), jamais un changement de couleur de bordure.
 - Face cachée : carte noire vide, rien dessus.
 - Révélée : carte noire + emoji centré, rien d'autre (pas de check, pas de halo, pas de teinte de succès).
+- **Reflet sur une paire** (décidé le 08/11/2026) : quand une paire est trouvée, une bande de lumière blanche très douce (dégradé, 20 % au centre) traverse la face des deux cartes en diagonale (0,65 s), comme une carte noire en métal qui accroche la lumière. Même reflet en vague sur la grille finie. Pas de contour (contour net, fondu, tracé et coins de visée essayés et refusés par Stan).
+- **Carte sous le doigt** : la carte s'incline de 7° vers l'endroit pressé (perspective 3D) et se tasse à 97 %, puis revient sur un ressort. Inspiré de Balatro et de Pokémon TCG Pocket (« la sensation physique d'une carte »).
+- **Les emojis ne bougent jamais** (ni saut, ni grossissement, ni rotation) : Stan les veut immobiles. Les effets passent par la carte entière (contour, tremblement, arrivée, sortie) ou par le HUD.
 - Aucun dégradé, aucun `box-shadow` de glow sur les cartes. Le seul relief autorisé est celui, très léger, de l'ombre du cadre du téléphone dans les mockups — jamais sur un élément de jeu lui-même.
 
 ## Boutons et contrôles

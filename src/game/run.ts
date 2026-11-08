@@ -33,8 +33,12 @@ export function boardSeed(runSeed: number, boardIndex: number): number {
   return (runSeed + Math.imul(boardIndex, 0x9e3779b9)) >>> 0;
 }
 
-export function runBoard(runSeed: number, boardIndex: number): GameState {
-  return setupBoard(boardSeed(runSeed, boardIndex), endlessBoardConfig(boardIndex));
+/**
+ * Board N of a run. The streak carries over from the board before: pairs found in a row keep
+ * their multiplier across a new deal, only a miss breaks it.
+ */
+export function runBoard(runSeed: number, boardIndex: number, streak = 0): GameState {
+  return { ...setupBoard(boardSeed(runSeed, boardIndex), endlessBoardConfig(boardIndex)), streak };
 }
 
 /** Daily Challenge seed: the same for every player on a given UTC day ("2026-09-30"). */
@@ -70,10 +74,11 @@ export function scoreRun(log: RunLog): RunResult {
   let flipCount = 0;
   let lastT = -Infinity;
   let firstT: number | null = null;
+  let streak = 0;
 
   for (let b = 0; b < log.boards.length; b++) {
     if (result.lost) return invalid("flips after the run ended", result);
-    let state = runBoard(log.seed, b);
+    let state = runBoard(log.seed, b, streak);
 
     for (const entry of log.boards[b]) {
       if (result.lost) return invalid("flips after the run ended", result);
@@ -123,6 +128,7 @@ export function scoreRun(log: RunLog): RunResult {
       }
     }
 
+    streak = state.streak;
     if (state.phase === "complete") {
       result.boardsCleared++;
       result.score += boardClearPoints(totalPairs(state), elapsedMs(state, lastT));

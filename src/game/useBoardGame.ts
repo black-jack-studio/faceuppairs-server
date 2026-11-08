@@ -7,7 +7,20 @@ import { playFx } from "@/fx/store";
 import { hapticError, hapticImpact, hapticSuccess, hapticTick } from "@/lib/haptics";
 import { useWallet } from "@/store/wallet";
 
-import { elapsedMs, flip, resolveMismatch, type FlipResult, type GameState } from "./engine";
+import { elapsedMs, flip, partnerOf, resolveMismatch, type FlipResult, type GameState } from "./engine";
+
+/** The last pair turned over, for the board's effects: where it is and how it went. */
+export interface LastFlip {
+  /** Grows with every pair, so effects keyed on it replay even for the same two cards. */
+  id: number;
+  kind: "match" | "mismatch";
+  a: number;
+  b: number;
+  streak: number;
+  complete: boolean;
+  /** A miss that cost a life (Endless and Daily only). */
+  costly: boolean;
+}
 
 interface Options {
   /** How long a missed pair stays visible before flipping back. */
@@ -22,6 +35,8 @@ export function useBoardGame(initial: GameState, { revealMs, memoryErrorsCost = 
   const stateRef = useRef(initial);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onResultRef = useRef(onResult);
+  const [lastFlip, setLastFlip] = useState<LastFlip | null>(null);
+  const flipId = useRef(0);
 
   useEffect(() => {
     onResultRef.current = onResult;
@@ -43,6 +58,28 @@ export function useBoardGame(initial: GameState, { revealMs, memoryErrorsCost = 
         timer.current = null;
       }
       commit(next);
+
+      if (result.kind === "match") {
+        setLastFlip({
+          id: ++flipId.current,
+          kind: "match",
+          a: partnerOf(next, index),
+          b: index,
+          streak: result.streak,
+          complete: result.complete,
+          costly: false,
+        });
+      } else if (result.kind === "mismatch") {
+        setLastFlip({
+          id: ++flipId.current,
+          kind: "mismatch",
+          a: next.faceUp[0],
+          b: next.faceUp[1],
+          streak: 0,
+          complete: false,
+          costly: result.memoryError && memoryErrorsCost,
+        });
+      }
 
       // One feel per outcome, the same in every mode: a tick to flip, a firm knock for a pair,
       // a soft bump for a miss, the success buzz to clear the board, the error buzz when a
@@ -68,6 +105,7 @@ export function useBoardGame(initial: GameState, { revealMs, memoryErrorsCost = 
   const reset = useCallback(
     (next: GameState) => {
       if (timer.current) clearTimeout(timer.current);
+      setLastFlip(null);
       commit(next);
     },
     [commit],
@@ -80,7 +118,7 @@ export function useBoardGame(initial: GameState, { revealMs, memoryErrorsCost = 
     [],
   );
 
-  return { state, press, reset };
+  return { state, press, reset, lastFlip };
 }
 
 /** Live clock for the HUD: ticks while the board is being played, frozen once it's done. */

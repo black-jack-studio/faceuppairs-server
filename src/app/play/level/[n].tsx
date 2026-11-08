@@ -3,6 +3,7 @@ import * as StoreReview from "expo-store-review";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, StyleSheet, Text, View } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 import { setupBoard } from "@/game/board";
 import { BOOSTER_PRICES, levelCoins, localDay, MILESTONE_COINS, PEEK_MS, type BoosterId } from "@/game/economy";
@@ -29,7 +30,7 @@ import { DoubleCoinsButton } from "@/ui/DoubleCoinsButton";
 import { Board } from "@/ui/Board";
 import { ResultPanel, useResultWidths } from "@/ui/ResultPanel";
 import { Screen } from "@/ui/Screen";
-import { StarRow } from "@/ui/StarRow";
+import { StarRow, starsLandedAt } from "@/ui/StarRow";
 import { colors } from "@/ui/theme";
 
 // Ask for a review only after a clearly good moment, once (same restraint as FaceUp).
@@ -47,7 +48,7 @@ export default function LevelScreen() {
 function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
   const { t, i18n } = useTranslation();
   const [initial] = useState(() => setupBoard(randomSeed(), level.board));
-  const { state, press } = useBoardGame(initial, { revealMs: level.board.revealMs });
+  const { state, press, lastFlip } = useBoardGame(initial, { revealMs: level.board.revealMs });
   const elapsed = useElapsed(state);
   const boosters = useWallet((s) => s.boosters);
   const rewardedReady = useAds((s) => s.rewardedReady);
@@ -143,6 +144,14 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
       setTimeout(() => setFlashIndex(null), PEEK_MS);
     });
 
+  // How close the next star was: the line that makes "Play again" tempting.
+  const nearMiss = (() => {
+    if (!complete || stars === 3) return null;
+    if (stars === 1) return t("game.nearMoves", { count: state.moves - level.moves2, stars: 2 });
+    if (state.moves > level.moves3) return t("game.nearMoves", { count: state.moves - level.moves3, stars: 3 });
+    return t("game.nearSeconds", { count: Math.max(1, Math.ceil(elapsed / 1000 - level.seconds3)), stars: 3 });
+  })();
+
   const flashing = peeking || flashIndex !== null;
   const canPeek = state.startedAt === null && !flashing;
   const canHint = hintTarget(state) !== null && !flashing;
@@ -172,7 +181,16 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
       </View>
 
       <View style={styles.boardArea} pointerEvents={flashing ? "none" : "auto"}>
-        <Board state={state} boardKey="level" onCardPress={press} revealAll={peeking} flashIndex={flashIndex} />
+        <Board
+          state={state}
+          boardKey="level"
+          onCardPress={press}
+          revealAll={peeking}
+          flashIndex={flashIndex}
+          lastFlip={lastFlip}
+          matchLabel={(flip) => (flip.streak >= 2 ? `×${flip.streak}` : null)}
+          finale={complete ? "wave" : null}
+        />
       </View>
 
       <View style={styles.boosters}>
@@ -196,7 +214,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
       {showResults && (
         <ResultPanel
           title={levelQuip(t, stars, quipSeed) || t("game.levelComplete")}
-          headline={<StarRow earned={stars} size={40} />}
+          headline={<StarRow earned={stars} size={40} animate />}
           stats={[
             { label: t("game.moves"), value: String(state.moves) },
             { label: t("game.time"), value: formatDuration(elapsed) },
@@ -205,6 +223,7 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
                   {
                     label: t("shop.coins"),
                     value: `+${formatScore(doubled ? coinsEarned * 2 : coinsEarned, i18n.language)}`,
+                    count: { to: doubled ? coinsEarned * 2 : coinsEarned, prefix: "+", delay: starsLandedAt(stars) },
                     icon: <CoinIcon />,
                   },
                 ]
@@ -243,6 +262,11 @@ function LevelRun({ level, onRetry }: { level: Level; onRetry: () => void }) {
             </>
           }
         >
+          {nearMiss && (
+            <Animated.Text entering={FadeIn.delay(starsLandedAt(stars) + 150).duration(260)} style={styles.nearMiss}>
+              {nearMiss}
+            </Animated.Text>
+          )}
           <DoubleCoinsButton doubled={doubled} canDouble={rewardedReady && coinsEarned > 0} onDouble={double} />
         </ResultPanel>
       )}
@@ -274,6 +298,12 @@ const styles = StyleSheet.create({
   boosters: {
     alignItems: "center",
     paddingVertical: 12,
+  },
+  nearMiss: {
+    color: colors.muted,
+    fontSize: 15,
+    fontWeight: "600",
+    textAlign: "center",
   },
   done: {
     color: colors.muted,
